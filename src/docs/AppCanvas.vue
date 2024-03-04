@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { drawText, type CanvasTextConfig } from 'canvas-txt'
+import { drawText, type CanvasTextConfig, type CanvasRenderContext, textToWords } from 'canvas-txt'
 import { ref, reactive, onMounted, watch } from 'vue'
 import type { Ref } from 'vue'
 import debounce from 'lodash/debounce'
 import cloneDeep from 'lodash/cloneDeep'
 
 const canvas: Ref<HTMLCanvasElement | null> = ref(null)
-const context: Ref<CanvasRenderingContext2D | null> = ref(null)
+const context: Ref<CanvasRenderContext | null> = ref(null)
 
 const renderTime = ref(0)
 
@@ -16,10 +16,6 @@ const initialConfig = {
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.',
   pos: { x: 100, y: 150 },
   size: { w: 300, h: 200 },
-  font: {
-    size: 38,
-    lineHeight: null,
-  },
   debug: false,
   align: 'center',
   vAlign: 'middle',
@@ -59,7 +55,7 @@ function renderText() {
     y: config.pos.y,
     width: config.size.w,
     height: config.size.h,
-    font: "Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue'",
+    fontFamily: "Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue'",
     fontSize: 24,
     fontWeight: '100',
     // fontStyle: 'oblique',
@@ -70,7 +66,16 @@ function renderText() {
     justify: config.justify,
   }
 
-  const { height } = drawText(ctx, config.text, myConfig)
+  const words = textToWords(config.text)
+  words.forEach((word) => {
+    if (word.text === 'ipsum') {
+      word.format = { fontStyle: 'italic', fontColor: 'red' }
+    } else if (word.text === 'consectetur') {
+      word.format = { fontWeight: '400', fontColor: 'blue' }
+    }
+  })
+
+  const { height } = drawText(ctx, words, myConfig)
 
   console.log(`Total height = ${height}`)
 }
@@ -110,7 +115,12 @@ onMounted(() => {
         <p>
           Canvas-txt uses the concept of textboxes borrowed from popular image
           editing softwares. You draw a rectangular box then place the text in
-          the box. Turn on the debug mode(below) to see what is happening.
+          the box. Turn on the debug mode (below) to see what is happening.
+        </p>
+        <p>
+          To keep the demo app simple while showing Canvas-txt's rich text features,
+          the word "ipsum" is always rendered in italics/red and the word "consectetur"
+          always in bold/blue.
         </p>
         <div class="slider">
           <span class="label">Pos X</span>

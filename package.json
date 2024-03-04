@@ -3,23 +3,25 @@
   "version": "4.1.1",
   "description": "Render multiline textboxes in HTML5 canvas with auto line breaks and better alignment system",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "dev": "vite serve --config config/vite.config.docs.ts",
-    "dev:node": "vite-node  ./src/node-test.ts",
-    "build": "tsc && vite build --emptyOutDir --config config/vite.config.ts && yarn build:dts",
+    "dev:node": "vite-node ./src/node-test.ts",
+    "build": "tsc && vite build --emptyOutDir --config config/vite.config.ts && yarn build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
     "build:dts": "tsup src/canvas-txt/index.ts --dts-only && mv dist/index.d.ts dist/canvas-txt.d.ts",
     "build:docs": "tsc && vite build --config config/vite.config.docs.ts",
     "prepare": "yarn build"
   },
-  "main": "./dist/canvas-txt.umd.js",
-  "module": "./dist/canvas-txt.mjs",
+  "main": "./dist/canvas-txt.umd.min.js",
+  "module": "./dist/canvas-txt.esm.min.js",
   "types": "./dist/canvas-txt.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/canvas-txt.mjs",
-      "require": "./dist/canvas-txt.umd.js",
+      "import": "./dist/canvas-txt.esm.min.js",
+      "require": "./dist/canvas-txt.umd.min.js",
       "types": "./dist/canvas-txt.d.ts"
     }
   },
@@ -43,6 +45,7 @@
   ],
   "devDependencies": {
     "@types/lodash": "^4.14.182",
+    "@types/offscreencanvas": "^2019.7.3",
     "@vitejs/plugin-vue": "^3.0.1",
     "canvas": "^2.11.2",
     "element-plus": "^2.2.12",
