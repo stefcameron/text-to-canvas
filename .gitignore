@@ -1,7 +1,22 @@
-node_modules
-dist
-dist-docs
-.vscode
-.idea
+# Editor/IDE files
+*.idea/
+*.sublime-project
+*.sublime-workspace
+*.vim
+*.vscode
 
+# Unimportant OS-specific files
+.DS_Store
+
+# Debug files
+*.log
+
+# Packages (deep)
+node_modules/
+
+# Generated builds (deep)
+dist/
+dist-docs/
+
+# Test output
 output.png

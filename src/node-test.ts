@@ -1,8 +1,12 @@
-import { createCanvas } from 'canvas'
-import { drawText, textToWords } from './canvas-txt/index'
-// @ts-ignore
-import * as fs from 'fs'
+// DEBUG import { createCanvas } from 'canvas'
+// DEBUG TODO: will need "canvas": "^2.11.2", in package.json if node-gyp can just succeed...
 
+// import { drawText, textToWords } from './canvas-txt/index'
+// // @ts-ignore
+// import * as fs from 'fs'
+
+// DEBUG
+/*
 function main() {
   const canvas = createCanvas(400, 400)
   const ctx = canvas.getContext('2d')
@@ -37,3 +41,4 @@ function main() {
 }
 
 main()
+*/
