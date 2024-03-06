@@ -1,20 +1,34 @@
 {
-  "name": "canvas-txt",
-  "version": "4.1.1",
-  "description": "Render multiline textboxes in HTML5 canvas with auto line breaks and better alignment system",
+  "name": "text-to-canvas",
+  "version": "1.0.0",
+  "description": "Render multiline plain or rich text into textboxes on HTML5 Canvas with automatic line wrapping",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefcameron/text-to-canvas.git"
+  },
+  "author": "Stefan Cameron <stefan@stefcameron.com> (https://stefcameron.com/)",
+  "contributors": [
+    "Geon George <me@geongeorge.com> (https://geongeorge.com/)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefcameron/text-to-canvas/issues"
+  },
+  "homepage": "https://stefcameron.github.io/text-to-canvas/",
+  "keywords": [
+    "vue",
+    "react",
+    "library",
+    "canvas",
+    "richtext",
+    "es6"
+  ],
+  "sideEffects": false,
   "files": [
     "dist",
     "LICENSE",
     "README.md"
   ],
-  "scripts": {
-    "dev": "vite serve --config config/vite.config.docs.ts",
-    "dev:node": "vite-node ./src/node-test.ts",
-    "build": "tsc && vite build --emptyOutDir --config config/vite.config.ts && yarn build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
-    "build:dts": "tsup src/canvas-txt/index.ts --dts-only && mv dist/index.d.ts dist/canvas-txt.d.ts",
-    "build:docs": "tsc && vite build --config config/vite.config.docs.ts",
-    "prepare": "yarn build"
-  },
   "main": "./dist/canvas-txt.umd.min.js",
   "module": "./dist/canvas-txt.esm.min.js",
   "types": "./dist/canvas-txt.d.ts",
@@ -25,24 +39,15 @@
       "types": "./dist/canvas-txt.d.ts"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/geongeorge/Canvas-Txt"
+  "scripts": {
+    "build": "tsc && vite build --emptyOutDir --config config/vite.config.ts && yarn build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
+    "build:docs": "tsc && vite build --config config/vite.config.docs.ts",
+    "build:dts": "tsup src/canvas-txt/index.ts --dts-only && mv dist/index.d.ts dist/canvas-txt.d.ts",
+    "prepare": "yarn build",
+    "start": "vite serve --config config/vite.config.docs.ts",
+    "test": "yarn test:unit && yarn build",
+    "test:unit": "vite-node ./src/node-test.ts"
   },
-  "author": "Geon George <me@geongeorge.com> (https://geongeorge.com)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/geongeorge/Canvas-Txt/issues"
-  },
-  "homepage": "https://canvas-txt.geongeorge.com",
-  "keywords": [
-    "vue",
-    "react",
-    "library",
-    "canvas",
-    "Multiline",
-    "es6"
-  ],
   "devDependencies": {
     "@types/lodash": "^4.14.182",
     "@types/offscreencanvas": "^2019.7.3",
@@ -57,6 +62,5 @@
     "vite": "^4.4.4",
     "vite-node": "^0.33.0",
     "vue": "^3.2.37"
-  },
-  "dependencies": {}
+  }
 }
