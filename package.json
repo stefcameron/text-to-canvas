@@ -44,11 +44,11 @@
     "npm": "10"
   },
   "scripts": {
-    "build": "tsc && vite build --emptyOutDir --config config/vite.config.ts && npm run build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
-    "build:docs": "tsc && vite build --config config/vite.config.docs.ts",
+    "build": "tsc && vite build --emptyOutDir --config config/vite.config.mts && npm run build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
+    "build:docs": "tsc && vite build --config config/vite.config.docs.mts",
     "build:dts": "tsup src/canvas-txt/index.ts --dts-only && mv dist/index.d.ts dist/canvas-txt.d.ts",
     "prepare": "npm run build",
-    "start": "vite serve --config config/vite.config.docs.ts",
+    "start": "vite serve --config config/vite.config.docs.mts",
     "test": "npm run test:unit && npm run build",
     "test:unit": "vite-node ./src/node-test.ts"
   },
