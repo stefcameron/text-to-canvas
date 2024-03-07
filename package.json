@@ -44,8 +44,8 @@
     "npm": "10"
   },
   "scripts": {
-    "build": "tsc && vite build --emptyOutDir --config config/vite.config.mts && npm run build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
-    "build:docs": "tsc && vite build --config config/vite.config.docs.mts",
+    "build": "vite build --emptyOutDir --config config/vite.config.mts && npm run build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
+    "build:docs": "vite build --config config/vite.config.docs.mts",
     "build:dts": "tsup src/canvas-txt/index.ts --dts-only && mv dist/index.d.ts dist/canvas-txt.d.ts",
     "fmt": "prettier --write \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
     "fmt:check": "prettier --check \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
