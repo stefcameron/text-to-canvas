@@ -20,7 +20,7 @@ export interface JustifyLineProps {
  * @param line
  * @returns New array with only non-whitespace words.
  */
-const extractWords = function (line: Word[]) {
+const extractWords = (line: Word[]) => {
   return line.filter((word) => !isWhitespace(word.text));
 };
 
@@ -29,7 +29,7 @@ const extractWords = function (line: Word[]) {
  * @param word
  * @returns Deep-cloned Word.
  */
-const cloneWord = function (word: Word) {
+const cloneWord = (word: Word) => {
   const clone = { ...word };
   if (word.format) {
     clone.format = { ...word.format };
@@ -46,7 +46,7 @@ const cloneWord = function (word: Word) {
  * @returns New array of Words. Empty if `words` is empty. New array of one Word if `words`
  *  contains only one Word.
  */
-const joinWords = function (words: Word[], joiner: Word[]) {
+const joinWords = (words: Word[], joiner: Word[]) => {
   if (words.length <= 1 || joiner.length < 1) {
     return [...words];
   }
@@ -71,12 +71,12 @@ const joinWords = function (words: Word[], joiner: Word[]) {
  * @returns New array containing original words from the `line` with additional whitespace
  *  for justification to `boxWidth`.
  */
-export function justifyLine({
+export const justifyLine = ({
   line,
   spaceWidth,
   spaceChar,
   boxWidth,
-}: JustifyLineProps) {
+}: JustifyLineProps) => {
   const words = extractWords(line);
   if (words.length <= 1) {
     return line.concat();
@@ -112,4 +112,4 @@ export function justifyLine({
     () => ({ text: spaceChar })
   );
   return joinWords(words, spaces);
-}
+};

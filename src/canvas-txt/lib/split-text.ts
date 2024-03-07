@@ -41,7 +41,7 @@ let fontBoundingBoxSupported: boolean;
  * @param word
  * @returns Hash.
  */
-const getWordHash = function (word: Word) {
+const getWordHash = (word: Word) => {
   return `${word.text}${word.format ? JSON.stringify(word.format) : ''}`;
 };
 
@@ -53,10 +53,10 @@ const getWordHash = function (word: Word) {
  *  based on words; false if we're to assume the words already include all necessary whitespace.
  * @returns Words expressed as lines.
  */
-const splitIntoLines = function (
+const splitIntoLines = (
   words: Word[],
   inferWhitespace: boolean = true
-): Word[][] {
+): Word[][] => {
   const lines: Word[][] = [[]];
 
   let wasWhitespace = false; // true if previous word was whitespace
@@ -102,7 +102,7 @@ const splitIntoLines = function (
  * @param params
  * @returns Results to return via `splitWords()`
  */
-const generateSpec = function ({
+const generateSpec = ({
   wrappedLines,
   wordMap,
   positioning: {
@@ -113,7 +113,7 @@ const generateSpec = function ({
     align,
     vAlign,
   },
-}: GenerateSpecProps): RenderSpec {
+}: GenerateSpecProps): RenderSpec => {
   const xEnd = boxX + boxWidth;
   const yEnd = boxY + boxHeight;
 
@@ -256,9 +256,9 @@ const jsonReplacer = function (key: string, value: unknown) {
  * @param specs
  * @returns Specs serialized as JSON.
  */
-export function specToJson(specs: RenderSpec): string {
+export const specToJson = (specs: RenderSpec): string => {
   return JSON.stringify(specs, jsonReplacer);
-}
+};
 
 /**
  * Serializes a list of Words to JSON for storage or for sending via `postMessage()`
@@ -270,16 +270,16 @@ export function specToJson(specs: RenderSpec): string {
  * @param words
  * @returns Words serialized as JSON.
  */
-export function wordsToJson(words: Word[]): string {
+export const wordsToJson = (words: Word[]): string => {
   return JSON.stringify(words, jsonReplacer);
-}
+};
 
 /**
  * @private
  * Measures a Word in a rendering context, assigning its `TextMetrics` to its `metrics` property.
  * @returns The Word's width, in pixels.
  */
-const measureWord = function ({
+const measureWord = ({
   ctx,
   word,
   wordMap,
@@ -289,7 +289,7 @@ const measureWord = function ({
   word: Word;
   wordMap: WordMap;
   baseTextFormat: TextFormat;
-}): number {
+}): number => {
   const hash = getWordHash(word);
 
   if (word.metrics) {
@@ -362,14 +362,14 @@ const measureWord = function ({
  * @returns Lines of positioned words to be rendered, and total height required to
  *  render all lines.
  */
-export function splitWords({
+export const splitWords = ({
   ctx,
   words,
   justify,
   format: baseFormat,
   inferWhitespace = true,
   ...positioning // rest of params are related to positioning
-}: SplitWordsProps): RenderSpec {
+}: SplitWordsProps): RenderSpec => {
   const wordMap: WordMap = new Map();
   const baseTextFormat = getTextFormat(baseFormat);
   const { width: boxWidth } = positioning;
@@ -516,7 +516,7 @@ export function splitWords({
 
   ctx.restore();
   return spec;
-}
+};
 
 /**
  * Converts a string of text containing words and whitespace, as well as line breaks (newlines),
@@ -524,7 +524,7 @@ export function splitWords({
  * @param text String to convert into Words.
  * @returns Converted text.
  */
-export function textToWords(text: string) {
+export const textToWords = (text: string) => {
   const words: Word[] = [];
 
   // split the `text` into a series of Words, preserving whitespace
@@ -557,13 +557,13 @@ export function textToWords(text: string) {
   }
 
   return words;
-}
+};
 
 /**
  * Splits plain text into lines in the order in which they should be rendered, top-down,
  *  preserving whitespace __only within the text__ (whitespace on either end is trimmed).
  */
-export function splitText({ text, ...params }: SplitTextProps): string[] {
+export const splitText = ({ text, ...params }: SplitTextProps): string[] => {
   const words = textToWords(text);
 
   const results = splitWords({
@@ -575,4 +575,4 @@ export function splitText({ text, ...params }: SplitTextProps): string[] {
   return results.lines.map((line) =>
     line.map(({ word: { text: t } }) => t).join('')
   );
-}
+};

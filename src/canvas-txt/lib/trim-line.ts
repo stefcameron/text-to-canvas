@@ -10,14 +10,14 @@ import { Word } from './models';
  *  what was trimmed from the left (empty if none). `trimmedRight` is a new array containing
  *  what was trimmed from the right (empty if none).
  */
-export const trimLine = function (
+export const trimLine = (
   line: Word[],
   side: 'left' | 'right' | 'both' = 'both'
 ): {
   trimmedLeft: Word[];
   trimmedRight: Word[];
   trimmedLine: Word[];
-} {
+} => {
   let leftTrim = 0;
   if (side === 'left' || side === 'both') {
     for (; leftTrim < line.length; leftTrim++) {
