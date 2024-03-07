@@ -1,8 +1,8 @@
 <script setup lang="js">
-import { ElContainer, ElHeader, ElMain, ElFooter } from 'element-plus'
-import AppCanvas from './AppCanvas.vue'
+import { ElContainer, ElHeader, ElMain, ElFooter } from 'element-plus';
+import AppCanvas from './AppCanvas.vue';
 
-const year = new Date().getFullYear()
+const year = new Date().getFullYear();
 </script>
 
 <template>

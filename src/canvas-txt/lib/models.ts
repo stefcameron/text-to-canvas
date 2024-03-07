@@ -1,4 +1,6 @@
-export type CanvasRenderContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
+export type CanvasRenderContext =
+  | CanvasRenderingContext2D
+  | OffscreenCanvasRenderingContext2D;
 
 /**
  * Identifies the minimum Canvas `TextMetrics` properties required by Canvas-Txt. This is
@@ -7,16 +9,16 @@ export type CanvasRenderContext = CanvasRenderingContext2D | OffscreenCanvasRend
  *  causing an exception.
  */
 export interface TextMetricsLike {
-  readonly fontBoundingBoxAscent: number
-  readonly fontBoundingBoxDescent: number
-  readonly width: number
+  readonly fontBoundingBoxAscent: number;
+  readonly fontBoundingBoxDescent: number;
+  readonly width: number;
 }
 
-export type CanvasTextMetrics = TextMetrics | TextMetricsLike
+export type CanvasTextMetrics = TextMetrics | TextMetricsLike;
 
 export interface TextFormat {
   /** Font family (CSS value). */
-  fontFamily?: string
+  fontFamily?: string;
 
   // TODO: rendering words at different sizes doesn't render well per baseline
   /**
@@ -26,28 +28,28 @@ export interface TextFormat {
    *  Prefer setting a common size as the base formatting for all text instead of setting
    *  a different size for a subset of Words.
    */
-  fontSize?: number
+  fontSize?: number;
 
   /** Font weight (CSS value). */
-  fontWeight?: string
+  fontWeight?: string;
   /** Font style (CSS value) */
-  fontStyle?: string
+  fontStyle?: string;
 
   // per spec, only CSS 2.1 values are supported
   // @see https://developer.mozilla.org/en-US/docs/Web/CSS/font
   /** Font variant (CSS value). */
-  fontVariant?: 'normal' | 'small-caps' | ''
+  fontVariant?: 'normal' | 'small-caps' | '';
 
-  fontColor?: string
+  fontColor?: string;
 
   // NOTE: line height is not currently supported
 }
 
 export interface Word {
   /** The word. Can also be whitespace. */
-  text: string
+  text: string;
   /** Optional formatting. If unspecified, base format defaults will be used. */
-  format?: TextFormat
+  format?: TextFormat;
   /**
    * Optional metrics for this Word if it has __already been measured__ on canvas.
    *
@@ -61,7 +63,7 @@ export interface Word {
    *  `text` and `format` remain the same. If they change, simply set this property to `undefined`
    *  to force it to be re-measured.
    */
-  metrics?: CanvasTextMetrics // NOTE: all property are flagged as `readonly` (good!)
+  metrics?: CanvasTextMetrics; // NOTE: all property are flagged as `readonly` (good!)
 }
 
 export type PlainText = string;
@@ -74,7 +76,7 @@ export interface CanvasTextConfig extends TextFormat {
    *  text wrapping, but will not necessarily constrain the text because, at minimum, one word,
    *  regardless of its width, will be rendered per line.
    */
-  width: number
+  width: number;
   /**
    * Height of box (px) at X/Y in 2D context within which text should be rendered. While this
    *  __will not constrain how the text is rendered__, it will determine how it's positioned
@@ -82,21 +84,21 @@ export interface CanvasTextConfig extends TextFormat {
    *  be rendered above/below the box defined in part by this dimension if it's too long to
    *  fit within the specified `boxWidth`.
    */
-  height: number
+  height: number;
   /** Absolute X coordinate (px) in 2D context where text should be rendered. */
-  x: number
+  x: number;
   /** Absolute Y coordinate (px) in 2D context where text should be rendered. */
-  y: number
+  y: number;
 
   /** True if debug lines should be rendered behind the text. */
-  debug?: boolean
+  debug?: boolean;
 
   /** Horizontal alignment. Defaults to 'center'. */
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right';
   /** Vertical alignment. Defaults to 'middle'. */
-  vAlign?: 'top' | 'middle' | 'bottom'
+  vAlign?: 'top' | 'middle' | 'bottom';
   /** True if text should be justified within the `boxWidth` to fill the hole width. */
-  justify?: boolean
+  justify?: boolean;
 
   /**
    * __NOTE:__ Applies only if `text`, given to `drawText()`, is a `Word[]`. Ignored if it's
@@ -111,22 +113,22 @@ export interface CanvasTextConfig extends TextFormat {
    *
    * False indicates that `words` contains its own whitespace and it shouldn't be inferred.
    */
-  inferWhitespace?: boolean
+  inferWhitespace?: boolean;
 }
 
 export interface BaseSplitProps {
-  ctx: CanvasRenderContext
+  ctx: CanvasRenderContext;
 
   /** Absolute X coordinate (px) in 2D context where text should be rendered. */
-  x: number
+  x: number;
   /** Absolute Y coordinate (px) in 2D context where text should be rendered. */
-  y: number
+  y: number;
   /**
    * Width of box (px) at X/Y in 2D context within which text should be rendered. This will affect
    *  text wrapping, but will not necessarily constrain the text because, at minimum, one word,
    *  regardless of its width, will be rendered per line.
    */
-  width: number
+  width: number;
   /**
    * Height of box (px) at X/Y in 2D context within which text should be rendered. While this
    *  __will not constrain how the text is rendered__, it will determine how it's positioned
@@ -134,20 +136,20 @@ export interface BaseSplitProps {
    *  be rendered above/below the box defined in part by this dimension if it's too long to
    *  fit within the specified `boxWidth`.
    */
-  height: number
+  height: number;
 
   /** Horizontal alignment. Defaults to 'center'. */
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right';
   /** Vertical alignment. Defaults to 'middle'. */
-  vAlign?: 'top' | 'middle' | 'bottom'
+  vAlign?: 'top' | 'middle' | 'bottom';
   /** True if text should be justified within the `boxWidth` to fill the hole width. */
-  justify?: boolean
+  justify?: boolean;
 
   /**
    * Base/default font styles. These will be used for any word that doesn't have specific
    *  formatting overrides. It's basically how "plain text" should be rendered.
    */
-  format?: TextFormat
+  format?: TextFormat;
 }
 
 export interface SplitTextProps extends BaseSplitProps {
@@ -156,12 +158,12 @@ export interface SplitTextProps extends BaseSplitProps {
    *  within the string__ (whitespace on either end is trimmed). Text will always wrap at max
    *  width regardless of newlines.
    */
-  text: PlainText
+  text: PlainText;
 }
 
 export interface SplitWordsProps extends BaseSplitProps {
   /** For hard breaks, include words that are newline characters as their `text`. */
-  words: Word[]
+  words: Word[];
 
   /**
    * True (default) indicates `words` contains _mostly_ visible words and whitespace should be
@@ -170,7 +172,7 @@ export interface SplitWordsProps extends BaseSplitProps {
    *
    * False indicates that `words` contains its own whitespace and it shouldn't be inferred.
    */
-  inferWhitespace?: boolean
+  inferWhitespace?: boolean;
 }
 
 /** Hash representing a `Word` and its associated `TextFormat`. */
@@ -181,28 +183,31 @@ export type WordHash = string;
  *  `Word` specified a format to use; undefined means the base formatting, as set on the canvas
  *  2D context, was used).
  */
-export type WordMap = Map<WordHash, { metrics: CanvasTextMetrics, format?: Required<TextFormat> }>
+export type WordMap = Map<
+  WordHash,
+  { metrics: CanvasTextMetrics; format?: Required<TextFormat> }
+>;
 
 export interface GenerateSpecProps {
   /** Words organized/wrapped into lines to be rendered. */
-  wrappedLines: Word[][]
+  wrappedLines: Word[][];
 
   /** Map of Word to measured dimensions (px) as it would be rendered. */
-  wordMap: WordMap
+  wordMap: WordMap;
 
   /**
    * Details on where to render the Words onto canvas. These parameters ultimately come
    *  from `SplitWordsProps`, and they come from `CanvasTextConfig`.
    */
   positioning: {
-    width: SplitWordsProps['width']
+    width: SplitWordsProps['width'];
     // NOTE: height does NOT constrain the text; used only for vertical alignment
-    height: SplitWordsProps['height']
-    x: SplitWordsProps['x']
-    y: SplitWordsProps['y']
-    align?: SplitWordsProps['align']
-    vAlign?: SplitWordsProps['vAlign']
-  }
+    height: SplitWordsProps['height'];
+    x: SplitWordsProps['x'];
+    y: SplitWordsProps['y'];
+    align?: SplitWordsProps['align'];
+    vAlign?: SplitWordsProps['vAlign'];
+  };
 }
 
 /**
@@ -214,7 +219,7 @@ export interface GenerateSpecProps {
  */
 export interface PositionedWord {
   /** Reference to a `Word` given to `splitWords()`. */
-  readonly word: Word
+  readonly word: Word;
 
   /**
    * Full formatting used to measure/position the `word`, __if a `word.format` partial
@@ -222,22 +227,22 @@ export interface PositionedWord {
    *
    * ❗️ __Use this for actual rendering__ instead of the original `word.format`.
    */
-  readonly format?: Readonly<Required<TextFormat>>
+  readonly format?: Readonly<Required<TextFormat>>;
 
   /** X position (px) relative to render box within 2D context. */
-  readonly x: number
+  readonly x: number;
   /** Y position (px) relative to render box within 2D context. */
-  readonly y: number
+  readonly y: number;
   /** Width (px) used to render text. */
-  readonly width: number
+  readonly width: number;
   /** Height (px) used to render text. */
-  readonly height: number
+  readonly height: number;
 
   /**
    * True if this `word` is non-visible whitespace (per a Regex `^\s+$` match) and so
    *  __could be skipped when rendering__.
    */
-  readonly isWhitespace: boolean
+  readonly isWhitespace: boolean;
 }
 
 export interface RenderSpec {
@@ -245,29 +250,28 @@ export interface RenderSpec {
    * Words split into lines as they would be visually wrapped on canvas if rendered
    *  to their prescribed positions.
    */
-  readonly lines: PositionedWord[][]
+  readonly lines: PositionedWord[][];
 
   /**
    * Baseline to use when rendering text based on alignment settings.
    *
    * ❗️ Set this on the 2D context __before__ rendering the Words in the `lines`.
    */
-  readonly textBaseline: CanvasTextBaseline
+  readonly textBaseline: CanvasTextBaseline;
 
   /**
    * Alignment to use when rendering text based on alignment settings.
    *
    * ❗️ Set this on the 2D context __before__ rendering the Words in the `lines`.
    */
-  readonly textAlign: CanvasTextAlign
+  readonly textAlign: CanvasTextAlign;
 
   /**
    * Total required width (px) to render all the lines as wrapped (i.e. the original
    *  `width` used to split the words.
    */
-  readonly width: number
+  readonly width: number;
 
   /** Total required height (px) to render all lines. */
-  readonly height: number
+  readonly height: number;
 }
-

@@ -10,10 +10,13 @@ import { Word } from './models';
  *  what was trimmed from the left (empty if none). `trimmedRight` is a new array containing
  *  what was trimmed from the right (empty if none).
  */
-export const trimLine = function(line: Word[], side: 'left' | 'right' | 'both' = 'both'): {
-  trimmedLeft: Word[],
-  trimmedRight: Word[],
-  trimmedLine: Word[],
+export const trimLine = function (
+  line: Word[],
+  side: 'left' | 'right' | 'both' = 'both'
+): {
+  trimmedLeft: Word[];
+  trimmedRight: Word[];
+  trimmedLine: Word[];
 } {
   let leftTrim = 0;
   if (side === 'left' || side === 'both') {
@@ -29,19 +32,19 @@ export const trimLine = function(line: Word[], side: 'left' | 'right' | 'both' =
         trimmedLeft: line.concat(),
         trimmedRight: [],
         trimmedLine: [],
-      }
+      };
     }
   }
 
-  let rightTrim = line.length
+  let rightTrim = line.length;
   if (side === 'right' || side === 'both') {
-    rightTrim--
+    rightTrim--;
     for (; rightTrim >= 0; rightTrim--) {
       if (!isWhitespace(line[rightTrim].text)) {
         break;
       }
     }
-    rightTrim++ // back up one since we started one down for 0-based indexes
+    rightTrim++; // back up one since we started one down for 0-based indexes
 
     if (rightTrim <= 0) {
       // all whitespace
@@ -49,7 +52,7 @@ export const trimLine = function(line: Word[], side: 'left' | 'right' | 'both' =
         trimmedLeft: [],
         trimmedRight: line.concat(),
         trimmedLine: [],
-      }
+      };
     }
   }
 
@@ -57,5 +60,5 @@ export const trimLine = function(line: Word[], side: 'left' | 'right' | 'both' =
     trimmedLeft: line.slice(0, leftTrim),
     trimmedRight: line.slice(rightTrim),
     trimmedLine: line.slice(leftTrim, rightTrim),
-  }
-}
+  };
+};
