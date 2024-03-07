@@ -1,15 +1,15 @@
 <script setup lang="js">
-import { drawText, textToWords } from 'canvas-txt'
-import { ref, reactive, onMounted, watch } from 'vue'
-import debounce from 'lodash/debounce'
-import cloneDeep from 'lodash/cloneDeep'
+import { drawText, textToWords } from 'canvas-txt';
+import { ref, reactive, onMounted, watch } from 'vue';
+import debounce from 'lodash/debounce';
+import cloneDeep from 'lodash/cloneDeep';
 
-const canvas = ref(null)
-const context = ref(null)
+const canvas = ref(null);
+const context = ref(null);
 
-const renderTime = ref(0)
+const renderTime = ref(0);
 
-const canvasSize = { w: 500, h: 500 }
+const canvasSize = { w: 500, h: 500 };
 
 const initialConfig = {
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.',
@@ -21,9 +21,9 @@ const initialConfig = {
   justify: false,
   min: 0,
   max: 800,
-}
+};
 
-const config = reactive(cloneDeep(initialConfig))
+const config = reactive(cloneDeep(initialConfig));
 
 function resetConfig() {
   for (const key of Object.keys(initialConfig)) {
@@ -31,28 +31,27 @@ function resetConfig() {
       config[key] =
         typeof initialConfig[key] === 'object'
           ? cloneDeep(initialConfig[key])
-          : initialConfig[key]
+          : initialConfig[key];
     }
   }
 }
 
-
-
 function renderText() {
   if (!context.value) {
-    return
+    return;
   }
 
-  const ctx = context.value
+  const ctx = context.value;
 
-  ctx.clearRect(0, 0, canvasSize.w, canvasSize.h)
+  ctx.clearRect(0, 0, canvasSize.w, canvasSize.h);
 
   const myConfig = {
     x: config.pos.x,
     y: config.pos.y,
     width: config.size.w,
     height: config.size.h,
-    fontFamily: "Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue'",
+    fontFamily:
+      "Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue'",
     fontSize: 24,
     fontWeight: '100',
     // fontStyle: 'oblique',
@@ -61,47 +60,47 @@ function renderText() {
     align: config.align,
     vAlign: config.vAlign,
     justify: config.justify,
-  }
+  };
 
-  const words = textToWords(config.text)
+  const words = textToWords(config.text);
   words.forEach((word) => {
     if (word.text === 'ipsum') {
-      word.format = { fontStyle: 'italic', fontColor: 'red' }
+      word.format = { fontStyle: 'italic', fontColor: 'red' };
     } else if (word.text === 'consectetur') {
-      word.format = { fontWeight: '400', fontColor: 'blue' }
+      word.format = { fontWeight: '400', fontColor: 'blue' };
     }
-  })
+  });
 
-  const { height } = drawText(ctx, words, myConfig)
+  const { height } = drawText(ctx, words, myConfig);
 
   // eslint-disable-next-line no-console
-  console.log(`Total height = ${height}`)
+  console.log(`Total height = ${height}`);
 }
 
 function redrawAndMeasure() {
-  const t0 = performance.now()
-  renderText()
-  const t1 = performance.now()
-  renderTime.value = t1 - t0
+  const t0 = performance.now();
+  renderText();
+  const t1 = performance.now();
+  renderTime.value = t1 - t0;
 
   // eslint-disable-next-line no-console
-  console.log(`Rendering took ${renderTime.value} milliseconds.`)
+  console.log(`Rendering took ${renderTime.value} milliseconds.`);
 }
-const debouncedRedrawAndMeasure = debounce(redrawAndMeasure, 10)
+const debouncedRedrawAndMeasure = debounce(redrawAndMeasure, 10);
 
 function initializeCanvas() {
-  context.value = (canvas.value).getContext('2d')
+  context.value = canvas.value.getContext('2d');
 
-  debouncedRedrawAndMeasure()
+  debouncedRedrawAndMeasure();
 }
 
 watch(config, () => {
-  debouncedRedrawAndMeasure()
-})
+  debouncedRedrawAndMeasure();
+});
 
 onMounted(() => {
-  initializeCanvas()
-})
+  initializeCanvas();
+});
 </script>
 
 <template>
@@ -123,9 +122,9 @@ onMounted(() => {
           the box. Turn on the debug mode (below) to see what is happening.
         </p>
         <p>
-          To keep the demo app simple while showing Canvas-txt's rich text features,
-          the word "ipsum" is always rendered in italics/red and the word "consectetur"
-          always in bold/blue.
+          To keep the demo app simple while showing Canvas-txt's rich text
+          features, the word "ipsum" is always rendered in italics/red and the
+          word "consectetur" always in bold/blue.
         </p>
         <div class="slider">
           <span class="label">Pos X</span>

@@ -1,52 +1,49 @@
-import { getTextStyle } from './get-style'
-import { CanvasRenderContext, Word } from './models'
+import { getTextStyle } from './get-style';
+import { CanvasRenderContext, Word } from './models';
 
 interface GetWordHeightProps {
-  ctx: CanvasRenderContext
-  word: Word
+  ctx: CanvasRenderContext;
+  word: Word;
 }
 
 interface GetTextHeightProps {
-  ctx: CanvasRenderContext
-  text: string
+  ctx: CanvasRenderContext;
+  text: string;
 
   /**
    * CSS font. Same syntax as CSS font specifier. If not specified, current `ctx` font
    *  settings/styles are used.
    */
-  style?: string
+  style?: string;
 }
 
-const getHeight = function(ctx: CanvasRenderContext, text: string, style?: string) {
-  const previousTextBaseline = ctx.textBaseline
-  const previousFont = ctx.font
+const getHeight = function (
+  ctx: CanvasRenderContext,
+  text: string,
+  style?: string
+) {
+  const previousTextBaseline = ctx.textBaseline;
+  const previousFont = ctx.font;
 
-  ctx.textBaseline = 'bottom'
+  ctx.textBaseline = 'bottom';
   if (style) {
-    ctx.font = style
+    ctx.font = style;
   }
-  const { actualBoundingBoxAscent: height } = ctx.measureText(text)
+  const { actualBoundingBoxAscent: height } = ctx.measureText(text);
 
   // Reset baseline
-  ctx.textBaseline = previousTextBaseline
+  ctx.textBaseline = previousTextBaseline;
   if (style) {
-    ctx.font = previousFont
+    ctx.font = previousFont;
   }
 
-  return height
+  return height;
+};
+
+export function getWordHeight({ ctx, word }: GetWordHeightProps) {
+  return getHeight(ctx, word.text, word.format && getTextStyle(word.format));
 }
 
-export function getWordHeight({
-  ctx,
-  word,
-}: GetWordHeightProps) {
-  return getHeight(ctx, word.text, word.format && getTextStyle(word.format))
-}
-
-export function getTextHeight({
-  ctx,
-  text,
-  style,
-}: GetTextHeightProps) {
-  return getHeight(ctx, text, style)
+export function getTextHeight({ ctx, text, style }: GetTextHeightProps) {
+  return getHeight(ctx, text, style);
 }

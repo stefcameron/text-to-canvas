@@ -1,6 +1,6 @@
-import { getTextFormat, getTextStyle } from './get-style'
-import { isWhitespace } from './is-whitespace'
-import { justifyLine } from './justify'
+import { getTextFormat, getTextStyle } from './get-style';
+import { isWhitespace } from './is-whitespace';
+import { justifyLine } from './justify';
 import {
   GenerateSpecProps,
   PositionedWord,
@@ -11,15 +11,15 @@ import {
   WordMap,
   CanvasTextMetrics,
   TextFormat,
-  CanvasRenderContext
-} from './models'
-import { trimLine } from './trim-line'
+  CanvasRenderContext,
+} from './models';
+import { trimLine } from './trim-line';
 
 // Hair space character for precise justification
-const HAIR = '\u{200a}'
+const HAIR = '\u{200a}';
 
 // for when we're inferring whitespace between words
-const SPACE = ' '
+const SPACE = ' ';
 
 /**
  * Whether the canvas API being used supports the newer `fontBoundingBox*` properties or not.
@@ -33,7 +33,7 @@ const SPACE = ' '
  * @see https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
  * @see https://www.npmjs.com/package/canvas
  */
-let fontBoundingBoxSupported: boolean
+let fontBoundingBoxSupported: boolean;
 
 /**
  * @private
@@ -41,9 +41,9 @@ let fontBoundingBoxSupported: boolean
  * @param word
  * @returns Hash.
  */
-const getWordHash = function(word: Word) {
-  return `${word.text}${word.format ? JSON.stringify(word.format) : ''}`
-}
+const getWordHash = function (word: Word) {
+  return `${word.text}${word.format ? JSON.stringify(word.format) : ''}`;
+};
 
 /**
  * @private
@@ -53,44 +53,47 @@ const getWordHash = function(word: Word) {
  *  based on words; false if we're to assume the words already include all necessary whitespace.
  * @returns Words expressed as lines.
  */
-const splitIntoLines = function(words: Word[], inferWhitespace: boolean = true): Word[][] {
-  const lines: Word[][] = [[]]
+const splitIntoLines = function (
+  words: Word[],
+  inferWhitespace: boolean = true
+): Word[][] {
+  const lines: Word[][] = [[]];
 
-  let wasWhitespace = false // true if previous word was whitespace
+  let wasWhitespace = false; // true if previous word was whitespace
   words.forEach((word, wordIdx) => {
     // TODO: this is likely a naive split (at least based on character?); should at least
     //  think about this more; text format shouldn't matter on a line break, right (hope not)?
     if (word.text.match(/^\n+$/)) {
       for (let i = 0; i < word.text.length; i++) {
-        lines.push([])
+        lines.push([]);
       }
-      wasWhitespace = true
-      return // next `word`
+      wasWhitespace = true;
+      return; // next `word`
     }
 
     if (isWhitespace(word.text)) {
       // whitespace OTHER THAN newlines since we checked for newlines above
-      lines.at(-1)?.push(word)
-      wasWhitespace = true
-      return // next `word`
+      lines.at(-1)?.push(word);
+      wasWhitespace = true;
+      return; // next `word`
     }
 
     if (word.text === '') {
-      return // skip to next `word`
+      return; // skip to next `word`
     }
 
     // looks like a non-empty, non-whitespace word at this point, so if it isn't the first
     //  word and the one before wasn't whitespace, insert a space
     if (inferWhitespace && !wasWhitespace && wordIdx > 0) {
-      lines.at(-1)?.push({ text: SPACE })
+      lines.at(-1)?.push({ text: SPACE });
     }
 
-    lines.at(-1)?.push(word)
-    wasWhitespace = false
-  })
+    lines.at(-1)?.push(word);
+    wasWhitespace = false;
+  });
 
-  return lines
-}
+  return lines;
+};
 
 /**
  * @private
@@ -99,7 +102,7 @@ const splitIntoLines = function(words: Word[], inferWhitespace: boolean = true):
  * @param params
  * @returns Results to return via `splitWords()`
  */
-const generateSpec = function({
+const generateSpec = function ({
   wrappedLines,
   wordMap,
   positioning: {
@@ -109,10 +112,10 @@ const generateSpec = function({
     y: boxY,
     align,
     vAlign,
-  }
+  },
 }: GenerateSpecProps): RenderSpec {
-  const xEnd = boxX + boxWidth
-  const yEnd = boxY + boxHeight
+  const xEnd = boxX + boxWidth;
+  const yEnd = boxY + boxHeight;
 
   // NOTE: using __font__ ascent/descent to account for all possible characters in the font
   //  so that lines with ascenders but no descenders, or vice versa, are all properly
@@ -123,32 +126,29 @@ const generateSpec = function({
   //  same font size, the baseline should match from left to right)
   const getHeight = (word: Word): number =>
     // NOTE: `metrics` must exist as every `word` MUST have been measured at this point
-    word.metrics!.fontBoundingBoxAscent + word.metrics!.fontBoundingBoxDescent
+    word.metrics!.fontBoundingBoxAscent + word.metrics!.fontBoundingBoxDescent;
 
   // max height per line
-  const lineHeights = wrappedLines.map(
-    (line) =>
-      line.reduce(
-        (acc, word) => {
-          return Math.max(acc, getHeight(word))
-        },
-        0
-      )
-  )
-  const totalHeight = lineHeights.reduce((acc, h) => acc + h, 0)
+  const lineHeights = wrappedLines.map((line) =>
+    line.reduce((acc, word) => {
+      return Math.max(acc, getHeight(word));
+    }, 0)
+  );
+  const totalHeight = lineHeights.reduce((acc, h) => acc + h, 0);
 
   // vertical alignment (defaults to middle)
-  let lineY: number
-  let textBaseline: CanvasTextBaseline
+  let lineY: number;
+  let textBaseline: CanvasTextBaseline;
   if (vAlign === 'top') {
-    textBaseline = 'top'
-    lineY = boxY
+    textBaseline = 'top';
+    lineY = boxY;
   } else if (vAlign === 'bottom') {
-    textBaseline = 'bottom'
-    lineY = yEnd - totalHeight
-  } else { // middle
-    textBaseline = 'top' // YES, using 'top' baseline for 'middle' v-align
-    lineY = (boxY + boxHeight / 2) - (totalHeight / 2)
+    textBaseline = 'bottom';
+    lineY = yEnd - totalHeight;
+  } else {
+    // middle
+    textBaseline = 'top'; // YES, using 'top' baseline for 'middle' v-align
+    lineY = boxY + boxHeight / 2 - totalHeight / 2;
   }
 
   const lines = wrappedLines.map((line, lineIdx): PositionedWord[] => {
@@ -156,40 +156,42 @@ const generateSpec = function({
       // NOTE: `metrics` must exist as every `word` MUST have been measured at this point
       (acc, word) => acc + word.metrics!.width,
       0
-    )
-    const lineHeight = lineHeights[lineIdx]
+    );
+    const lineHeight = lineHeights[lineIdx];
 
     // horizontal alignment (defaults to center)
-    let lineX: number
+    let lineX: number;
     if (align === 'right') {
-      lineX = xEnd - lineWidth
+      lineX = xEnd - lineWidth;
     } else if (align === 'left') {
-      lineX = boxX
-    } else { // center
-      lineX = (boxX + boxWidth / 2) - (lineWidth / 2)
+      lineX = boxX;
+    } else {
+      // center
+      lineX = boxX + boxWidth / 2 - lineWidth / 2;
     }
 
-    let wordX = lineX
+    let wordX = lineX;
     const posWords = line.map((word): PositionedWord => {
       // NOTE: `word.metrics` and `wordMap.get(hash)` must exist as every `word` MUST have
       //  been measured at this point
 
-      const hash = getWordHash(word)
-      const { format } = wordMap.get(hash)!
-      const x = wordX
-      const height = getHeight(word)
+      const hash = getWordHash(word);
+      const { format } = wordMap.get(hash)!;
+      const x = wordX;
+      const height = getHeight(word);
 
       // vertical alignment (defaults to middle)
-      let y: number
+      let y: number;
       if (vAlign === 'top') {
-        y = lineY
+        y = lineY;
       } else if (vAlign === 'bottom') {
-        y = lineY + lineHeight
-      } else { // middle
-        y = lineY + (lineHeight - height) / 2
+        y = lineY + lineHeight;
+      } else {
+        // middle
+        y = lineY + (lineHeight - height) / 2;
       }
 
-      wordX += word.metrics!.width
+      wordX += word.metrics!.width;
       return {
         word,
         format, // undefined IF base formatting should be used when rendering (i.e. `word.format` is undefined)
@@ -197,22 +199,22 @@ const generateSpec = function({
         y,
         width: word.metrics!.width,
         height,
-        isWhitespace: isWhitespace(word.text)
-      }
-    })
+        isWhitespace: isWhitespace(word.text),
+      };
+    });
 
-    lineY += lineHeight
-    return posWords
-  })
+    lineY += lineHeight;
+    return posWords;
+  });
 
   return {
     lines,
     textBaseline,
     textAlign: 'left', // always per current algorithm
     width: boxWidth,
-    height: totalHeight
-  }
-}
+    height: totalHeight,
+  };
+};
 
 /**
  * @private
@@ -225,7 +227,7 @@ const generateSpec = function({
  */
 // CAREFUL: use a `function`, not an arrow function, as stringify() sets its context to
 //  the object being serialized on each call to the replacer
-const jsonReplacer = function(key: string, value: unknown) {
+const jsonReplacer = function (key: string, value: unknown) {
   if (key === 'metrics' && value && typeof value === 'object') {
     // TODO: need better typings here, if possible, so that TSC warns if we aren't
     //  including a property we should be if a new one is needed in the future (i.e. if
@@ -241,8 +243,8 @@ const jsonReplacer = function(key: string, value: unknown) {
     };
   }
 
-  return value
-}
+  return value;
+};
 
 /**
  * Serializes render specs to JSON for storage or for sending via `postMessage()`
@@ -255,7 +257,7 @@ const jsonReplacer = function(key: string, value: unknown) {
  * @returns Specs serialized as JSON.
  */
 export function specToJson(specs: RenderSpec): string {
-  return JSON.stringify(specs, jsonReplacer)
+  return JSON.stringify(specs, jsonReplacer);
 }
 
 /**
@@ -269,7 +271,7 @@ export function specToJson(specs: RenderSpec): string {
  * @returns Words serialized as JSON.
  */
 export function wordsToJson(words: Word[]): string {
-  return JSON.stringify(words, jsonReplacer)
+  return JSON.stringify(words, jsonReplacer);
 }
 
 /**
@@ -277,11 +279,16 @@ export function wordsToJson(words: Word[]): string {
  * Measures a Word in a rendering context, assigning its `TextMetrics` to its `metrics` property.
  * @returns The Word's width, in pixels.
  */
-const measureWord = function({ ctx, word, wordMap, baseTextFormat }: {
-  ctx: CanvasRenderContext,
-  word: Word,
-  wordMap: WordMap,
-  baseTextFormat: TextFormat,
+const measureWord = function ({
+  ctx,
+  word,
+  wordMap,
+  baseTextFormat,
+}: {
+  ctx: CanvasRenderContext;
+  word: Word;
+  wordMap: WordMap;
+  baseTextFormat: TextFormat;
 }): number {
   const hash = getWordHash(word);
 
@@ -292,61 +299,61 @@ const measureWord = function({ ctx, word, wordMap, baseTextFormat }: {
     if (!wordMap.has(hash)) {
       let format = undefined;
       if (word.format) {
-        format = getTextFormat(word.format, baseTextFormat)
+        format = getTextFormat(word.format, baseTextFormat);
       }
-      wordMap.set(hash, { metrics: word.metrics, format })
+      wordMap.set(hash, { metrics: word.metrics, format });
     }
 
-    return word.metrics.width
+    return word.metrics.width;
   }
 
   // check to see if we have already measured an identical Word
   if (wordMap.has(hash)) {
     const { metrics } = wordMap.get(hash)!; // will be there because of `if(has())` check
     word.metrics = metrics;
-    return metrics.width
+    return metrics.width;
   }
 
-  let ctxSaved = false
+  let ctxSaved = false;
 
-  let format = undefined
+  let format = undefined;
   if (word.format) {
-    ctx.save()
-    ctxSaved = true
-    format = getTextFormat(word.format, baseTextFormat)
-    ctx.font = getTextStyle(format) // `fontColor` is ignored as it has no effect on metrics
+    ctx.save();
+    ctxSaved = true;
+    format = getTextFormat(word.format, baseTextFormat);
+    ctx.font = getTextStyle(format); // `fontColor` is ignored as it has no effect on metrics
   }
 
   if (!fontBoundingBoxSupported) {
     // use fallback which comes close enough and still gives us properly-aligned text, albeit
     //  lines are a couple pixels tighter together
     if (!ctxSaved) {
-      ctx.save()
-      ctxSaved = true
+      ctx.save();
+      ctxSaved = true;
     }
-    ctx.textBaseline = 'bottom'
+    ctx.textBaseline = 'bottom';
   }
 
-  const metrics = ctx.measureText(word.text)
+  const metrics = ctx.measureText(word.text);
   if (typeof metrics.fontBoundingBoxAscent === 'number') {
-    fontBoundingBoxSupported = true
+    fontBoundingBoxSupported = true;
   } else {
-    fontBoundingBoxSupported = false
+    fontBoundingBoxSupported = false;
     // @ts-expect-error -- property doesn't exist; we need to polyfill it
-    metrics.fontBoundingBoxAscent = metrics.actualBoundingBoxAscent
+    metrics.fontBoundingBoxAscent = metrics.actualBoundingBoxAscent;
     // @ts-expect-error -- property doesn't exist; we need to polyfill it
-    metrics.fontBoundingBoxDescent = 0
+    metrics.fontBoundingBoxDescent = 0;
   }
 
-  word.metrics = metrics
-  wordMap.set(hash, { metrics, format })
+  word.metrics = metrics;
+  wordMap.set(hash, { metrics, format });
 
   if (ctxSaved) {
-    ctx.restore()
+    ctx.restore();
   }
 
-  return metrics.width
-}
+  return metrics.width;
+};
 
 /**
  * Splits Words into positioned lines of Words as they need to be rendred in 2D space,
@@ -363,9 +370,9 @@ export function splitWords({
   inferWhitespace = true,
   ...positioning // rest of params are related to positioning
 }: SplitWordsProps): RenderSpec {
-  const wordMap: WordMap = new Map()
-  const baseTextFormat = getTextFormat(baseFormat)
-  const { width: boxWidth } = positioning
+  const wordMap: WordMap = new Map();
+  const baseTextFormat = getTextFormat(baseFormat);
+  const { width: boxWidth } = positioning;
 
   //// text measurement
 
@@ -380,48 +387,56 @@ export function splitWords({
   //   Word included in the `lineWidth` (and is `words.length` if all Words were included);
   //  `splitPoint` could also be thought of as the number of `words` included in the `lineWidth`.
   //  - If `force=true`, will always be `words.length`.
-  const measureLine = (lineWords: Word[], force: boolean = false): {
-    lineWidth: number,
-    splitPoint: number
+  const measureLine = (
+    lineWords: Word[],
+    force: boolean = false
+  ): {
+    lineWidth: number;
+    splitPoint: number;
   } => {
-    let lineWidth = 0
-    let splitPoint = 0
+    let lineWidth = 0;
+    let splitPoint = 0;
     lineWords.every((word, idx) => {
-      const wordWidth = measureWord({ ctx, word, wordMap, baseTextFormat })
-      if (!force && (lineWidth + wordWidth > boxWidth)) {
+      const wordWidth = measureWord({ ctx, word, wordMap, baseTextFormat });
+      if (!force && lineWidth + wordWidth > boxWidth) {
         // at minimum, MUST include at least first Word, even if it's wider than box width
         if (idx === 0) {
-          splitPoint = 1
-          lineWidth = wordWidth
+          splitPoint = 1;
+          lineWidth = wordWidth;
         }
         // else, `lineWidth` already includes at least one Word so this current Word will
         //  be the `splitPoint` such that `lineWidth` remains < `boxWidth`
 
-        return false // break
+        return false; // break
       }
 
-      splitPoint++
-      lineWidth += wordWidth
-      return true // next
+      splitPoint++;
+      lineWidth += wordWidth;
+      return true; // next
     });
 
-    return { lineWidth, splitPoint }
-  }
+    return { lineWidth, splitPoint };
+  };
 
   //// main
 
-  ctx.save()
+  ctx.save();
 
   // start by trimming the `words` to remove any whitespace at either end, then split the `words`
   //  into an initial set of lines dictated by explicit hard breaks, if any (if none, we'll have
   //  one super long line)
-  const hardLines = splitIntoLines(trimLine(words).trimmedLine, inferWhitespace)
+  const hardLines = splitIntoLines(
+    trimLine(words).trimmedLine,
+    inferWhitespace
+  );
 
   if (
     hardLines.length <= 0 ||
     boxWidth <= 0 ||
     positioning.height <= 0 ||
-    (baseFormat && typeof baseFormat.fontSize === 'number' && baseFormat.fontSize <= 0)
+    (baseFormat &&
+      typeof baseFormat.fontSize === 'number' &&
+      baseFormat.fontSize <= 0)
   ) {
     // width or height or font size cannot be 0, or there are no lines after trimming
     return {
@@ -429,44 +444,47 @@ export function splitWords({
       textAlign: 'center',
       textBaseline: 'middle',
       width: positioning.width,
-      height: 0
-    }
+      height: 0,
+    };
   }
 
-  ctx.font = getTextStyle(baseTextFormat)
+  ctx.font = getTextStyle(baseTextFormat);
 
   const hairWidth = justify
     ? measureWord({ ctx, word: { text: HAIR }, wordMap, baseTextFormat })
-    : 0
-  const wrappedLines: Word[][] = []
+    : 0;
+  const wrappedLines: Word[][] = [];
 
   // now further wrap every hard line to make sure it fits within the `boxWidth`, down to a
   //  MINIMUM of 1 Word per line
   for (const hardLine of hardLines) {
-    let { splitPoint } = measureLine(hardLine)
+    let { splitPoint } = measureLine(hardLine);
 
     // if the line fits, we're done; else, we have to break it down further to fit
     //  as best as we can (i.e. MIN one word per line, no breaks within words, no
     //  leading/pending whitespace)
     if (splitPoint >= hardLine.length) {
-      wrappedLines.push(hardLine)
+      wrappedLines.push(hardLine);
     } else {
       // shallow clone because we're going to break this line down further to get the best fit
-      let softLine = hardLine.concat()
+      let softLine = hardLine.concat();
       while (splitPoint < softLine.length) {
         // right-trim what we split off in case we split just after some whitespace
-        const splitLine = trimLine(softLine.slice(0, splitPoint), 'right').trimmedLine
-        wrappedLines.push(splitLine)
+        const splitLine = trimLine(
+          softLine.slice(0, splitPoint),
+          'right'
+        ).trimmedLine;
+        wrappedLines.push(splitLine);
 
         // left-trim what remains in case we split just before some whitespace
         softLine = trimLine(softLine.slice(splitPoint), 'left').trimmedLine;
-        ({ splitPoint } = measureLine(softLine))
+        ({ splitPoint } = measureLine(softLine));
       }
 
       // get the last bit of the `softLine`
       // NOTE: since we started by timming the entire line, and we just left-trimmed
       //  what remained of `softLine`, there should be no need to trim again
-      wrappedLines.push(softLine)
+      wrappedLines.push(softLine);
     }
   }
 
@@ -480,24 +498,24 @@ export function splitWords({
           spaceWidth: hairWidth,
           spaceChar: HAIR,
           boxWidth,
-        })
+        });
 
         // make sure any new Words used for justification get measured so we're able to
         //  position them later when we generate the render spec
-        measureLine(justifiedLine, true)
-        wrappedLines[idx] = justifiedLine
+        measureLine(justifiedLine, true);
+        wrappedLines[idx] = justifiedLine;
       }
-    })
+    });
   }
 
   const spec = generateSpec({
     wrappedLines,
     wordMap,
     positioning,
-  })
+  });
 
-  ctx.restore()
-  return spec
+  ctx.restore();
+  return spec;
 }
 
 /**
@@ -507,54 +525,54 @@ export function splitWords({
  * @returns Converted text.
  */
 export function textToWords(text: string) {
-  const words: Word[] = []
+  const words: Word[] = [];
 
   // split the `text` into a series of Words, preserving whitespace
   let word: Word | undefined = undefined;
-  let wasWhitespace = false
+  let wasWhitespace = false;
   Array.from(text.trim()).forEach((c) => {
-    const charIsWhitespace = isWhitespace(c)
-    if ((charIsWhitespace && !wasWhitespace) || (!charIsWhitespace && wasWhitespace)) {
+    const charIsWhitespace = isWhitespace(c);
+    if (
+      (charIsWhitespace && !wasWhitespace) ||
+      (!charIsWhitespace && wasWhitespace)
+    ) {
       // save current `word`, if any, and start new `word`
-      wasWhitespace = charIsWhitespace
+      wasWhitespace = charIsWhitespace;
       if (word) {
-        words.push(word)
+        words.push(word);
       }
-      word = { text: c }
+      word = { text: c };
     } else {
       // accumulate into current `word`
       if (!word) {
-        word = { text: '' }
+        word = { text: '' };
       }
-      word.text += c
+      word.text += c;
     }
-  })
+  });
 
   // make sure we have the last word! ;)
   if (word) {
-    words.push(word)
+    words.push(word);
   }
 
-  return words
+  return words;
 }
 
 /**
  * Splits plain text into lines in the order in which they should be rendered, top-down,
  *  preserving whitespace __only within the text__ (whitespace on either end is trimmed).
  */
-export function splitText({
-  text,
-  ...params
-}: SplitTextProps): string[] {
-  const words = textToWords(text)
+export function splitText({ text, ...params }: SplitTextProps): string[] {
+  const words = textToWords(text);
 
   const results = splitWords({
     ...params,
     words,
-    inferWhitespace: false
-  })
+    inferWhitespace: false,
+  });
 
-  return results.lines.map(
-    (line) => line.map(({ word: { text: t } }) => t).join('')
-  )
+  return results.lines.map((line) =>
+    line.map(({ word: { text: t } }) => t).join('')
+  );
 }

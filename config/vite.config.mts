@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: 'src',
@@ -9,7 +9,8 @@ export default defineConfig({
       entry: 'canvas-txt/index.ts',
       name: 'canvasTxt',
       formats: ['es', 'umd'],
-      fileName: (format) => `canvas-txt${format === 'es' ? '.esm.min.js' : '.umd.min.js' }`,
+      fileName: (format) =>
+        `canvas-txt${format === 'es' ? '.esm.min.js' : '.umd.min.js'}`,
     },
   },
-})
+});
