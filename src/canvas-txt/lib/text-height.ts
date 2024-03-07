@@ -1,5 +1,5 @@
-import { getTextStyle } from "./get-style"
-import { CanvasRenderContext, Word } from "./models"
+import { getTextStyle } from './get-style'
+import { CanvasRenderContext, Word } from './models'
 
 interface GetWordHeightProps {
   ctx: CanvasRenderContext

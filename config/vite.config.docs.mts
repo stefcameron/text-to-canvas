@@ -1,10 +1,9 @@
+import path from 'path';
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-// @ts-ignore
-import path from "path";
 
 export default defineConfig({
   plugins: [
@@ -16,11 +15,10 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     })
   ],
-  root: 'src',
+  root: 'src/docs',
   resolve:{
     alias: [
-    // @ts-ignore
-      { find: 'canvas-txt', replacement:  path.resolve(__dirname, "../src/canvas-txt/index.ts"), },
+      { find: 'canvas-txt', replacement:  path.resolve(__dirname, '../src/canvas-txt/index.ts'), },
     ]
   },
   build: {

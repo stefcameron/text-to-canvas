@@ -1,4 +1,4 @@
-import { TextFormat } from "./models";
+import { TextFormat } from './models';
 
 export const DEFAULT_FONT_FAMILY = 'Arial'
 export const DEFAULT_FONT_SIZE = 14

@@ -1,5 +1,19 @@
 export type CanvasRenderContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
 
+/**
+ * Identifies the minimum Canvas `TextMetrics` properties required by Canvas-Txt. This is
+ *  important for serialization across the main thread to a Web Worker thread (or vice versa)
+ *  as the native `TextMetrics` object fails to get serialized by `Worker.postMessage()`,
+ *  causing an exception.
+ */
+export interface TextMetricsLike {
+  readonly fontBoundingBoxAscent: number
+  readonly fontBoundingBoxDescent: number
+  readonly width: number
+}
+
+export type CanvasTextMetrics = TextMetrics | TextMetricsLike
+
 export interface TextFormat {
   /** Font family (CSS value). */
   fontFamily?: string
@@ -161,20 +175,6 @@ export interface SplitWordsProps extends BaseSplitProps {
 
 /** Hash representing a `Word` and its associated `TextFormat`. */
 export type WordHash = string;
-
-/**
- * Identifies the minimum Canvas `TextMetrics` properties required by Canvas-Txt. This is
- *  important for serialization across the main thread to a Web Worker thread (or vice versa)
- *  as the native `TextMetrics` object fails to get serialized by `Worker.postMessage()`,
- *  causing an exception.
- */
-export interface TextMetricsLike {
-  readonly fontBoundingBoxAscent: number
-  readonly fontBoundingBoxDescent: number
-  readonly width: number
-}
-
-export type CanvasTextMetrics = TextMetrics | TextMetricsLike
 
 /**
  * Maps a `Word` to its measured `metrics` and the font `format` used to measure it (if the

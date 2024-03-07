@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { ElContainer, ElHeader, ElMain, ElFooter } from 'element-plus'
 import AppCanvas from './AppCanvas.vue'
 
@@ -20,7 +20,7 @@ const year = new Date().getFullYear()
         </p>
       </ElHeader>
       <ElMain class="container">
-        <AppCanvas></AppCanvas>
+        <AppCanvas />
 
         <br />
         <br />
