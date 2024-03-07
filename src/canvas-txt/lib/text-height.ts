@@ -17,11 +17,7 @@ interface GetTextHeightProps {
   style?: string;
 }
 
-const getHeight = function (
-  ctx: CanvasRenderContext,
-  text: string,
-  style?: string
-) {
+const getHeight = (ctx: CanvasRenderContext, text: string, style?: string) => {
   const previousTextBaseline = ctx.textBaseline;
   const previousFont = ctx.font;
 
@@ -40,10 +36,10 @@ const getHeight = function (
   return height;
 };
 
-export function getWordHeight({ ctx, word }: GetWordHeightProps) {
+export const getWordHeight = ({ ctx, word }: GetWordHeightProps) => {
   return getHeight(ctx, word.text, word.format && getTextStyle(word.format));
-}
+};
 
-export function getTextHeight({ ctx, text, style }: GetTextHeightProps) {
+export const getTextHeight = ({ ctx, text, style }: GetTextHeightProps) => {
   return getHeight(ctx, text, style);
-}
+};

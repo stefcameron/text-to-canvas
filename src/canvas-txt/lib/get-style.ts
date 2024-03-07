@@ -10,10 +10,10 @@ export const DEFAULT_FONT_COLOR = 'black';
  * @param baseFormat Overrides to default format.
  * @returns Full text format (all properties specified).
  */
-export const getTextFormat = function (
+export const getTextFormat = (
   format?: TextFormat,
   baseFormat?: TextFormat
-): Required<TextFormat> {
+): Required<TextFormat> => {
   return Object.assign(
     {},
     {
@@ -35,13 +35,13 @@ export const getTextFormat = function (
  * @returns Style string to set on context's `font` property. Note this __does not include
  *  the font color__ as that is not part of the CSS font value. Color must be handled separately.
  */
-export const getTextStyle = function ({
+export const getTextStyle = ({
   fontFamily,
   fontSize,
   fontStyle,
   fontVariant,
   fontWeight,
-}: TextFormat) {
+}: TextFormat) => {
   // per spec:
   // - font-style, font-variant and font-weight must precede font-size
   // - font-family must be the last value specified

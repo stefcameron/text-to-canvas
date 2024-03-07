@@ -13,11 +13,11 @@ import {
 } from './lib/get-style';
 import { CanvasRenderContext, CanvasTextConfig, Text } from './lib/models';
 
-function drawText(
+const drawText = (
   ctx: CanvasRenderContext,
   text: Text,
   config: CanvasTextConfig
-) {
+) => {
   const baseFormat = getTextFormat({
     fontFamily: config.fontFamily,
     fontSize: config.fontSize,
@@ -126,7 +126,7 @@ function drawText(
   ctx.restore();
 
   return { height: totalHeight };
-}
+};
 
 export {
   drawText,
