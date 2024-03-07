@@ -1,5 +1,5 @@
-import { isWhitespace } from "./is-whitespace"
-import { Word } from "./models"
+import { isWhitespace } from './is-whitespace'
+import { Word } from './models'
 
 export interface JustifyLineProps {
   /** Assumed to have already been trimmed on both ends. */
@@ -98,7 +98,7 @@ export function justifyLine({
     )
     const lastWord = words[words.length - 1]
     return [...firstPart, ...remainingSpaces, lastWord]
-  } else {
+  } 
     // only 2 words so fill with spaces in between them: use FLOOR to make sure we don't
     //  go past `boxWidth`
     const spaces: Word[] = Array.from(
@@ -106,5 +106,5 @@ export function justifyLine({
       () => ({ text: spaceChar })
     )
     return joinWords(words, spaces)
-  }
+  
 }

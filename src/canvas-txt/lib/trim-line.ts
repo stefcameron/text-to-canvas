@@ -1,5 +1,5 @@
-import { isWhitespace } from "./is-whitespace";
-import { Word } from "./models";
+import { isWhitespace } from './is-whitespace';
+import { Word } from './models';
 
 /**
  * Trims whitespace from the beginning and end of a `line`.

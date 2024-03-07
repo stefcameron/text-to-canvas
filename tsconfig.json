@@ -19,6 +19,12 @@
       "canvas-txt": ["./src/canvas-txt/index.ts"]
     },
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "config/**/*.ts",
+    "config/**/*.mts",
+    "src/**/*.ts"
+    // think twice about including "src/**/*.vue" here for use with typescript-eslint
+    //  because you'll hit this and for a demo, it's just not worth it:
+    //  https://stackoverflow.com/questions/64051706/eslint-doesnt-believe-that-ive-included-vue-files-in-my-tsconfig
+  ]
 }

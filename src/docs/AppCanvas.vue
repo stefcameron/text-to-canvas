@@ -1,12 +1,11 @@
-<script setup lang="ts">
-import { drawText, type CanvasTextConfig, type CanvasRenderContext, textToWords } from 'canvas-txt'
+<script setup lang="js">
+import { drawText, textToWords } from 'canvas-txt'
 import { ref, reactive, onMounted, watch } from 'vue'
-import type { Ref } from 'vue'
 import debounce from 'lodash/debounce'
 import cloneDeep from 'lodash/cloneDeep'
 
-const canvas: Ref<HTMLCanvasElement | null> = ref(null)
-const context: Ref<CanvasRenderContext | null> = ref(null)
+const canvas = ref(null)
+const context = ref(null)
 
 const renderTime = ref(0)
 
@@ -37,20 +36,18 @@ function resetConfig() {
   }
 }
 
-function initializeCanvas() {
-  context.value = (canvas.value as HTMLCanvasElement).getContext('2d')
 
-  deboundedRedrawAndMeasure()
-}
 
 function renderText() {
-  if (!context.value) return
+  if (!context.value) {
+    return
+  }
 
   const ctx = context.value
 
   ctx.clearRect(0, 0, canvasSize.w, canvasSize.h)
 
-  const myConfig: CanvasTextConfig = {
+  const myConfig = {
     x: config.pos.x,
     y: config.pos.y,
     width: config.size.w,
@@ -61,8 +58,8 @@ function renderText() {
     // fontStyle: 'oblique',
     // fontVariant: 'small-caps',
     debug: config.debug,
-    align: config.align as CanvasTextConfig['align'],
-    vAlign: config.vAlign as CanvasTextConfig['vAlign'],
+    align: config.align,
+    vAlign: config.vAlign,
     justify: config.justify,
   }
 
@@ -77,21 +74,29 @@ function renderText() {
 
   const { height } = drawText(ctx, words, myConfig)
 
+  // eslint-disable-next-line no-console
   console.log(`Total height = ${height}`)
 }
 
 function redrawAndMeasure() {
-  console.log('Rerendering')
   const t0 = performance.now()
   renderText()
   const t1 = performance.now()
   renderTime.value = t1 - t0
+
+  // eslint-disable-next-line no-console
   console.log(`Rendering took ${renderTime.value} milliseconds.`)
 }
-const deboundedRedrawAndMeasure = debounce(redrawAndMeasure, 10)
+const debouncedRedrawAndMeasure = debounce(redrawAndMeasure, 10)
+
+function initializeCanvas() {
+  context.value = (canvas.value).getContext('2d')
+
+  debouncedRedrawAndMeasure()
+}
 
 watch(config, () => {
-  deboundedRedrawAndMeasure()
+  debouncedRedrawAndMeasure()
 })
 
 onMounted(() => {
@@ -103,7 +108,7 @@ onMounted(() => {
   <div>
     <div class="flex">
       <div class="canvas-wrapper">
-        <canvas width="500" height="500" ref="canvas"></canvas>
+        <canvas width="500" height="500" ref="canvas" />
       </div>
       <div class="controls-wrapper">
         <el-input

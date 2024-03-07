@@ -225,18 +225,20 @@ const generateSpec = function({
  */
 // CAREFUL: use a `function`, not an arrow function, as stringify() sets its context to
 //  the object being serialized on each call to the replacer
-const jsonReplacer = function(key: string, value: any) {
+const jsonReplacer = function(key: string, value: unknown) {
   if (key === 'metrics' && value && typeof value === 'object') {
     // TODO: need better typings here, if possible, so that TSC warns if we aren't
     //  including a property we should be if a new one is needed in the future (i.e. if
     //  a new property is added to the `TextMetricsLike` type)
     // NOTE: TextMetrics objects don't have own-enumerable properties; they only have getters,
-    //  so we have to explicitly get the values we care about
+    //  so we have to explicitly get the values we care about instead of spreading them into
+    //  the new object
+    const metrics: CanvasTextMetrics = value as CanvasTextMetrics;
     return {
-      width: value.width,
-      fontBoundingBoxAscent: value.fontBoundingBoxAscent,
-      fontBoundingBoxDescent: value.fontBoundingBoxDescent,
-    } as CanvasTextMetrics;
+      width: metrics.width,
+      fontBoundingBoxAscent: metrics.fontBoundingBoxAscent,
+      fontBoundingBoxDescent: metrics.fontBoundingBoxDescent,
+    };
   }
 
   return value
@@ -330,9 +332,9 @@ const measureWord = function({ ctx, word, wordMap, baseTextFormat }: {
     fontBoundingBoxSupported = true
   } else {
     fontBoundingBoxSupported = false
-    // @ts-ignore -- property doesn't exist; we need to polyfill it
+    // @ts-expect-error -- property doesn't exist; we need to polyfill it
     metrics.fontBoundingBoxAscent = metrics.actualBoundingBoxAscent
-    // @ts-ignore -- property doesn't exist; we need to polyfill it
+    // @ts-expect-error -- property doesn't exist; we need to polyfill it
     metrics.fontBoundingBoxDescent = 0
   }
 
@@ -363,6 +365,7 @@ export function splitWords({
 }: SplitWordsProps): RenderSpec {
   const wordMap: WordMap = new Map()
   const baseTextFormat = getTextFormat(baseFormat)
+  const { width: boxWidth } = positioning
 
   //// text measurement
 
@@ -377,13 +380,13 @@ export function splitWords({
   //   Word included in the `lineWidth` (and is `words.length` if all Words were included);
   //  `splitPoint` could also be thought of as the number of `words` included in the `lineWidth`.
   //  - If `force=true`, will always be `words.length`.
-  const measureLine = (words: Word[], force: boolean = false): {
+  const measureLine = (lineWords: Word[], force: boolean = false): {
     lineWidth: number,
     splitPoint: number
   } => {
     let lineWidth = 0
     let splitPoint = 0
-    words.every((word, idx) => {
+    lineWords.every((word, idx) => {
       const wordWidth = measureWord({ ctx, word, wordMap, baseTextFormat })
       if (!force && (lineWidth + wordWidth > boxWidth)) {
         // at minimum, MUST include at least first Word, even if it's wider than box width
@@ -413,7 +416,6 @@ export function splitWords({
   //  into an initial set of lines dictated by explicit hard breaks, if any (if none, we'll have
   //  one super long line)
   const hardLines = splitIntoLines(trimLine(words).trimmedLine, inferWhitespace)
-  const { width: boxWidth } = positioning
 
   if (
     hardLines.length <= 0 ||
@@ -553,6 +555,6 @@ export function splitText({
   })
 
   return results.lines.map(
-    (line) => line.map(({ word: { text } }) => text).join('')
+    (line) => line.map(({ word: { text: t } }) => t).join('')
   )
 }
