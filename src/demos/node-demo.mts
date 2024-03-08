@@ -1,5 +1,6 @@
 // TODO: import { createCanvas } from 'canvas'
 // TODO: will need "canvas": "^2.11.2", in package.json if node-gyp can just succeed...
+// TODO: output to ./demo/node-demo-output.png
 
 // import { drawText, textToWords } from '../lib/index'
 // // @ts-ignore
@@ -38,9 +39,10 @@ function main() {
   // Convert the canvas to a buffer in PNG format
   const buffer = canvas.toBuffer('image/png')
   // @ts-ignore
-  fs.writeFileSync('output.png', buffer)
+  fs.writeFileSync('./demo/node-demo-output.png', buffer)
 
   console.log(`Total height = ${height}`)
+  console.log('See demo output in ./demo/node-demo-output.png')
 }
 
 main()
