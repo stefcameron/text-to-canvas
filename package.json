@@ -28,7 +28,8 @@
   "files": [
     "dist",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "main": "./dist/text-to-canvas.umd.min.js",
   "module": "./dist/text-to-canvas.esm.min.js",
@@ -65,6 +66,7 @@
     "lint:code": "eslint \"{*,config/**/*,src/**/*}.+(js|mjs|ts|mts|vue)\"",
     "lint:types": "tsc",
     "prepare": "npm run build",
+    "prepublishOnly": "npm run lint && npm run test:unit && npm run build",
     "start": "vite serve --config config/vite.config.docs.mts",
     "test": "npm run lint && npm run test:unit && npm run build",
     "test:unit": "npm run demo:node"
