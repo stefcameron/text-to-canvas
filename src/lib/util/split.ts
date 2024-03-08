@@ -1,8 +1,7 @@
-import { getTextFormat, getTextStyle } from './get-style';
-import { isWhitespace } from './is-whitespace';
+import { getTextFormat, getTextStyle } from './style';
+import { isWhitespace } from './whitespace';
 import { justifyLine } from './justify';
 import {
-  GenerateSpecProps,
   PositionedWord,
   SplitTextProps,
   SplitWordsProps,
@@ -12,8 +11,8 @@ import {
   CanvasTextMetrics,
   TextFormat,
   CanvasRenderContext,
-} from './models';
-import { trimLine } from './trim-line';
+} from '../model';
+import { trimLine } from './trim';
 
 // Hair space character for precise justification
 const HAIR = '\u{200a}';
@@ -41,7 +40,7 @@ let fontBoundingBoxSupported: boolean;
  * @param word
  * @returns Hash.
  */
-const getWordHash = (word: Word) => {
+const _getWordHash = (word: Word) => {
   return `${word.text}${word.format ? JSON.stringify(word.format) : ''}`;
 };
 
@@ -53,7 +52,7 @@ const getWordHash = (word: Word) => {
  *  based on words; false if we're to assume the words already include all necessary whitespace.
  * @returns Words expressed as lines.
  */
-const splitIntoLines = (
+const _splitIntoLines = (
   words: Word[],
   inferWhitespace: boolean = true
 ): Word[][] => {
@@ -102,7 +101,7 @@ const splitIntoLines = (
  * @param params
  * @returns Results to return via `splitWords()`
  */
-const generateSpec = ({
+const _generateSpec = ({
   wrappedLines,
   wordMap,
   positioning: {
@@ -113,7 +112,27 @@ const generateSpec = ({
     align,
     vAlign,
   },
-}: GenerateSpecProps): RenderSpec => {
+}: {
+  /** Words organized/wrapped into lines to be rendered. */
+  wrappedLines: Word[][];
+
+  /** Map of Word to measured dimensions (px) as it would be rendered. */
+  wordMap: WordMap;
+
+  /**
+   * Details on where to render the Words onto canvas. These parameters ultimately come
+   *  from `SplitWordsProps`, and they come from `DrawTextConfig`.
+   */
+  positioning: {
+    width: SplitWordsProps['width'];
+    // NOTE: height does NOT constrain the text; used only for vertical alignment
+    height: SplitWordsProps['height'];
+    x: SplitWordsProps['x'];
+    y: SplitWordsProps['y'];
+    align?: SplitWordsProps['align'];
+    vAlign?: SplitWordsProps['vAlign'];
+  };
+}): RenderSpec => {
   const xEnd = boxX + boxWidth;
   const yEnd = boxY + boxHeight;
 
@@ -175,7 +194,7 @@ const generateSpec = ({
       // NOTE: `word.metrics` and `wordMap.get(hash)` must exist as every `word` MUST have
       //  been measured at this point
 
-      const hash = getWordHash(word);
+      const hash = _getWordHash(word);
       const { format } = wordMap.get(hash)!;
       const x = wordX;
       const height = getHeight(word);
@@ -227,7 +246,7 @@ const generateSpec = ({
  */
 // CAREFUL: use a `function`, not an arrow function, as stringify() sets its context to
 //  the object being serialized on each call to the replacer
-const jsonReplacer = function (key: string, value: unknown) {
+const _jsonReplacer = function (key: string, value: unknown) {
   if (key === 'metrics' && value && typeof value === 'object') {
     // TODO: need better typings here, if possible, so that TSC warns if we aren't
     //  including a property we should be if a new one is needed in the future (i.e. if
@@ -257,7 +276,7 @@ const jsonReplacer = function (key: string, value: unknown) {
  * @returns Specs serialized as JSON.
  */
 export const specToJson = (specs: RenderSpec): string => {
-  return JSON.stringify(specs, jsonReplacer);
+  return JSON.stringify(specs, _jsonReplacer);
 };
 
 /**
@@ -271,7 +290,7 @@ export const specToJson = (specs: RenderSpec): string => {
  * @returns Words serialized as JSON.
  */
 export const wordsToJson = (words: Word[]): string => {
-  return JSON.stringify(words, jsonReplacer);
+  return JSON.stringify(words, _jsonReplacer);
 };
 
 /**
@@ -279,7 +298,7 @@ export const wordsToJson = (words: Word[]): string => {
  * Measures a Word in a rendering context, assigning its `TextMetrics` to its `metrics` property.
  * @returns The Word's width, in pixels.
  */
-const measureWord = ({
+const _measureWord = ({
   ctx,
   word,
   wordMap,
@@ -290,7 +309,7 @@ const measureWord = ({
   wordMap: WordMap;
   baseTextFormat: TextFormat;
 }): number => {
-  const hash = getWordHash(word);
+  const hash = _getWordHash(word);
 
   if (word.metrics) {
     // assume Word's text and format haven't changed since last measurement and metrics are good
@@ -397,7 +416,7 @@ export const splitWords = ({
     let lineWidth = 0;
     let splitPoint = 0;
     lineWords.every((word, idx) => {
-      const wordWidth = measureWord({ ctx, word, wordMap, baseTextFormat });
+      const wordWidth = _measureWord({ ctx, word, wordMap, baseTextFormat });
       if (!force && lineWidth + wordWidth > boxWidth) {
         // at minimum, MUST include at least first Word, even if it's wider than box width
         if (idx === 0) {
@@ -425,7 +444,7 @@ export const splitWords = ({
   // start by trimming the `words` to remove any whitespace at either end, then split the `words`
   //  into an initial set of lines dictated by explicit hard breaks, if any (if none, we'll have
   //  one super long line)
-  const hardLines = splitIntoLines(
+  const hardLines = _splitIntoLines(
     trimLine(words).trimmedLine,
     inferWhitespace
   );
@@ -451,7 +470,7 @@ export const splitWords = ({
   ctx.font = getTextStyle(baseTextFormat);
 
   const hairWidth = justify
-    ? measureWord({ ctx, word: { text: HAIR }, wordMap, baseTextFormat })
+    ? _measureWord({ ctx, word: { text: HAIR }, wordMap, baseTextFormat })
     : 0;
   const wrappedLines: Word[][] = [];
 
@@ -508,7 +527,7 @@ export const splitWords = ({
     });
   }
 
-  const spec = generateSpec({
+  const spec = _generateSpec({
     wrappedLines,
     wordMap,
     positioning,

@@ -1,21 +1,28 @@
-import { isWhitespace } from './is-whitespace';
-import { Word } from './models';
+import { isWhitespace } from './whitespace';
+import { Word } from '../model';
 
 /**
  * Trims whitespace from the beginning and end of a `line`.
  * @param line
  * @param side Which side to trim.
- * @returns `trimmedLine` is a new array representing the trimmed line, even if nothing
- *  gets trimmed. Empty array if all whitespace. `trimmedLeft` is a new array containing
- *  what was trimmed from the left (empty if none). `trimmedRight` is a new array containing
- *  what was trimmed from the right (empty if none).
+ * @returns An object containing trimmed characters, and the new trimmed line.
  */
 export const trimLine = (
   line: Word[],
   side: 'left' | 'right' | 'both' = 'both'
 ): {
+  /**
+   * New array containing what was trimmed from the left (empty if none).
+   */
   trimmedLeft: Word[];
+  /**
+   * New array containing what was trimmed from the right (empty if none).
+   */
   trimmedRight: Word[];
+  /**
+   * New array representing the trimmed line, even if nothing gets trimmed. Empty array if
+   *  all whitespace.
+   */
   trimmedLine: Word[];
 } => {
   let leftTrim = 0;

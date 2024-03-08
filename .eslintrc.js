@@ -235,6 +235,7 @@ module.exports = {
     // TypeScript source files
     {
       files: ['src/**/*.ts'],
+      excludedFiles: ['src/demos/**'],
 
       // @see https://typescript-eslint.io/packages/eslint-plugin/
       plugins: ['@typescript-eslint'],
@@ -243,6 +244,20 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: typedParserOptions,
       env: browserEnv,
+      rules: tsRules,
+    },
+
+    // TypeScript node demo files
+    {
+      files: ['src/demos/**/*.{ts,mts}'],
+
+      // @see https://typescript-eslint.io/packages/eslint-plugin/
+      plugins: ['@typescript-eslint'],
+
+      extends: tsExtends,
+      parser: '@typescript-eslint/parser',
+      parserOptions: typedParserOptions,
+      env,
       rules: tsRules,
     },
 

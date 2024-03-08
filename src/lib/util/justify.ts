@@ -1,35 +1,23 @@
-import { isWhitespace } from './is-whitespace';
-import { Word } from './models';
-
-export interface JustifyLineProps {
-  /** Assumed to have already been trimmed on both ends. */
-  line: Word[];
-  /** Width (px) of `spaceChar`.  */
-  spaceWidth: number;
-  /**
-   * Character used as a whitespace in justification. Will be injected in between Words in
-   *  `line` in order to justify the text on the line within `lineWidth`.
-   */
-  spaceChar: string;
-  /** Width (px) of the box containing the text (i.e. max `line` width). */
-  boxWidth: number;
-}
+import { isWhitespace } from './whitespace';
+import { Word } from '../model';
 
 /**
+ * @private
  * Extracts the __visible__ (i.e. non-whitespace) words from a line.
  * @param line
  * @returns New array with only non-whitespace words.
  */
-const extractWords = (line: Word[]) => {
+const _extractWords = (line: Word[]) => {
   return line.filter((word) => !isWhitespace(word.text));
 };
 
 /**
+ * @private
  * Deep-clones a Word.
  * @param word
  * @returns Deep-cloned Word.
  */
-const cloneWord = (word: Word) => {
+const _cloneWord = (word: Word) => {
   const clone = { ...word };
   if (word.format) {
     clone.format = { ...word.format };
@@ -38,6 +26,7 @@ const cloneWord = (word: Word) => {
 };
 
 /**
+ * @private
  * Joins Words together using another set of Words.
  * @param words Words to join.
  * @param joiner Words to use when joining `words`. These will be deep-cloned and inserted
@@ -46,7 +35,7 @@ const cloneWord = (word: Word) => {
  * @returns New array of Words. Empty if `words` is empty. New array of one Word if `words`
  *  contains only one Word.
  */
-const joinWords = (words: Word[], joiner: Word[]) => {
+const _joinWords = (words: Word[], joiner: Word[]) => {
   if (words.length <= 1 || joiner.length < 1) {
     return [...words];
   }
@@ -56,7 +45,7 @@ const joinWords = (words: Word[], joiner: Word[]) => {
     phrase.push(word);
     if (wordIdx < words.length - 1) {
       // don't append after last `word`
-      joiner.forEach((jw) => phrase.push(cloneWord(jw)));
+      joiner.forEach((jw) => phrase.push(_cloneWord(jw)));
     }
   });
 
@@ -76,8 +65,20 @@ export const justifyLine = ({
   spaceWidth,
   spaceChar,
   boxWidth,
-}: JustifyLineProps) => {
-  const words = extractWords(line);
+}: {
+  /** Assumed to have already been trimmed on both ends. */
+  line: Word[];
+  /** Width (px) of `spaceChar`.  */
+  spaceWidth: number;
+  /**
+   * Character used as a whitespace in justification. Will be injected in between Words in
+   *  `line` in order to justify the text on the line within `lineWidth`.
+   */
+  spaceChar: string;
+  /** Width (px) of the box containing the text (i.e. max `line` width). */
+  boxWidth: number;
+}) => {
+  const words = _extractWords(line);
   if (words.length <= 1) {
     return line.concat();
   }
@@ -97,7 +98,7 @@ export const justifyLine = ({
       text: spaceChar,
     }));
     const firstWords = words.slice(0, words.length - 1); // all but last word
-    const firstPart = joinWords(firstWords, spaces);
+    const firstPart = _joinWords(firstWords, spaces);
     const remainingSpaces = spaces.slice(
       0,
       Math.floor(noOfSpacesToInsert) - (firstWords.length - 1) * spaces.length
@@ -111,5 +112,5 @@ export const justifyLine = ({
     { length: Math.floor(noOfSpacesToInsert) },
     () => ({ text: spaceChar })
   );
-  return joinWords(words, spaces);
+  return _joinWords(words, spaces);
 };
