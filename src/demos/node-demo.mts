@@ -1,11 +1,14 @@
-// DEBUG import { createCanvas } from 'canvas'
-// DEBUG TODO: will need "canvas": "^2.11.2", in package.json if node-gyp can just succeed...
+// TODO: import { createCanvas } from 'canvas'
+// TODO: will need "canvas": "^2.11.2", in package.json if node-gyp can just succeed...
 
 // import { drawText, textToWords } from '../lib/index'
 // // @ts-ignore
 // import * as fs from 'fs'
 
-// DEBUG
+// eslint-disable-next-line no-console
+console.error('❗️ Node demo needs fixing');
+
+// TODO re-enable
 /*
 function main() {
   const canvas = createCanvas(400, 400)
