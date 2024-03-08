@@ -54,7 +54,7 @@
     "build:browser": "vite build --config config/vite.config.browser.mts",
     "build:node": "vite build --config config/vite.config.node.mts",
     "build:types": "tsc src/lib/index.ts --declaration --emitDeclarationOnly --outFile dist/text-to-canvas.d.ts",
-    "ci:build": "npm run build",
+    "ci:build": "npm run build && npm run docs",
     "ci:lint": "npm run lint",
     "ci:test": "npm run test:unit",
     "demo:node": "vite-node ./src/demos/node-demo.mts",
