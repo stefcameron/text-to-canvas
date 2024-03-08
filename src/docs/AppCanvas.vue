@@ -50,16 +50,13 @@ function renderText() {
     y: config.pos.y,
     width: config.size.w,
     height: config.size.h,
-    fontFamily:
-      "Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue'",
+    fontFamily: 'Times New Roman, serif',
     fontSize: 24,
-    fontWeight: '100',
-    // fontStyle: 'oblique',
-    // fontVariant: 'small-caps',
-    debug: config.debug,
+    fontWeight: '400',
     align: config.align,
     vAlign: config.vAlign,
     justify: config.justify,
+    debug: config.debug,
   };
 
   const words = textToWords(config.text);
@@ -67,7 +64,7 @@ function renderText() {
     if (word.text === 'ipsum') {
       word.format = { fontStyle: 'italic', fontColor: 'red' };
     } else if (word.text === 'consectetur') {
-      word.format = { fontWeight: '400', fontColor: 'blue' };
+      word.format = { fontWeight: 'bold', fontColor: 'blue' };
     }
   });
 
@@ -84,7 +81,7 @@ function redrawAndMeasure() {
   renderTime.value = t1 - t0;
 
   // eslint-disable-next-line no-console
-  console.log(`Rendering took ${renderTime.value} milliseconds.`);
+  console.log(`Rendering took ${renderTime.value} milliseconds`);
 }
 const debouncedRedrawAndMeasure = debounce(redrawAndMeasure, 10);
 
@@ -117,12 +114,13 @@ onMounted(() => {
           placeholder="Please input"
         />
         <p>
-          Canvas-txt uses the concept of textboxes borrowed from popular image
-          editing softwares. You draw a rectangular box then place the text in
-          the box. Turn on the debug mode (below) to see what is happening.
+          The library uses the concept of textboxes borrowed from popular image
+          editing software. You draw a rectangular box then place the text in
+          the box. Turn on <strong>debug mode</strong> (below) to see what is
+          happening.
         </p>
         <p>
-          To keep the demo app simple while showing Canvas-txt's rich text
+          💬 To keep the demo app simple while showing the library's rich text
           features, the word "ipsum" is always rendered in italics/red and the
           word "consectetur" always in bold/blue.
         </p>
