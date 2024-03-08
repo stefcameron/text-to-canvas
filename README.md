@@ -1,3 +1,5 @@
+[![CI](https://github.com/stefcameron/text-to-canvas/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/stefcameron/text-to-canvas/actions/workflows/ci.yml) [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
+
 # text-to-canvas
 
 Render multiline plain or rich text into textboxes on HTML5 Canvas with automatic line wrapping, in the browser or in Node.
