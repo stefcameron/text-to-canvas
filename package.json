@@ -46,8 +46,8 @@
     }
   },
   "engines": {
-    "node": "20",
-    "npm": "10"
+    "node": ">=21.2",
+    "npm": ">=10"
   },
   "scripts": {
     "build": "rm -rf ./dist && npm run build:browser && npm run build:node && npm run build:types",
