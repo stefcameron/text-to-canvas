@@ -46,7 +46,7 @@
     }
   },
   "engines": {
-    "node": ">=21.2",
+    "node": ">=20.11.1",
     "npm": ">=10"
   },
   "scripts": {
@@ -58,7 +58,7 @@
     "ci:lint": "npm run lint",
     "ci:test": "npm run test:unit",
     "demo:node": "vite-node ./src/demos/node-demo.mts",
-    "docs": "vite build --config config/vite.config.docs.mts",
+    "docs": "vite build --config config/vite.config.docs.mts && prettier --write \"src/docs/*.d.ts\"",
     "fmt": "prettier --write \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
     "fmt:check": "prettier --check \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
     "lint": "npm run lint:code && npm run lint:types && npm run fmt:check",

@@ -3,12 +3,15 @@
 //
 
 import path from 'node:path';
+import url from 'node:url';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vite';
 
+const __dirname = path.basename(url.fileURLToPath(import.meta.url));
+
 const require = createRequire(import.meta.url);
 const pkg: { name: string } = require(
-  path.resolve(import.meta.dirname, '../package.json')
+  path.resolve(__dirname, '../package.json')
 ) as { name: string };
 const pkgName = pkg.name;
 
