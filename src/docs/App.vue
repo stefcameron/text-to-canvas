@@ -9,41 +9,58 @@ const year = new Date().getFullYear();
   <div class="common-layout">
     <ElContainer>
       <ElHeader class="container">
-        <h1>Canvas-Txt: Text on HTML5 Canvas</h1>
+        <h1>Rich text on HTML5 Canvas with text-to-canvas</h1>
         <p>
-          A tiny, zero external dependency library that makes it easier to
-          render multiline text on HTML5 Canvas
+          Render multiline plain or rich text into textboxes on HTML5 Canvas
+          with automatic line wrapping, in the browser or in Node.
         </p>
         <p>
-          Read docs on
-          <a href="https://github.com/geongeorge/Canvas-Txt/">Github</a>
+          Read the docs on
+          <a href="https://github.com/stefcameron/text-to-canvas/">Github</a>.
         </p>
       </ElHeader>
       <ElMain class="container">
         <AppCanvas />
-
-        <br />
-        <br />
       </ElMain>
       <ElHeader class="container">
         <div class="flex">
           <div class="flex-1">
-            <h1>Browser and Node.js Support</h1>
-            <p>Works with all modern browsers and Node.js with node-canvas.</p>
+            <h2>Supports browsers, Web Workers, and Node</h2>
+            <p
+              >Works with all modern browsers, as well as Node with
+              <code>node-canvas</code>.</p
+            >
             <p>
-              Star on
-              <a href="https://github.com/geongeorge/Canvas-Txt/">Github</a>
+              Also works with
+              <a
+                href="https://github.com/stefcameron/text-to-canvas?tab=readme-ov-file#web-worker-and-offscreencanvas"
+                >Web Workers</a
+              >
+              and <code>OffscreenCanvas</code>.
             </p>
           </div>
-
           <div class="flex-1">
-            <img src="./featured-2.png" class="image" />
+            <h2>Plain or rich text rendering</h2>
+            <p>
+              The main <code>drawText()</code>
+              <a
+                href="https://github.com/stefcameron/text-to-canvas?tab=readme-ov-file#api"
+                >API</a
+              >
+              accepts either a plain string or an array of
+              <code>Word</code> objects. Define your base formatting options and
+              then use a string to render everything the same, or use
+              <code>Word</code> objects to apply overrides to the base
+              formatting as necessary.
+            </p>
           </div>
         </div>
       </ElHeader>
       <ElFooter>
         <div class="footer-text">
-          {{ year }} | <a href="https://geongeorge.com">Geon George</a>
+          Copyright (c) {{ year }}
+          <a href="https://stefancameron.com">Stefan Cameron</a> |
+          <a href="https://github.com/stefcameron/text-to-canvas/">Github</a>
         </div>
       </ElFooter>
     </ElContainer>
