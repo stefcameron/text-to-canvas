@@ -4,19 +4,15 @@ import {
   splitText,
   textToWords,
   wordsToJson,
-} from './lib/split-text';
-import { getTextHeight, getWordHeight } from './lib/text-height';
-import {
-  getTextStyle,
-  getTextFormat,
-  DEFAULT_FONT_COLOR,
-} from './lib/get-style';
-import { CanvasRenderContext, CanvasTextConfig, Text } from './lib/models';
+} from './util/split';
+import { getTextHeight, getWordHeight } from './util/height';
+import { getTextStyle, getTextFormat, DEFAULT_FONT_COLOR } from './util/style';
+import { CanvasRenderContext, DrawTextConfig, Text } from './model';
 
 const drawText = (
   ctx: CanvasRenderContext,
   text: Text,
-  config: CanvasTextConfig
+  config: DrawTextConfig
 ) => {
   const baseFormat = getTextFormat({
     fontFamily: config.fontFamily,
@@ -140,4 +136,4 @@ export {
   getTextStyle,
   getTextFormat,
 };
-export * from './lib/models';
+export * from './model';

@@ -21,7 +21,8 @@
     "library",
     "canvas",
     "richtext",
-    "es6"
+    "es6",
+    "node"
   ],
   "sideEffects": false,
   "files": [
@@ -29,14 +30,19 @@
     "LICENSE",
     "README.md"
   ],
-  "main": "./dist/canvas-txt.umd.min.js",
-  "module": "./dist/canvas-txt.esm.min.js",
-  "types": "./dist/canvas-txt.d.ts",
+  "main": "./dist/text-to-canvas.umd.min.js",
+  "module": "./dist/text-to-canvas.esm.min.js",
+  "types": "./dist/text-to-canvas.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/canvas-txt.esm.min.js",
-      "require": "./dist/canvas-txt.umd.min.js",
-      "types": "./dist/canvas-txt.d.ts"
+    "types": "./dist/text-to-canvas.d.ts",
+    "node": {
+      "import": "./dist/text-to-canvas.mjs",
+      "require": "./dist/text-to-canvas.cjs"
+    },
+    "default": {
+      "import": "./dist/text-to-canvas.esm.min.js",
+      "require": "./dist/text-to-canvas.cjs.min.js",
+      "browser": "./dist/text-to-canvas.umd.min.js"
     }
   },
   "engines": {
@@ -44,9 +50,12 @@
     "npm": "10"
   },
   "scripts": {
-    "build": "vite build --emptyOutDir --config config/vite.config.mts && npm run build:dts && cp ./dist/canvas-txt.esm.min.js ./dist/canvas-txt.mjs",
-    "build:docs": "vite build --config config/vite.config.docs.mts",
-    "build:dts": "tsup src/canvas-txt/index.ts --dts-only && mv dist/index.d.ts dist/canvas-txt.d.ts",
+    "build": "rm -rf ./dist && npm run build:browser && npm run build:node && npm run build:types",
+    "build:browser": "vite build --config config/vite.config.browser.mts",
+    "build:node": "vite build --config config/vite.config.node.mts",
+    "build:types": "tsc src/lib/index.ts --declaration --emitDeclarationOnly --outFile dist/text-to-canvas.d.ts",
+    "demo:node": "vite-node ./src/demos/node-demo.mts",
+    "docs": "vite build --config config/vite.config.docs.mts",
     "fmt": "prettier --write \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
     "fmt:check": "prettier --check \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
     "lint": "npm run lint:code && npm run lint:types && npm run fmt:check",
@@ -55,7 +64,7 @@
     "prepare": "npm run build",
     "start": "vite serve --config config/vite.config.docs.mts",
     "test": "npm run lint && npm run test:unit && npm run build",
-    "test:unit": "vite-node ./src/node-test.ts"
+    "test:unit": "npm run demo:node"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",
@@ -70,7 +79,6 @@
     "eslint-plugin-vue": "^9.22.0",
     "lodash": "^4.17.21",
     "prettier": "^3.2.5",
-    "tsup": "^8.0.2",
     "typescript": "^5.4.2",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-vue-components": "^0.26.0",

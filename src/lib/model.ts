@@ -3,7 +3,7 @@ export type CanvasRenderContext =
   | OffscreenCanvasRenderingContext2D;
 
 /**
- * Identifies the minimum Canvas `TextMetrics` properties required by Canvas-Txt. This is
+ * Identifies the minimum Canvas `TextMetrics` properties required by this library. This is
  *  important for serialization across the main thread to a Web Worker thread (or vice versa)
  *  as the native `TextMetrics` object fails to get serialized by `Worker.postMessage()`,
  *  causing an exception.
@@ -70,7 +70,7 @@ export type PlainText = string;
 
 export type Text = PlainText | Word[];
 
-export interface CanvasTextConfig extends TextFormat {
+export interface DrawTextConfig extends TextFormat {
   /**
    * Width of box (px) at X/Y in 2D context within which text should be rendered. This will affect
    *  text wrapping, but will not necessarily constrain the text because, at minimum, one word,
@@ -89,9 +89,6 @@ export interface CanvasTextConfig extends TextFormat {
   x: number;
   /** Absolute Y coordinate (px) in 2D context where text should be rendered. */
   y: number;
-
-  /** True if debug lines should be rendered behind the text. */
-  debug?: boolean;
 
   /** Horizontal alignment. Defaults to 'center'. */
   align?: 'left' | 'center' | 'right';
@@ -114,6 +111,9 @@ export interface CanvasTextConfig extends TextFormat {
    * False indicates that `words` contains its own whitespace and it shouldn't be inferred.
    */
   inferWhitespace?: boolean;
+
+  /** True if debug lines should be rendered behind the text. */
+  debug?: boolean;
 }
 
 export interface BaseSplitProps {
@@ -152,6 +152,7 @@ export interface BaseSplitProps {
   format?: TextFormat;
 }
 
+// props for a public API function
 export interface SplitTextProps extends BaseSplitProps {
   /**
    * Text to render. Newlines are interpreted as hard breaks. Whitespace is preserved __only
@@ -161,6 +162,7 @@ export interface SplitTextProps extends BaseSplitProps {
   text: PlainText;
 }
 
+// props for a public API function
 export interface SplitWordsProps extends BaseSplitProps {
   /** For hard breaks, include words that are newline characters as their `text`. */
   words: Word[];
@@ -187,28 +189,6 @@ export type WordMap = Map<
   WordHash,
   { metrics: CanvasTextMetrics; format?: Required<TextFormat> }
 >;
-
-export interface GenerateSpecProps {
-  /** Words organized/wrapped into lines to be rendered. */
-  wrappedLines: Word[][];
-
-  /** Map of Word to measured dimensions (px) as it would be rendered. */
-  wordMap: WordMap;
-
-  /**
-   * Details on where to render the Words onto canvas. These parameters ultimately come
-   *  from `SplitWordsProps`, and they come from `CanvasTextConfig`.
-   */
-  positioning: {
-    width: SplitWordsProps['width'];
-    // NOTE: height does NOT constrain the text; used only for vertical alignment
-    height: SplitWordsProps['height'];
-    x: SplitWordsProps['x'];
-    y: SplitWordsProps['y'];
-    align?: SplitWordsProps['align'];
-    vAlign?: SplitWordsProps['vAlign'];
-  };
-}
 
 /**
  * A `Word` along with its __relative__ position along the X/Y axis within the bounding box

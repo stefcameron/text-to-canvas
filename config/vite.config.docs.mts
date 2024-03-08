@@ -1,3 +1,7 @@
+//
+// Docs app
+//
+
 import path from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -19,12 +23,13 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: 'canvas-txt',
-        replacement: path.resolve(__dirname, '../src/canvas-txt/index.ts'),
+        find: 'text-to-canvas',
+        replacement: path.resolve(__dirname, '../src/lib/index.ts'),
       },
     ],
   },
   build: {
-    outDir: '../dist-docs',
+    outDir: '../../dist-docs',
+    emptyOutDir: true,
   },
 });

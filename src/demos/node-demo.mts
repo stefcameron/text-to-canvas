@@ -1,7 +1,7 @@
 // DEBUG import { createCanvas } from 'canvas'
 // DEBUG TODO: will need "canvas": "^2.11.2", in package.json if node-gyp can just succeed...
 
-// import { drawText, textToWords } from './canvas-txt/index'
+// import { drawText, textToWords } from '../lib/index'
 // // @ts-ignore
 // import * as fs from 'fs'
 

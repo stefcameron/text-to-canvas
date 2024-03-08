@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { drawText, textToWords } from 'canvas-txt';
+import { drawText, textToWords } from 'text-to-canvas';
 import { ref, reactive, onMounted, watch } from 'vue';
 import debounce from 'lodash/debounce';
 import cloneDeep from 'lodash/cloneDeep';
