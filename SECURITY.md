@@ -8,7 +8,7 @@ The most recently published version is the only supported version. We simply do 
 
 The most recently published version is the only supported version. If there's a security issue in that version, then we will fix it by publishing a new version that addresses the vulnerability, but we will not support or update any previous versions.
 
-__Example Scenario__
+### Example Scenario
 
 Let's say we publish 9.0.0 and a security issue is found in 8.1.3, and it's still in 9.0.0, then we will fix it in 9.0.1 or 9.1.0 (or possibly 10.0.0 if it requires breaking backward compatibility for some reason -- this should be rare), but we will not also publish 8.1.4 or 8.2.1 to fix it.
 
