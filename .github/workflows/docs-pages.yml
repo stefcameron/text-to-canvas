@@ -37,6 +37,8 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
+      - name: Install packages
+        run: npm ci
       - name: Build
         run: npm run docs
       - name: Upload artifact
