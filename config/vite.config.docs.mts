@@ -28,6 +28,7 @@ export default defineConfig({
       },
     ],
   },
+  base: '/text-to-canvas/', // ultimately deployed to https://stefcameron.github.io/text-to-canvas/
   build: {
     outDir: '../../dist-docs',
     emptyOutDir: true,
