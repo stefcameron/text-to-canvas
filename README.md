@@ -47,7 +47,7 @@ $ yarn add text-to-canvas
 
 ## Compilation of canvas package
 
-This project depends on the [canvas](https://github.com/Automattic/node-canvas) package which enables its use in Node.
+This project __optionally__ depends on the [canvas](https://github.com/Automattic/node-canvas) package which enables it to be used in a Node [demo](#node).
 
 Since this package needs to be compiled for use on the platform on which you intend to install/use it, the author must either include pre-built binaries specific to your OS when they make a [release](https://github.com/Automattic/node-canvas/releases), or a new binary must be compiled by your package manager (i.e. `npm`) upon installation.
 

@@ -16,6 +16,8 @@
 
 # Packages (deep)
 node_modules/
+yarn.lock
+pnpm-lock.yaml
 
 # Generated builds (deep)
 dist/
