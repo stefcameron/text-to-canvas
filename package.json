@@ -59,7 +59,7 @@
     "build:types": "tsc src/lib/index.ts --declaration --emitDeclarationOnly --outFile dist/text-to-canvas.d.ts",
     "ci:build": "npm run build && npm run docs",
     "ci:lint": "npm run lint",
-    "ci:test": "npm run test:unit",
+    "ci:test": "npm run test:unit && npm run demo:node",
     "demo:node": "vite-node ./src/demos/node-demo.mts",
     "docs": "vite build --config config/vite.config.docs.mts && prettier --write \"src/docs/*.d.ts\"",
     "fmt": "prettier --write \"{*,config/**/*,src/**/*}.+(js|cjs|mjs|ts|cts|mts|css|yml|json|vue)\"",
@@ -71,7 +71,7 @@
     "prepublishOnly": "npm run lint && npm run test:unit && npm run build",
     "start": "vite serve --config config/vite.config.docs.mts",
     "test": "npm run lint && npm run test:unit && npm run build",
-    "test:unit": "echo '⚠️ No unit tests to run yet'"
+    "test:unit": "echo 'TODO: Add unit tests...'"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",
