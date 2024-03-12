@@ -15,12 +15,10 @@ const initialConfig = {
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.',
   pos: { x: 100, y: 150 },
   size: { w: 300, h: 200 },
-  debug: false,
   align: 'center',
   vAlign: 'middle',
   justify: false,
-  min: 0,
-  max: 800,
+  debug: false,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -50,13 +48,14 @@ function renderText() {
     y: config.pos.y,
     width: config.size.w,
     height: config.size.h,
-    fontFamily: 'Times New Roman, serif',
-    fontSize: 24,
-    fontWeight: '400',
     align: config.align,
     vAlign: config.vAlign,
     justify: config.justify,
     debug: config.debug,
+    // currently not configurable in demo UI
+    fontFamily: 'Times New Roman, serif',
+    fontSize: 24,
+    fontWeight: '400',
   };
 
   const words = textToWords(config.text);

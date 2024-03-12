@@ -1,6 +1,11 @@
-export type CanvasRenderContext =
-  | CanvasRenderingContext2D
-  | OffscreenCanvasRenderingContext2D;
+// NOTE: `node-canvas` adds some custom properties/methods to its version of
+//  `CanvasRenderingContext2D` and does not support the full `CanvasRenderingContext2D`
+//  Web API type, so we have to be careful to support only what they have in common;
+// NOTE: `OffscreenCanvasRenderingContext2D` is supported because it inherits from
+//  `CanvasRenderingContext2D`
+// this indirection gives us the flexibility to tweak the context type later on,
+//  if necessary, without having to update types everywhere
+export type CanvasRenderContext = CanvasRenderingContext2D;
 
 /**
  * Identifies the minimum Canvas `TextMetrics` properties required by this library. This is
@@ -86,10 +91,11 @@ export interface DrawTextConfig extends TextFormat {
    *  fit within the specified `boxWidth`.
    */
   height: number;
-  /** Absolute X coordinate (px) in 2D context where text should be rendered. */
-  x: number;
-  /** Absolute Y coordinate (px) in 2D context where text should be rendered. */
-  y: number;
+
+  /** Absolute X coordinate (px) in 2D context where text should be rendered. Defaults to `0`. */
+  x?: number;
+  /** Absolute Y coordinate (px) in 2D context where text should be rendered. Defaults to `0`. */
+  y?: number;
 
   /** Horizontal alignment. Defaults to 'center'. */
   align?: 'left' | 'center' | 'right';

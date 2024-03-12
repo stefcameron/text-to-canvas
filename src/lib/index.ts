@@ -33,8 +33,8 @@ const drawText = (
     inferWhitespace: Array.isArray(text)
       ? config.inferWhitespace === undefined || config.inferWhitespace
       : undefined, // ignore since `text` is a string; we assume it already has all the whitespace it needs
-    x: config.x,
-    y: config.y,
+    x: config.x || 0,
+    y: config.y || 0,
     width: config.width,
     height: config.height,
     align: config.align,
@@ -71,7 +71,7 @@ const drawText = (
   });
 
   if (config.debug) {
-    const { width, height, x, y } = config;
+    const { width, height, x = 0, y = 0 } = config;
     const xEnd = x + width;
     const yEnd = y + height;
 

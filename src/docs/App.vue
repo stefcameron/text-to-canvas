@@ -9,10 +9,10 @@ const year = new Date().getFullYear();
   <div class="common-layout">
     <ElContainer>
       <ElHeader class="container">
-        <h1>Rich text on HTML5 Canvas with text-to-canvas</h1>
+        <h1>Rich text on HTML Canvas with text-to-canvas</h1>
         <p>
-          Render multiline plain or rich text into textboxes on HTML5 Canvas
-          with automatic line wrapping, in the browser or in Node.
+          Render multiline plain or rich text into textboxes on HTML Canvas with
+          automatic line wrapping.
         </p>
         <p>
           Read the docs on
@@ -25,18 +25,23 @@ const year = new Date().getFullYear();
       <ElHeader class="container">
         <div class="flex">
           <div class="flex-1">
-            <h2>Supports browsers, Web Workers, and Node</h2>
-            <p
-              >Works with all modern browsers, as well as Node with
-              <code>node-canvas</code>.</p
-            >
+            <h2>Supports browsers and Web Workers</h2>
             <p>
-              Also works with
+              Works with all modern browsers, as well as optimizations with
               <a
                 href="https://github.com/stefcameron/text-to-canvas?tab=readme-ov-file#web-worker-and-offscreencanvas"
                 >Web Workers</a
               >
               and <code>OffscreenCanvas</code>.
+            </p>
+            <p>
+              Also works with Node as long as you use a Node-based Canvas
+              library that supports the
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement"
+                >HTMLCanvasElement</a
+              >
+              API.
             </p>
           </div>
           <div class="flex-1">

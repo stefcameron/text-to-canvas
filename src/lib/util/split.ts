@@ -107,8 +107,8 @@ const _generateSpec = ({
   positioning: {
     width: boxWidth,
     height: boxHeight,
-    x: boxX,
-    y: boxY,
+    x: boxX = 0,
+    y: boxY = 0,
     align,
     vAlign,
   },

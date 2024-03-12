@@ -33,6 +33,12 @@ The following package scripts will get you started:
 
 See `/package.json` scripts for other commands.
 
+## Testing
+
+At the moment, the Docs app (`npm start`) and the Node demo (`npm demo:node` or `npm run test:unit`) (although `text-to-canvas` does not formally support Node nor the `node-canvas` library used in the demo) are the only "tests".
+
+Run `npm test`, the Docs app, and the Node demo and manually verify your changes as best as you can.
+
 ## Pull requests
 
 Always include a new bullet point in the [CHANGELOG](./CHANGELOG.md) under the __UNRELEASED__ heading at the very top.
