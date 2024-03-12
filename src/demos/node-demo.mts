@@ -1,49 +1,62 @@
-// TODO: import { createCanvas } from 'canvas'
-// TODO: will need "canvas": "^2.11.2", in package.json if node-gyp can just succeed...
-// TODO: output to ./demo/node-demo-output.png
+import fs from 'node:fs';
+import path from 'node:path';
+import { createCanvas } from 'canvas';
+import { drawText, textToWords } from '../lib/index';
 
-// import { drawText, textToWords } from '../lib/index'
-// // @ts-ignore
-// import * as fs from 'fs'
+const OUT_FILEPATH = './demo/node-demo-output.png';
 
-// eslint-disable-next-line no-console
-console.error('❗️ Node demo needs fixing');
-
-// TODO re-enable
-/*
 function main() {
-  const canvas = createCanvas(400, 400)
-  const ctx = canvas.getContext('2d')
+  const canvas = createCanvas(400, 400);
+  const ctx = canvas.getContext('2d');
 
-  const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.'
-  const words = textToWords(text)
+  const text =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.';
+  const words = textToWords(text);
   words.forEach((word) => {
     if (word.text === 'ipsum') {
-      word.format = { fontStyle: 'italic', fontColor: 'red' }
+      word.format = { fontStyle: 'italic', fontColor: 'red' };
     } else if (word.text === 'consectetur') {
-      word.format = { fontWeight: '700', fontColor: 'blue' }
+      word.format = { fontWeight: '700', fontColor: 'blue' };
     }
-  })
+  });
 
-  // @ts-ignore
-  const { height } = drawText(ctx, words, {
-    x: 100,
-    y: 100,
-    width: 200,
-    height: 200,
-    fontSize: 24,
-    debug: true
-  })
+  let height;
+  try {
+    // @ts-expect-error -- text-to-canvas does not formally support Node, nor `node-canvas`
+    // `node-canvas` does not support the full HTMLCanvasElement API, but supports enough
+    //  of it that this works :)
+    ({ height } = drawText(ctx, words, {
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 200,
+      fontSize: 24,
+      fontFamily: 'Times New Roman, serif',
+      fontWeight: '400',
+      debug: true,
+    }));
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `⚠️ Encountered an error in drawText() using the 2D context obtained from node-canvas (make sure it supports the HTMLCanvasElement API): "${err instanceof Error ? err.message : (err as string)}"`
+    );
+  }
 
-  // @ts-ignore
-  // Convert the canvas to a buffer in PNG format
-  const buffer = canvas.toBuffer('image/png')
-  // @ts-ignore
-  fs.writeFileSync('./demo/node-demo-output.png', buffer)
+  // convert the canvas to a buffer in PNG format
+  const buffer = canvas.toBuffer('image/png');
 
-  console.log(`Total height = ${height}`)
-  console.log('See demo output in ./demo/node-demo-output.png')
+  fs.mkdirSync(path.dirname(OUT_FILEPATH), { recursive: true });
+  if (fs.existsSync(OUT_FILEPATH)) {
+    fs.unlinkSync(OUT_FILEPATH);
+  }
+  fs.writeFileSync(OUT_FILEPATH, buffer);
+
+  if (height !== undefined) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Total height (px) = ${height}\nDemo output in ${OUT_FILEPATH}`
+    );
+  }
 }
 
-main()
-*/
+main();

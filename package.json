@@ -1,7 +1,7 @@
 {
   "name": "text-to-canvas",
   "version": "1.0.0",
-  "description": "Render multiline plain or rich text into textboxes on HTML5 Canvas with automatic line wrapping",
+  "description": "Render multiline plain or rich text into textboxes on HTML Canvas with automatic line wrapping",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stefcameron/text-to-canvas.git"
@@ -16,11 +16,13 @@
   },
   "homepage": "https://stefcameron.github.io/text-to-canvas/",
   "keywords": [
-    "vue",
-    "react",
+    "javascript",
     "library",
+    "html",
     "canvas",
     "richtext",
+    "multiline",
+    "wrapping",
     "es6",
     "node"
   ],
@@ -78,6 +80,7 @@
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-vue": "^5.0.4",
+    "canvas": "^2.11.2",
     "element-plus": "^2.6.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
