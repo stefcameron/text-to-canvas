@@ -1,11 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { createCanvas } from 'canvas';
 import { drawText, textToWords } from '../lib/index';
+
+/* eslint-disable no-console */
 
 const OUT_FILEPATH = './demo/node-demo-output.png';
 
-function main() {
+async function main() {
+  let createCanvas;
+  try {
+    // @ts-expect-error -- `canvas` package is an optional dependency so may not exist, hence this dynamic import
+    ({ createCanvas } = await import('canvas'));
+  } catch {
+    console.error(
+      "ERROR: Failed to load the `canvas` module: Make sure it's installed by first running `npm install`"
+    );
+    process.exit(1);
+  }
+
   const canvas = createCanvas(400, 400);
   const ctx = canvas.getContext('2d');
 
@@ -22,9 +34,10 @@ function main() {
 
   let height;
   try {
-    // @ts-expect-error -- text-to-canvas does not formally support Node, nor `node-canvas`
-    // `node-canvas` does not support the full HTMLCanvasElement API, but supports enough
-    //  of it that this works :)
+    // NOTE: text-to-canvas does not formally support Node, nor `node-canvas`, nor does
+    // `node-canvas` claim to support the full `HTMLCanvasElement` API; but it supports enough
+    //  of it that this should work :) -- if it fails, we'll need to find another Node-based
+    //  Canvas library that has more complete support for the Web Canvas API.
     ({ height } = drawText(ctx, words, {
       x: 100,
       y: 100,
@@ -36,9 +49,8 @@ function main() {
       debug: true,
     }));
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.warn(
-      `⚠️ Encountered an error in drawText() using the 2D context obtained from node-canvas (make sure it supports the HTMLCanvasElement API): "${err instanceof Error ? err.message : (err as string)}"`
+      `WARNING: Encountered an error in drawText() using the 2D context obtained from node-canvas (make sure it supports the HTMLCanvasElement API): "${err instanceof Error ? err.message : (err as string)}"`
     );
   }
 
@@ -52,11 +64,10 @@ function main() {
   fs.writeFileSync(OUT_FILEPATH, buffer);
 
   if (height !== undefined) {
-    // eslint-disable-next-line no-console
     console.log(
       `Total height (px) = ${height}\nDemo output in ${OUT_FILEPATH}`
     );
   }
 }
 
-main();
+void main();
