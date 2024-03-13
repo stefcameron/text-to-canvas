@@ -9,7 +9,7 @@ const year = new Date().getFullYear();
   <div class="common-layout">
     <ElContainer>
       <ElHeader class="container">
-        <h1>Rich text on HTML Canvas with text-to-canvas</h1>
+        <h1>text-to-canvas</h1>
         <p>
           Render multiline plain or rich text into textboxes on HTML Canvas with
           automatic line wrapping.
