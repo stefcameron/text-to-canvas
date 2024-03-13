@@ -8,7 +8,7 @@ Render multiline plain or rich text into textboxes on HTML Canvas with automatic
 
 🙌 This library would not exist were it not for all the work done by its original author, [Geon George](https://geongeorge.com/), in his [canvas-txt](https://github.com/geongeorge/Canvas-Txt) library.
 
-The main feature that sparked `text-to-canvas` is a significant update to (departure from) the original code base in order to support rich text formatting, which introduced the concept of a `Word` specifying both `text` and (optional) associated CSS-based `format` styles. A sentence is then simply a `Word[]` with/out whitespace (optionally inferred).
+The main feature that sparked `text-to-canvas` is a significant [update](https://github.com/geongeorge/Canvas-Txt/pull/95) to the original code base in order to support rich text formatting, which introduced the concept of a `Word` specifying both `text` and (optional) associated CSS-based `format` styles. A sentence is then simply a `Word[]` with/out whitespace (optionally inferred).
 
 Plain text (i.e. a `string`) is still supported as a convenience via the `drawText()`, `splitText()`, and `textToWords()` [APIs](#api).
 
@@ -74,8 +74,8 @@ Use in Node is only supported to the extent that appropriate bundles are provide
 
 Two bundles are provided for this type of target:
 
-- `./dist/text-to-canvas.esm.min.js` (ESM)
-- `./dist/text-to-canvas.min.js` (CJS)
+- `./dist/text-to-canvas.esm.min.js` (ESM, `import`, ES2020+)
+- `./dist/text-to-canvas.min.js` (CJS, `require()`, ES2019+)
 
 Used implicitly when using the library in a larger app bundled with a bundler like Webpack, Rollup, or Vite.
 
@@ -127,7 +127,7 @@ const { height } = drawText(...);
 
 One bundle is provided for this type of target:
 
-- `./dist/text-to-canvas.umd.min.js` (UMD)
+- `./dist/text-to-canvas.umd.min.js` (UMD, ES2019+)
 
 Used implicitly when loading the library directly in a browser:
 
@@ -146,8 +146,8 @@ Used implicitly when loading the library directly in a browser:
 
 Two bundles are provided for this type of target:
 
-- `./dist/text-to-canvas.mjs` (ESM/MJS)
-- `./dist/text-to-canvas.cjs` (CJS)
+- `./dist/text-to-canvas.mjs` (ESM/MJS, `import`, Node v20.11.1+)
+- `./dist/text-to-canvas.cjs` (CJS, `require()`, Node v20.11.1+)
 
 > ⚠️ Other than the bundles, __Node is not formally supported by this library__, and neither is the `node-canvas` library used in the demo. Whatever "Node Canvas" library you use, make sure it supports the [HTMLCanvasElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement) API and it _should_ work.
 

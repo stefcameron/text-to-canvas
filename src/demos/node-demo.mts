@@ -9,7 +9,6 @@ const OUT_FILEPATH = './demo/node-demo-output.png';
 async function main() {
   let createCanvas;
   try {
-    // @ts-expect-error -- `canvas` package is an optional dependency so may not exist, hence this dynamic import
     ({ createCanvas } = await import('canvas'));
   } catch {
     console.error(
@@ -38,6 +37,7 @@ async function main() {
     // `node-canvas` claim to support the full `HTMLCanvasElement` API; but it supports enough
     //  of it that this should work :) -- if it fails, we'll need to find another Node-based
     //  Canvas library that has more complete support for the Web Canvas API.
+    // @ts-expect-error -- because `node-canvas` doesn't support exactly the same API as the `HTMLCanvasElement` on the 2D context
     ({ height } = drawText(ctx, words, {
       x: 100,
       y: 100,
