@@ -33,18 +33,17 @@
     "README.md",
     "CHANGELOG.md"
   ],
-  "main": "./dist/text-to-canvas.umd.min.js",
-  "module": "./dist/text-to-canvas.esm.min.js",
-  "types": "./dist/text-to-canvas.d.ts",
+  "main": "./dist/text-to-canvas.min.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
-    "types": "./dist/text-to-canvas.d.ts",
+    "types": "./dist/types/index.d.ts",
     "node": {
       "import": "./dist/text-to-canvas.mjs",
       "require": "./dist/text-to-canvas.cjs"
     },
     "default": {
       "import": "./dist/text-to-canvas.esm.min.js",
-      "require": "./dist/text-to-canvas.cjs.min.js",
+      "require": "./dist/text-to-canvas.min.js",
       "browser": "./dist/text-to-canvas.umd.min.js"
     }
   },
@@ -54,9 +53,9 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && npm run build:browser && npm run build:node && npm run build:types",
-    "build:browser": "vite build --config config/vite.config.browser.mts",
+    "build:browser": "vite build --config config/vite.config.esm.mts && vite build --config config/vite.config.cjs.mts",
     "build:node": "vite build --config config/vite.config.node.mts",
-    "build:types": "tsc src/lib/index.ts --declaration --emitDeclarationOnly --outFile dist/text-to-canvas.d.ts",
+    "build:types": "tsc src/lib/index.ts --declaration --emitDeclarationOnly --outDir dist/types",
     "ci:build": "npm run build && npm run docs",
     "ci:lint": "npm run lint",
     "ci:test": "npm run test:unit && npm run demo:node",

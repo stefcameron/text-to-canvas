@@ -1,11 +1,12 @@
 //
-// Node.js library bundles
+// Browser library bundles
 //
 
 import path from 'node:path';
 import url from 'node:url';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vite';
+import { esmBrowserTargets } from './build-util.mjs';
 
 const __dirname = path.basename(url.fileURLToPath(import.meta.url));
 
@@ -18,22 +19,20 @@ const pkgName = pkg.name;
 export default defineConfig({
   root: 'src',
   build: {
-    // @see // @see https://vitejs.dev/config/build-options.html#build-target
-    target: 'node20.11.1', // should match package.json#engines.node minimum
+    // @see https://vitejs.dev/config/build-options.html#build-target
+    // ES2020 is first version with dynamic import and `import.meta`, in particular
+    target: ['es2020', ...esmBrowserTargets],
     outDir: '../dist',
     emptyOutDir: false,
-    sourcemap: false,
-    minify: false,
+    sourcemap: true,
     lib: {
       entry: 'lib/index.ts',
-      formats: ['es', 'cjs'],
+      name: 'textToCanvas',
+      formats: ['es'],
       fileName: (format) => {
         switch (format) {
           case 'es':
-            return `${pkgName}.mjs`;
-          case 'cjs':
-          case 'commonjs':
-            return `${pkgName}.cjs`;
+            return `${pkgName}.esm.min.js`;
           default:
             throw new Error(`Unknown build format "${format}"`);
         }
