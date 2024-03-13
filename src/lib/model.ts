@@ -105,9 +105,6 @@ export interface DrawTextConfig extends TextFormat {
   justify?: boolean;
 
   /**
-   * __NOTE:__ Applies only if `text`, given to `drawText()`, is a `Word[]`. Ignored if it's
-   *  a `string`.
-   *
    * True indicates `text` is a `Word` array that contains _mostly_ visible words and
    *  whitespace should be inferred _unless a word is whitespace (e.g. a new line or tab)_, based
    *  on the context's general text formatting style (i.e. every space will use the font style set
@@ -116,11 +113,22 @@ export interface DrawTextConfig extends TextFormat {
    *  as Words with `text="\n"`).
    *
    * False indicates that `words` contains its own whitespace and it shouldn't be inferred.
+   *
+   * ❗️ Applies only if `text`, given to `drawText()`, is a `Word[]`. Ignored if it's
+   *  a `string`.
    */
   inferWhitespace?: boolean;
 
   /** True if debug lines should be rendered behind the text. */
   debug?: boolean;
+
+  /**
+   * True (default) if the text should overflow the box's boundaries when it's either too
+   *  tall or too wide to fit.
+   *
+   * False if the text should be clipped to the box's boundaries.
+   */
+  overflow?: boolean;
 }
 
 export interface BaseSplitProps {

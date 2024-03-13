@@ -19,6 +19,7 @@ const initialConfig = {
   vAlign: 'middle',
   justify: false,
   debug: false,
+  overflow: true,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -52,6 +53,7 @@ function renderText() {
     vAlign: config.vAlign,
     justify: config.justify,
     debug: config.debug,
+    overflow: config.overflow,
     // currently not configurable in demo UI
     fontFamily: 'Times New Roman, serif',
     fontSize: 24,
@@ -163,9 +165,10 @@ onMounted(() => {
             size="small"
           />
         </div>
+
         <br />
-        <el-row>
-          <el-col :span="12">
+        <el-row :gutter="12">
+          <el-col :span="8">
             <el-form-item label="Horizontal Align">
               <el-select v-model="config.align" placeholder="Align">
                 <el-option label="Center" value="center" />
@@ -174,7 +177,7 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="Vertical Align">
               <el-select v-model="config.vAlign" placeholder="vAlign">
                 <el-option label="Middle" value="middle" />
@@ -183,12 +186,15 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-checkbox v-model="config.justify" label="Justify" />
+          </el-col>
         </el-row>
         <br />
 
-        <el-row>
+        <el-row :gutter="12">
           <el-col :span="12">
-            <el-checkbox v-model="config.justify" label="Justify Text" />
+            <el-checkbox v-model="config.overflow" label="Overflow" />
           </el-col>
           <el-col :span="12">
             <el-checkbox v-model="config.debug" label="Debug mode" />
