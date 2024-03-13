@@ -185,6 +185,7 @@ You can run this demo locally with `npm run node:demo`
 | `fontColor`       | `'black'`    | Base font color, same as css color. Examples: `blue`, `#00ff00`. |
 | `justify`         | `false`      | Justify text if `true`, it will insert spaces between words when necessary. |
 | `inferWhitespace` | `true`       | If whitespace in the text should be inferred. Only applies if the text given to `drawText()` is a `Word[]`. If the text is a `string`, this config setting is ignored. |
+| `overflow`        | `true`       | Allows the text to overflow out of the box if the box is too narrow/short to fit it all. `false` will clip the text to the box's boundaries. |
 | `debug`           | `false`      | Draws the border and alignment lines of the text box for debugging purposes. |
 
 ## Functions
