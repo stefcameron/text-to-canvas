@@ -31,7 +31,8 @@
     "dist",
     "LICENSE",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "main": "./dist/text-to-canvas.min.js",
   "types": "./dist/types/index.d.ts",
