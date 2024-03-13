@@ -23,6 +23,13 @@ const drawText = (
   });
 
   const {
+    width: boxWidth,
+    height: boxHeight,
+    x: boxX = 0,
+    y: boxY = 0,
+  } = config;
+
+  const {
     lines: richLines,
     height: totalHeight,
     textBaseline,
@@ -33,8 +40,8 @@ const drawText = (
     inferWhitespace: Array.isArray(text)
       ? config.inferWhitespace === undefined || config.inferWhitespace
       : undefined, // ignore since `text` is a string; we assume it already has all the whitespace it needs
-    x: config.x || 0,
-    y: config.y || 0,
+    x: boxX,
+    y: boxY,
     width: config.width,
     height: config.height,
     align: config.align,
@@ -48,6 +55,12 @@ const drawText = (
   ctx.textBaseline = textBaseline;
   ctx.font = getTextStyle(baseFormat);
   ctx.fillStyle = baseFormat.fontColor || DEFAULT_FONT_COLOR;
+
+  if (config.overflow === false) {
+    ctx.beginPath();
+    ctx.rect(boxX, boxY, boxWidth, boxHeight);
+    ctx.clip(); // part of saved context state
+  }
 
   richLines.forEach((line) => {
     line.forEach((pw) => {
@@ -71,24 +84,23 @@ const drawText = (
   });
 
   if (config.debug) {
-    const { width, height, x = 0, y = 0 } = config;
-    const xEnd = x + width;
-    const yEnd = y + height;
+    const xEnd = boxX + boxWidth;
+    const yEnd = boxY + boxHeight;
 
     let textAnchor: number;
     if (config.align === 'right') {
       textAnchor = xEnd;
     } else if (config.align === 'left') {
-      textAnchor = x;
+      textAnchor = boxX;
     } else {
-      textAnchor = x + width / 2;
+      textAnchor = boxX + boxWidth / 2;
     }
 
-    let debugY = y;
+    let debugY = boxY;
     if (config.vAlign === 'bottom') {
       debugY = yEnd;
     } else if (config.vAlign === 'middle') {
-      debugY = y + height / 2;
+      debugY = boxY + boxHeight / 2;
     }
 
     const debugColor = '#0C8CE9';
@@ -96,7 +108,7 @@ const drawText = (
     // Text box
     ctx.lineWidth = 1;
     ctx.strokeStyle = debugColor;
-    ctx.strokeRect(x, y, width, height);
+    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
 
     ctx.lineWidth = 1;
 
@@ -104,7 +116,7 @@ const drawText = (
       // Horizontal Center
       ctx.strokeStyle = debugColor;
       ctx.beginPath();
-      ctx.moveTo(textAnchor, y);
+      ctx.moveTo(textAnchor, boxY);
       ctx.lineTo(textAnchor, yEnd);
       ctx.stroke();
     }
@@ -113,7 +125,7 @@ const drawText = (
       // Vertical Center
       ctx.strokeStyle = debugColor;
       ctx.beginPath();
-      ctx.moveTo(x, debugY);
+      ctx.moveTo(boxX, debugY);
       ctx.lineTo(xEnd, debugY);
       ctx.stroke();
     }

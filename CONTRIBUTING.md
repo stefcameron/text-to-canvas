@@ -41,17 +41,16 @@ Run `npm test`, the Docs app, and the Node demo and manually verify your changes
 
 ## Pull requests
 
-Always include a new bullet point in the [CHANGELOG](./CHANGELOG.md) under the __UNRELEASED__ heading at the very top.
+Always include a new bullet point (CD, Change Description) in the [CHANGELOG](./CHANGELOG.md) under the __UNRELEASED__ heading at the very top, linking to the issue being addressed when applicable, typically ending your CD with `([#123](https://github.com/stefcameron/text-to-canvas/issues/123))`
 
-Include your change description in one of the following subsections under "UNRELEASED":
+Include your CD in one of the following subsections under "UNRELEASED":
 
-> If an "UNRELEASED" heading doesn't exist, please add one!
+> If an `## UNRELEASED` heading doesn't exist, please add one!
 
--   "Breaking": If your change alters an existing API/type in a way that is not backward-compatible, or makes use of a Web API that doesn't yet have wide browser support.
+-   `### Breaking`: If your change alters an existing API/type in a way that is not backward-compatible, or makes use of a Web API that doesn't yet have wide browser support.
     -   __AVOID__ this type of change as best as possible.
--   "Added": If your change adds a new feature without breaking anything pre-existing.
--   "Changed": If your change alters existing behavior without breaking anything pre-existing, including bug fixes.
+-   `### Added`: If your change adds a new feature without breaking anything pre-existing.
+-   `### Changed`: If your change alters existing behavior without breaking anything pre-existing, including bug fixes.
     -   If you're fixing a bug, try to start your change description with, "Fixed ..."
--   Always link to the issue being addressed when applicable, typically ending your change description with `([#123](https://github.com/stefcameron/text-to-canvas/issues/123))`
 
 And please fill-out the pull request template when prompted!
