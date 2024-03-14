@@ -20,8 +20,8 @@
     }
   },
   "include": [
-    "config/**/*.ts",
-    "config/**/*.mts",
+    "build/**/*.ts",
+    "build/**/*.mts",
     "src/**/*.ts",
     "src/**/*.mts"
     // think twice about including "src/**/*.vue" here for use with typescript-eslint
