@@ -150,14 +150,10 @@ const jsRules = {
 };
 
 // for TypeScript modules
-const tsRules = {
-  ...jsRules,
-};
+const tsRules = {};
 
 // for modules with typed Vue code
 const vueRules = {
-  ...tsRules,
-
   //// ESLint Vue plugin
 
   'vue/html-self-closing': [
@@ -216,6 +212,7 @@ module.exports = {
       },
       env,
       rules: {
+        ...jsRules,
         ...tsRules,
         'no-console': 'off',
       },
@@ -227,6 +224,7 @@ module.exports = {
       parserOptions: typedParserOptions,
       env,
       rules: {
+        ...jsRules,
         ...tsRules,
         'no-console': 'off',
       },
@@ -244,7 +242,10 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: typedParserOptions,
       env: browserEnv,
-      rules: tsRules,
+      rules: {
+        ...jsRules,
+        ...tsRules,
+      },
     },
 
     // TypeScript node demo files
@@ -258,7 +259,10 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: typedParserOptions,
       env,
-      rules: tsRules,
+      rules: {
+        ...jsRules,
+        ...tsRules,
+      },
     },
 
     // TypeScript test files
@@ -275,7 +279,10 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: typedParserOptions,
       env, // expected to be NodeJS for now
-      rules: tsRules,
+      rules: {
+        ...jsRules,
+        ...tsRules,
+      },
     },
 
     // JavaScript source files (docs are untyped because typescript-eslint plugin appears
@@ -287,7 +294,9 @@ module.exports = {
       extends: jsExtends,
       parserOptions,
       env: browserEnv,
-      rules: tsRules,
+      rules: {
+        ...jsRules,
+      },
     },
 
     // Vue source files
@@ -298,7 +307,11 @@ module.exports = {
       parser: 'vue-eslint-parser',
       parserOptions,
       env: browserEnv,
-      rules: vueRules,
+      rules: {
+        ...jsRules,
+        ...tsRules,
+        ...vueRules,
+      },
     },
   ],
 };
