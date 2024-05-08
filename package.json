@@ -74,7 +74,7 @@
     "test:unit": "echo 'TODO: Add unit tests...'"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.0",
+    "@types/lodash": "^4.17.1",
     "@types/node": "^20.12.7",
     "@types/offscreencanvas": "^2019.7.3",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
