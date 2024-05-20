@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- README update to include the new `overflow` option in the API docs.
+- README updated to include the new `overflow` option in the API docs.
+- Fixed bug where `drawText()` config `fontColor` option was not being included in the base font format used to render the text ([#64](https://github.com/stefcameron/text-to-canvas/issues/64)).
 
 ## v1.1.0
 

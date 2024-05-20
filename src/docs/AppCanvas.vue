@@ -58,6 +58,7 @@ function renderText() {
     fontFamily: 'Times New Roman, serif',
     fontSize: 24,
     fontWeight: '400',
+    fontColor: 'slategray',
   };
 
   const words = textToWords(config.text);
