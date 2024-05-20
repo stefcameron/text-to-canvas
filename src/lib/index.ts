@@ -20,6 +20,7 @@ const drawText = (
     fontStyle: config.fontStyle,
     fontVariant: config.fontVariant,
     fontWeight: config.fontWeight,
+    fontColor: config.fontColor,
   });
 
   const {

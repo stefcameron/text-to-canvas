@@ -46,6 +46,7 @@ async function main() {
       fontSize: 24,
       fontFamily: 'Times New Roman, serif',
       fontWeight: '400',
+      fontColor: 'green',
       debug: true,
     }));
   } catch (err) {
