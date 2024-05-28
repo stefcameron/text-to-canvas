@@ -49,6 +49,8 @@ $ yarn add text-to-canvas
 
 This project __optionally__ depends on the [canvas](https://github.com/Automattic/node-canvas) package which enables it to be used in a Node [demo](#node).
 
+> ❗️ Note this is __optional__ as `text-to-canvas` does not formally support this library. This is purely for casual testing and as an example of how `text-to-canvas` should technically work with any library that supports the `HTMLCanvasElement` API. `text-to-canvas` only officially supports HTML `<canvas>`.
+
 Since this package needs to be compiled for use on the platform on which you intend to install/use it, the author must either include pre-built binaries specific to your OS when they make a [release](https://github.com/Automattic/node-canvas/releases), or a new binary must be compiled by your package manager (i.e. `npm`) upon installation.
 
 If you're installing on a newer Apple M1, M2, or M3 computer, or if you're using a version of Node newer than v20 (the latest LTS at time of writing), you may experience a `node-pre-gyp` failure because `canvas` doesn't provide pre-built binaries for the ARM64 architecture, only providing x86-64 (Intel x64) binaries for Node v20.
