@@ -365,3 +365,9 @@ worker.onmessage = (event) => {
 ```
 
 </details>
+
+# Help
+
+## Blurry text
+
+If you're experiencing an issue where, "the text quality rendered on the canvas appears lower than that rendered in the DOM across various device resolutions," this may be caused by __pixel density__ settings. See the discussion on [issue #69](https://github.com/stefcameron/text-to-canvas/issues/69#issuecomment-2136498781) for a possible solution.
