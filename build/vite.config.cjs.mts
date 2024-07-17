@@ -8,7 +8,7 @@ import { createRequire } from 'node:module';
 import { defineConfig } from 'vite';
 import { esmBrowserTargets } from './build-util.mjs';
 
-const __dirname = path.basename(url.fileURLToPath(import.meta.url));
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 const require = createRequire(import.meta.url);
 const pkg: { name: string } = require(

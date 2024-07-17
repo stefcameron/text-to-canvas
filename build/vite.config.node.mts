@@ -7,7 +7,7 @@ import url from 'node:url';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vite';
 
-const __dirname = path.basename(url.fileURLToPath(import.meta.url));
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 const require = createRequire(import.meta.url);
 const pkg: { name: string } = require(
