@@ -87,7 +87,7 @@
     "lodash": "^4.17.21",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4",
-    "unplugin-auto-import": "^0.18.0",
+    "unplugin-auto-import": "^0.18.2",
     "unplugin-vue-components": "^0.27.3",
     "vite": "^5.3.4",
     "vite-node": "^2.0.4",
