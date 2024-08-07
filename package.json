@@ -90,7 +90,7 @@
     "unplugin-auto-import": "^0.18.2",
     "unplugin-vue-components": "^0.27.3",
     "vite": "^5.3.5",
-    "vite-node": "^2.0.4",
+    "vite-node": "^2.0.5",
     "vue": "^3.4.36"
   },
   "optionalDependencies": {
