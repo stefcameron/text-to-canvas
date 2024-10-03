@@ -102,7 +102,7 @@ const text = 'Lorem ipsum dolor sit amet';
 // OR with some formatting
 const text: Word[] = [
   { text: 'Lorem' },
-  { text: 'ipsum', format: { fontWeight: 'bold', color: 'red' } },
+  { text: 'ipsum', format: { fontWeight: 'bold', fontColor: 'red' } },
   { text: 'dolor', format: { fontStyle: 'italic' } },
   { text: 'sit' },
   { text: 'amet' },
@@ -179,7 +179,7 @@ You can run this demo locally with `npm run node:demo`
 | `y`               | `0`          | Y position of the text box.                                   |
 | `align`           | `center`     | Text align. Other possible values: `left`, `right`.           |
 | `vAlign`          | `middle`     | Text vertical align. Other possible values: `top`, `bottom`.  |
-| `font`            | `Arial`      | Base font family of the text.                                 |
+| `fontFamily`      | `Arial`      | Base font family of the text.                                 |
 | `fontSize`        | `14`         | Base font size of the text in px.                             |
 | `fontStyle`       | `''`         | Base font style, same as css font-style. Examples: `italic`, `oblique 40deg`. |
 | `fontVariant`     | `''`         | Base font variant, same as css font-variant. Examples: `small-caps`. |
@@ -327,7 +327,7 @@ const drawWords = (baseFormat: TextFormat, spec: RenderSpec) => {
 
 const words: Word[] = [
   { text: 'Lorem' },
-  { text: 'ipsum', format: { fontWeight: 'bold', color: 'red' } },
+  { text: 'ipsum', format: { fontWeight: 'bold', fontColor: 'red' } },
   { text: 'dolor', format: { fontStyle: 'italic' } },
   { text: 'sit' },
   { text: 'amet' },
