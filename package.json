@@ -91,7 +91,7 @@
     "unplugin-vue-components": "^0.27.4",
     "vite": "^5.4.8",
     "vite-node": "^2.1.2",
-    "vue": "^3.5.10"
+    "vue": "^3.5.11"
   },
   "optionalDependencies": {
     "canvas": "^2.11.2"
