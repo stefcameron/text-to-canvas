@@ -83,7 +83,7 @@
     "element-plus": "^2.8.7",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-vue": "^9.30.0",
+    "eslint-plugin-vue": "^9.31.0",
     "lodash": "^4.17.21",
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
