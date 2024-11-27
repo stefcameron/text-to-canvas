@@ -43,9 +43,9 @@
       "require": "./dist/text-to-canvas.cjs"
     },
     "default": {
+      "browser": "./dist/text-to-canvas.umd.min.js",
       "import": "./dist/text-to-canvas.esm.min.js",
-      "require": "./dist/text-to-canvas.min.js",
-      "browser": "./dist/text-to-canvas.umd.min.js"
+      "require": "./dist/text-to-canvas.min.js"
     }
   },
   "engines": {
