@@ -81,7 +81,7 @@
     "@typescript-eslint/parser": "^8.16.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "element-plus": "^2.8.8",
-    "eslint": "^8.57.0",
+    "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.31.0",
     "lodash": "^4.17.21",
