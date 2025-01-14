@@ -27,7 +27,12 @@ async function main() {
     if (word.text === 'ipsum') {
       word.format = { fontStyle: 'italic', fontColor: 'red' };
     } else if (word.text === 'consectetur') {
-      word.format = { fontWeight: '700', fontColor: 'blue' };
+      word.format = {
+        fontWeight: '700',
+        fontColor: 'blue',
+        strokeColor: 'cyan',
+        strokeWidth: 0.5,
+      };
     }
   });
 
@@ -47,6 +52,8 @@ async function main() {
       fontFamily: 'Times New Roman, serif',
       fontWeight: '400',
       fontColor: 'green',
+      strokeColor: 'yellow',
+      strokeWidth: 0.25,
       debug: true,
     }));
   } catch (err) {

@@ -29,6 +29,8 @@ export interface TextFormat {
   /**
    * Font size (px).
    *
+   * Base text format defaults to 14px. Otherwise, defaults to base text format.
+   *
    * ❗️ Rendering words at different sizes currently does not render well per text baseline.
    *  Prefer setting a common size as the base formatting for all text instead of setting
    *  a different size for a subset of Words.
@@ -45,8 +47,27 @@ export interface TextFormat {
   /** Font variant (CSS value). */
   fontVariant?: 'normal' | 'small-caps' | '';
 
-  /** CSS color value. */
+  /**
+   * CSS color value.
+   *
+   * Base text format defaults to black. Otherwise, defaults to base text format.
+   */
   fontColor?: string;
+
+  /**
+   * CSS color value.
+   *
+   * Base text format defaults to black. Otherwise, defaults to base text format.
+   */
+  strokeColor?: string;
+
+  /**
+   * Stroke width in pixels. `>= 0`, can be fractional.
+   *
+   * Base text format defaults to 0, which means no stroke/outline. Otherwise, defaults to
+   *  base text format.
+   */
+  strokeWidth?: number;
 
   // NOTE: line height is not currently supported
 }
