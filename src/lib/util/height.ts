@@ -10,6 +10,9 @@ const _getHeight = (ctx: CanvasRenderContext, text: string, style?: string) => {
   if (style) {
     ctx.font = style;
   }
+
+  // NOTE: this API does NOT account for the `lineWidth` used to add the stroke
+  //  effect via `strokeText()`; the stroke will bleed out of the measured box
   const { actualBoundingBoxAscent: height } = ctx.measureText(text);
 
   // Reset baseline

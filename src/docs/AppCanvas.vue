@@ -15,6 +15,8 @@ const initialConfig = {
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.',
   pos: { x: 100, y: 150 },
   size: { w: 300, h: 200 },
+  fontSize: 24,
+  strokeWidth: 0,
   align: 'center',
   vAlign: 'middle',
   justify: false,
@@ -56,9 +58,11 @@ function renderText() {
     overflow: config.overflow,
     // currently not configurable in demo UI
     fontFamily: 'Times New Roman, serif',
-    fontSize: 24,
+    fontSize: config.fontSize,
     fontWeight: '400',
     fontColor: 'slategray',
+    strokeWidth: config.strokeWidth,
+    strokeColor: 'lime',
   };
 
   const words = textToWords(config.text);
@@ -66,7 +70,12 @@ function renderText() {
     if (word.text === 'ipsum') {
       word.format = { fontStyle: 'italic', fontColor: 'red' };
     } else if (word.text === 'consectetur') {
-      word.format = { fontWeight: 'bold', fontColor: 'blue' };
+      word.format = {
+        fontWeight: 'bold',
+        fontColor: 'blue',
+        strokeColor: 'cyan',
+        strokeWidth: 0.5,
+      };
     }
   });
 
@@ -116,16 +125,43 @@ onMounted(() => {
           placeholder="Please input"
         />
         <p>
-          The library uses the concept of textboxes borrowed from popular image
-          editing software. You draw a rectangular box then place the text in
-          the box. Turn on <strong>debug mode</strong> (below) to see what is
-          happening.
+          💬 To keep the demo app simple while showing the library's rich text
+          features, the word "ipsum" is always rendered in italics/red without a
+          stroke, and the word "consectetur" always in bold/blue with a cyan
+          stroke fixed at 0.5px.
         </p>
         <p>
-          💬 To keep the demo app simple while showing the library's rich text
-          features, the word "ipsum" is always rendered in italics/red and the
-          word "consectetur" always in bold/blue.
+          🔺 Setting the <code>Stroke</code> too large will cause it to bleed
+          out of the box. <strong>This is expected</strong>, and a limitation of
+          using the <code>strokeText()</code> Canvas API to stroke the text. The
+          stroke is always drawn on the center of the edges, and is not
+          considered by the <code>measureText()</code> Canvas API.
         </p>
+        <p>
+          Turn on <strong>debug mode</strong> (below) to see the text box
+          boundaries.
+        </p>
+        <div class="slider">
+          <span class="label">Font size</span>
+          <el-slider
+            v-model="config.fontSize"
+            show-input
+            :min="0"
+            :max="128"
+            size="small"
+          />
+        </div>
+        <div class="slider">
+          <span class="label">Stroke 🔺</span>
+          <el-slider
+            v-model="config.strokeWidth"
+            show-input
+            :min="0"
+            :max="20"
+            :step="0.5"
+            size="small"
+          />
+        </div>
         <div class="slider">
           <span class="label">Pos X</span>
           <el-slider

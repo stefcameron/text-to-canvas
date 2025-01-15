@@ -6,7 +6,14 @@ import {
   wordsToJson,
 } from './util/split';
 import { getTextHeight, getWordHeight } from './util/height';
-import { getTextStyle, getTextFormat, DEFAULT_FONT_COLOR } from './util/style';
+import {
+  getTextStyle,
+  getTextFormat,
+  DEFAULT_FONT_COLOR,
+  DEFAULT_STROKE_COLOR,
+  DEFAULT_STROKE_WIDTH,
+  DEFAULT_STROKE_JOIN,
+} from './util/style';
 import { CanvasRenderContext, DrawTextConfig, Text } from './model';
 
 const drawText = (
@@ -21,6 +28,8 @@ const drawText = (
     fontVariant: config.fontVariant,
     fontWeight: config.fontWeight,
     fontColor: config.fontColor,
+    strokeColor: config.strokeColor,
+    strokeWidth: config.strokeWidth,
   });
 
   const {
@@ -56,6 +65,12 @@ const drawText = (
   ctx.textBaseline = textBaseline;
   ctx.font = getTextStyle(baseFormat);
   ctx.fillStyle = baseFormat.fontColor || DEFAULT_FONT_COLOR;
+  ctx.strokeStyle = baseFormat.strokeColor || DEFAULT_STROKE_COLOR;
+  ctx.lineJoin = DEFAULT_STROKE_JOIN; // for now, this is not configurable; if it becomes so, would have to also add config for `miterLimit`
+
+  // NOTE: setting `ctx.lineWidth` to a number <=0 results in the value being IGNORED (and default
+  //  value of 1 used); for now, just capture what the requested base stroke width is
+  const baseStrokeWidth = baseFormat.strokeWidth ?? DEFAULT_STROKE_WIDTH;
 
   if (config.overflow === false) {
     ctx.beginPath();
@@ -75,8 +90,23 @@ const drawText = (
           if (pw.format.fontColor) {
             ctx.fillStyle = pw.format.fontColor;
           }
+          if (pw.format.strokeColor) {
+            ctx.strokeStyle = pw.format.strokeColor;
+          }
         }
+
         ctx.fillText(pw.word.text, pw.x, pw.y);
+
+        // stroke AFTER fill so it goes on top
+        const lineWidth =
+          typeof pw.format?.strokeWidth === 'number'
+            ? pw.format.strokeWidth
+            : baseStrokeWidth;
+        if (lineWidth > 0) {
+          ctx.lineWidth = lineWidth;
+          ctx.strokeText(pw.word.text, pw.x, pw.y);
+        }
+
         if (pw.format) {
           ctx.restore();
         }
