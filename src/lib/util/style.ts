@@ -3,6 +3,9 @@ import { TextFormat } from '../model';
 export const DEFAULT_FONT_FAMILY = 'Arial';
 export const DEFAULT_FONT_SIZE = 14;
 export const DEFAULT_FONT_COLOR = 'black';
+export const DEFAULT_STROKE_COLOR = DEFAULT_FONT_COLOR;
+export const DEFAULT_STROKE_WIDTH = 0;
+export const DEFAULT_STROKE_JOIN = 'round';
 
 /**
  * Generates a text format based on defaults and any provided overrides.
@@ -23,6 +26,8 @@ export const getTextFormat = (
       fontStyle: '',
       fontVariant: '',
       fontColor: DEFAULT_FONT_COLOR,
+      strokeColor: DEFAULT_STROKE_COLOR,
+      strokeWidth: DEFAULT_STROKE_WIDTH,
     },
     baseFormat,
     format
