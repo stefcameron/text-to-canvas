@@ -79,7 +79,7 @@
     "@types/node": "^22.10.7",
     "@types/offscreencanvas": "^2019.7.3",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
-    "@typescript-eslint/parser": "^8.20.0",
+    "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "element-plus": "^2.9.3",
     "eslint": "^9.18.0",
