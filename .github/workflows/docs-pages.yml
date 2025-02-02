@@ -1,4 +1,4 @@
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+# Sample workflow for building and deploying a Vite site to GitHub Pages
 name: Docs-to-Pages
 
 on:
