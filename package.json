@@ -88,7 +88,7 @@
     "eslint-import-resolver-typescript": "^3.8.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-vue": "^9.32.0",
-    "globals": "^15.13.0",
+    "globals": "^16.0.0",
     "lodash": "^4.17.21",
     "prettier": "^3.5.0",
     "typescript": "^5.7.3",
