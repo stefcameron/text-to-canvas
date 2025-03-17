@@ -43,6 +43,11 @@ export const getWordHeight = ({
 
 /**
  * Gets the measured height of a given `string` using a given text style.
+ *
+ * 🔺 This function does not measure multi-line text. It only ever measures the first
+ *  line in the `text` as it uses the `CanvasRenderingContext2D.measureText()` API,
+ *  which does not account for text layout.
+ *
  * @returns {number} Height in pixels.
  */
 export const getTextHeight = ({
@@ -51,6 +56,12 @@ export const getTextHeight = ({
   style,
 }: {
   ctx: CanvasRenderContext;
+  /**
+   * Text to measure.
+   *
+   * 🔺 Newline characters will be ignored. The `CanvasRenderingContext2D.measureText()` API
+   *  is used to measure the text, and it does not account for text layout.
+   */
   text: string;
   /**
    * CSS font. Same syntax as CSS font specifier. If not specified, current `ctx` font

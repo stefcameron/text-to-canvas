@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## UNRELEASED
+
+- Added warning in TypeScript/JSDoc for the exported `getTextHeight()` function about it not supporting multi-line text.
+
 ## v1.2.0
 
 - New `strokeColor` and `strokeWidth` text formatting options to control the outline of the text ([#292](https://github.com/stefcameron/text-to-canvas/issues/292)).
