@@ -12,7 +12,7 @@ Local development is straightforward. Use the following CLI tools:
 Install all project dependencies:
 
 ```bash
-$ npm install
+$ npm install --include=optional
 ```
 
 ## Scripts
