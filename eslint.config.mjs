@@ -167,9 +167,9 @@ const baseRules = {
 
 const vueRules = {
   ...vue.configs.base.rules,
-  ...vue.configs['vue3-essential'].rules,
-  ...vue.configs['vue3-recommended'].rules,
-  ...vue.configs['vue3-strongly-recommended'].rules,
+  ...vue.configs.essential.rules,
+  ...vue.configs.recommended.rules,
+  ...vue.configs['strongly-recommended'].rules,
 
   'vue/html-self-closing': [
     'error',
