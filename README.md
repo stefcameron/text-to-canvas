@@ -76,8 +76,8 @@ Use in Node is only supported to the extent that appropriate bundles are provide
 
 Two bundles are provided for this type of target:
 
-- `./dist/text-to-canvas.esm.min.js` (ESM, `import`, ES2020+)
-- `./dist/text-to-canvas.min.js` (CJS, `require()`, ES2019+)
+- `./dist/text-to-canvas.esm.min.js` (ESM, `import`, ES2022+)
+- `./dist/text-to-canvas.min.js` (CJS, `require()`, ES2022+)
 
 Used implicitly when using the library in a larger app bundled with a bundler like Webpack, Rollup, or Vite.
 
@@ -129,7 +129,7 @@ const { height } = drawText(...);
 
 One bundle is provided for this type of target:
 
-- `./dist/text-to-canvas.umd.min.js` (UMD, ES2019+)
+- `./dist/text-to-canvas.umd.min.js` (UMD, ES2022+)
 
 Used implicitly when loading the library directly in a browser:
 
@@ -148,8 +148,8 @@ Used implicitly when loading the library directly in a browser:
 
 Two bundles are provided for this type of target:
 
-- `./dist/text-to-canvas.mjs` (ESM/MJS, `import`, Node v20.11.1+)
-- `./dist/text-to-canvas.cjs` (CJS, `require()`, Node v20.11.1+)
+- `./dist/text-to-canvas.mjs` (ESM/MJS, `import`, Node v22+)
+- `./dist/text-to-canvas.cjs` (CJS, `require()`, Node v22+)
 
 > ⚠️ Other than the bundles, __Node is not formally supported by this library__, and neither is the `node-canvas` library used in the demo. Whatever "Node Canvas" library you use, make sure it supports the [HTMLCanvasElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement) API and it _should_ work.
 
