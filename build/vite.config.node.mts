@@ -19,7 +19,7 @@ export default defineConfig({
   root: 'src',
   build: {
     // @see // @see https://vitejs.dev/config/build-options.html#build-target
-    target: 'node20.11.1', // should match package.json#engines.node minimum
+    target: 'node22', // should match package.json#engines.node minimum
     outDir: '../dist',
     emptyOutDir: false,
     sourcemap: false,

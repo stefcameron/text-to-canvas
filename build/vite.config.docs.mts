@@ -33,7 +33,8 @@ export default defineConfig({
   build: {
     // @see https://vitejs.dev/config/build-options.html#build-target
     // ES2020 is first version with dynamic import and `import.meta`, in particular
-    target: ['es2020', ...esmBrowserTargets],
+    // ES2022 supports `Array.at()`
+    target: ['es2022', ...esmBrowserTargets],
     outDir: '../../dist-docs',
     emptyOutDir: true,
   },
