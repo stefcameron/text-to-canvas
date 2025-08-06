@@ -72,6 +72,7 @@ const _splitIntoLines = (
 
     if (isWhitespace(word.text)) {
       // whitespace OTHER THAN newlines since we checked for newlines above
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
       // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       lines.at(-1)?.push(word);
       wasWhitespace = true;
@@ -85,10 +86,12 @@ const _splitIntoLines = (
     // looks like a non-empty, non-whitespace word at this point, so if it isn't the first
     //  word and the one before wasn't whitespace, insert a space
     if (inferWhitespace && !wasWhitespace && wordIdx > 0) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
       // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       lines.at(-1)?.push({ text: SPACE });
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
     // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
     lines.at(-1)?.push(word);
     wasWhitespace = false;
