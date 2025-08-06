@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "es2022",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ES2022", "DOM"],
     "moduleResolution": "Bundler",
     "strict": true,
     "sourceMap": true,

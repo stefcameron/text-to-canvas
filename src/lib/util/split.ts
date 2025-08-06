@@ -53,10 +53,10 @@ const _getWordHash = (word: Word) => {
  * @returns Words expressed as lines.
  */
 const _splitIntoLines = (
-  words: Word[],
+  words: Array<Word>,
   inferWhitespace: boolean = true
-): Word[][] => {
-  const lines: Word[][] = [[]];
+): Array<Array<Word>> => {
+  const lines: Array<Array<Word>> = [[]];
 
   let wasWhitespace = false; // true if previous word was whitespace
   words.forEach((word, wordIdx) => {
@@ -72,6 +72,8 @@ const _splitIntoLines = (
 
     if (isWhitespace(word.text)) {
       // whitespace OTHER THAN newlines since we checked for newlines above
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       lines.at(-1)?.push(word);
       wasWhitespace = true;
       return; // next `word`
@@ -84,9 +86,13 @@ const _splitIntoLines = (
     // looks like a non-empty, non-whitespace word at this point, so if it isn't the first
     //  word and the one before wasn't whitespace, insert a space
     if (inferWhitespace && !wasWhitespace && wordIdx > 0) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       lines.at(-1)?.push({ text: SPACE });
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+    // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
     lines.at(-1)?.push(word);
     wasWhitespace = false;
   });
@@ -114,7 +120,7 @@ const _generateSpec = ({
   },
 }: {
   /** Words organized/wrapped into lines to be rendered. */
-  wrappedLines: Word[][];
+  wrappedLines: Array<Array<Word>>;
 
   /** Map of Word to measured dimensions (px) as it would be rendered. */
   wordMap: WordMap;
@@ -170,7 +176,7 @@ const _generateSpec = ({
     lineY = boxY + boxHeight / 2 - totalHeight / 2;
   }
 
-  const lines = wrappedLines.map((line, lineIdx): PositionedWord[] => {
+  const lines = wrappedLines.map((line, lineIdx): Array<PositionedWord> => {
     const lineWidth = line.reduce(
       // NOTE: `metrics` must exist as every `word` MUST have been measured at this point
       (acc, word) => acc + word.metrics!.width,
@@ -289,7 +295,7 @@ export const specToJson = (specs: RenderSpec): string => {
  * @param words
  * @returns Words serialized as JSON.
  */
-export const wordsToJson = (words: Word[]): string => {
+export const wordsToJson = (words: Array<Word>): string => {
   return JSON.stringify(words, _jsonReplacer);
 };
 
@@ -410,7 +416,7 @@ export const splitWords = ({
   //  `splitPoint` could also be thought of as the number of `words` included in the `lineWidth`.
   //  - If `force=true`, will always be `words.length`.
   const measureLine = (
-    lineWords: Word[],
+    lineWords: Array<Word>,
     force: boolean = false
   ): {
     lineWidth: number;
@@ -475,7 +481,7 @@ export const splitWords = ({
   const hairWidth = justify
     ? _measureWord({ ctx, word: { text: HAIR }, wordMap, baseTextFormat })
     : 0;
-  const wrappedLines: Word[][] = [];
+  const wrappedLines: Array<Array<Word>> = [];
 
   // now further wrap every hard line to make sure it fits within the `boxWidth`, down to a
   //  MINIMUM of 1 Word per line
@@ -547,7 +553,7 @@ export const splitWords = ({
  * @returns Converted text.
  */
 export const textToWords = (text: string) => {
-  const words: Word[] = [];
+  const words: Array<Word> = [];
 
   // split the `text` into a series of Words, preserving whitespace
   let word: Word | undefined = undefined;

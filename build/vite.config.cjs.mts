@@ -20,10 +20,9 @@ export default defineConfig({
   root: 'src',
   build: {
     // @see https://vitejs.dev/config/build-options.html#build-target
-    // would be nice to make it es2020 but that means a lot of newer features
-    //  like dynamic imports, `import.meta`, nullish coalescing and optional
-    //  chaining operators, etc, that tend to not be supported in older bundlers
-    target: ['es2019', ...esmBrowserTargets],
+    // ES2020 is first version with dynamic import and `import.meta`, in particular
+    // ES2022 supports `Array.at()`
+    target: ['es2022', ...esmBrowserTargets],
     outDir: '../dist',
     emptyOutDir: false,
     sourcemap: true,
