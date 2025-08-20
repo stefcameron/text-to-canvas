@@ -100,6 +100,6 @@
     "vue-eslint-parser": "^10.2.0"
   },
   "optionalDependencies": {
-    "canvas": "^3.1.2"
+    "canvas": "^3.2.0"
   }
 }
