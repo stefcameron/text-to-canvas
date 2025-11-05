@@ -78,7 +78,7 @@
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.10.0",
     "@types/offscreencanvas": "^2019.7.3",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",
     "@vitejs/plugin-vue": "^6.0.1",
     "element-plus": "^2.11.7",
