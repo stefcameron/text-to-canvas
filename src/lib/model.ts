@@ -21,6 +21,7 @@ export interface TextMetricsLike {
 
 export type CanvasTextMetrics = TextMetrics | TextMetricsLike;
 
+// NOTE: line height is not currently supported
 export interface TextFormat {
   /** Font family (CSS value). */
   fontFamily?: string;
@@ -39,6 +40,7 @@ export interface TextFormat {
 
   /** Font weight (CSS value). */
   fontWeight?: string;
+
   /** Font style (CSS value) */
   fontStyle?: string;
 
@@ -50,14 +52,14 @@ export interface TextFormat {
   /**
    * CSS color value.
    *
-   * Base text format defaults to black. Otherwise, defaults to base text format.
+   * Defaults to base text format color (black).
    */
   fontColor?: string;
 
   /**
    * CSS color value.
    *
-   * Base text format defaults to black. Otherwise, defaults to base text format.
+   * Defaults to base text format color (black).
    */
   strokeColor?: string;
 
@@ -69,8 +71,89 @@ export interface TextFormat {
    */
   strokeWidth?: number;
 
-  // NOTE: line height is not currently supported
+  /**
+   * Specifies the underline text style. True will underline with all defaults. Use the
+   *  object form for customization.
+   */
+  underline?:
+    | boolean
+    | {
+        /**
+         * CSS color value.
+         *
+         * Defaults to base text format color (black).
+         */
+        color?: string;
+
+        /**
+         * Thickness of the line in pixels. `>= 0`, can be fractional. `0` effectively means
+         *  "no underline". Defaults to a number based on `fontSize` that aims to be balanced
+         *  (bigger/smaller the font, thicker/thinner the underline).
+         */
+        thickness?: number;
+
+        /**
+         * Offset, positive (move down, away from text) or negative (move up, toward text) to tweak
+         *  the exact position of the underline with respect to the text. Use this if the font
+         *  you're using is not working well with the default position.
+         */
+        offset?: number;
+      };
+
+  /**
+   * Specifies the strikethrough text style. True will strikethrough with all defaults. Use the
+   *  object form for customization.
+   */
+  strikethrough?:
+    | boolean
+    | {
+        /**
+         * CSS color value.
+         *
+         * Defaults to base text format color (black).
+         */
+        color?: string;
+
+        /**
+         * Thickness of the line in pixels. `>= 0`, can be fractional. `0` effectively means
+         *  "no strikethrough". Defaults to a number based on `fontSize` that aims to be balanced
+         *  (bigger/smaller the font, thicker/thinner the strikethrough).
+         */
+        thickness?: number;
+
+        /**
+         * Offset, positive (move down, away from text) or negative (move up, toward text) to tweak
+         *  the exact position of the strikethrough with respect to the text. Use this if the font
+         *  you're using is not working well with the default position.
+         */
+        offset?: number;
+      };
 }
+
+/**
+ * @private
+ * {@link TextFormat.underline} as object only.
+ */
+type _UnderlineObj = NonNullable<Exclude<TextFormat['underline'], boolean>>;
+
+/**
+ * @private
+ * {@link TextFormat.strikethrough} as object only.
+ */
+type _StrikethroughObj = NonNullable<
+  Exclude<TextFormat['strikethrough'], boolean>
+>;
+
+/**
+ * Version of {@link TextFormat} with all properties required, and `underline` only as its
+ *  full object form with all properties required.
+ */
+export type RequiredTextFormat = Required<
+  Omit<TextFormat, 'underline' | 'strikethrough'>
+> & {
+  underline: Required<_UnderlineObj>;
+  strikethrough: Required<_StrikethroughObj>;
+};
 
 export interface Word {
   /** The word. Can also be whitespace. */
@@ -90,7 +173,7 @@ export interface Word {
    *  `text` and `format` remain the same. If they change, simply set this property to `undefined`
    *  to force it to be re-measured.
    */
-  metrics?: CanvasTextMetrics; // NOTE: all property are flagged as `readonly` (good!)
+  metrics?: CanvasTextMetrics; // NOTE: all properties are flagged as `readonly` (good!)
 }
 
 export type PlainText = string;
@@ -223,7 +306,7 @@ export type WordHash = string;
  */
 export type WordMap = Map<
   WordHash,
-  { metrics: CanvasTextMetrics; format?: Required<TextFormat> }
+  { metrics: CanvasTextMetrics; format?: RequiredTextFormat }
 >;
 
 /**
@@ -243,7 +326,7 @@ export interface PositionedWord {
    *
    * ❗️ __Use this for actual rendering__ instead of the original `word.format`.
    */
-  readonly format?: Readonly<Required<TextFormat>>;
+  readonly format?: Readonly<RequiredTextFormat>;
 
   /** X position (px) relative to render box within 2D context. */
   readonly x: number;
@@ -261,6 +344,12 @@ export interface PositionedWord {
   readonly isWhitespace: boolean;
 }
 
+/** Supported text baselines, subset of `CanvasTextBaseline`. */
+export type RenderTextBaseline = 'top' | 'bottom';
+
+/**
+ * Specifies how to render the text as a whole onto Canvas.
+ */
 export interface RenderSpec {
   /**
    * Words split into lines as they would be visually wrapped on canvas if rendered
@@ -273,7 +362,7 @@ export interface RenderSpec {
    *
    * ❗️ Set this on the 2D context __before__ rendering the Words in the `lines`.
    */
-  readonly textBaseline: CanvasTextBaseline;
+  readonly textBaseline: RenderTextBaseline;
 
   /**
    * Alignment to use when rendering text based on alignment settings.

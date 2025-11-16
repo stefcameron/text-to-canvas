@@ -35,6 +35,8 @@ const initialConfig = {
   debug: false,
   overflow: true,
   fontFamily: 'Times New Roman',
+  underline: false,
+  strikethrough: false,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -71,22 +73,41 @@ function renderText() {
     overflow: config.overflow,
     fontFamily: config.fontFamily,
     fontSize: config.fontSize,
+    strokeWidth: config.strokeWidth,
+    underline: config.underline
+      ? {
+          color: 'green',
+        }
+      : false,
+    strikethrough: config.strikethrough
+      ? {
+          color: 'purple',
+        }
+      : false,
+    // currently not configurable in demo UI
     fontWeight: '400',
     fontColor: 'slategray',
-    strokeWidth: config.strokeWidth,
     strokeColor: 'lime',
   };
 
   const words = textToWords(config.text);
   words.forEach((word) => {
     if (word.text === 'ipsum') {
-      word.format = { fontStyle: 'italic', fontColor: 'red' };
+      word.format = {
+        fontStyle: 'italic',
+        fontColor: 'red',
+        underline: false,
+        strikethrough: false,
+      };
     } else if (word.text === 'consectetur') {
       word.format = {
         fontWeight: 'bold',
         fontColor: 'blue',
         strokeColor: 'cyan',
         strokeWidth: 0.5,
+        fontSize: config.fontSize,
+        underline: false,
+        strikethrough: false,
       };
     }
   });
@@ -140,7 +161,8 @@ onMounted(() => {
           💬 To keep the demo app simple while showing the library's rich text
           features, the word "ipsum" is always rendered in italics/red without a
           stroke, and the word "consectetur" always in bold/blue with a cyan
-          stroke fixed at 0.5px.
+          stroke fixed at 0.5px. Both words are also configured not to have an
+          underline or a strikethrough regardless of the setting being enabled.
         </p>
         <p>
           🔺 Setting the <code>Stroke</code> too large will cause it to bleed
@@ -254,6 +276,8 @@ onMounted(() => {
           </el-col>
           <el-col :span="8">
             <el-checkbox v-model="config.justify" label="Justify" />
+            <el-checkbox v-model="config.underline" label="Underline" />
+            <el-checkbox v-model="config.strikethrough" label="Strikethrough" />
           </el-col>
         </el-row>
         <br />

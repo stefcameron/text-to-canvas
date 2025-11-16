@@ -188,6 +188,8 @@ You can run this demo locally with `npm run node:demo`
 | `strokeColor`     | `'black'`    | Base stroke color, same as css color. Examples: `blue`, `#00ff00`. |
 | `strokeWidth`     | `0`          | Base stroke width. Positive number; `<=0` means none. Can be fractional. ⚠️ Word splitting does not take into account the stroke, which is applied on the __center__ of the edges of the text via the [strokeText()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeText) Canvas API. Setting a thick stroke will cause it to bleed out of the text box. |
 | `justify`         | `false`      | Justify text if `true`, it will insert spaces between words when necessary. |
+| `underline`       | `false`      | If the text or word should be underlined. Can also be an object with customization options like color, thickness, and offset. |
+| `strikethrough`   | `false`      | If the text or word should have a strikethrough. Can also be an object with customization options like color, thickness, and offset. |
 | `inferWhitespace` | `true`       | If whitespace in the text should be inferred. Only applies if the text given to `drawText()` is a `Word[]`. If the text is a `string`, this config setting is ignored. |
 | `overflow`        | `true`       | Allows the text to overflow out of the box if the box is too narrow/short to fit it all. `false` will clip the text to the box's boundaries. |
 | `debug`           | `false`      | Draws the border and alignment lines of the text box for debugging purposes. |

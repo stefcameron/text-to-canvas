@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## UNRELEASED
+
+- __Breaking:__ The `RenderSpec.textBaseline` property type has changed from `CanvasTextBaseline` to `RenderTextBaseline` which is a narrowing of possible baselines used for actual rendering.
+- Added new `TextFormat.underline` and `TextFormat.strikethrough` options.
+    - Set to true to enable with all defaults, or specify an object with `{ color?, thickness?, offset? }` properties to have more customization.
+    - By default, the thickness scales with the font size where `24px` font size yields a `1px` thick line. This simply seemed to be the best balance for the handful of fonts that were tested (Times New Roman, Arial, and Georgia). Tweak as needed for the font(s) you will use.
+
 ## v2.0.0
 
 - **Breaking:** Updated minimum supported of Node to `>=22` and builds now target `ES2022` at minimum.

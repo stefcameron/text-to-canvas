@@ -11,6 +11,8 @@ import {
   CanvasTextMetrics,
   TextFormat,
   CanvasRenderContext,
+  TextMetricsLike,
+  RenderTextBaseline,
 } from '../model';
 import { trimLine } from './trim';
 
@@ -163,7 +165,7 @@ const _generateSpec = ({
 
   // vertical alignment (defaults to middle)
   let lineY: number;
-  let textBaseline: CanvasTextBaseline;
+  let textBaseline: RenderTextBaseline;
   if (vAlign === 'top') {
     textBaseline = 'top';
     lineY = boxY;
@@ -254,9 +256,6 @@ const _generateSpec = ({
 //  the object being serialized on each call to the replacer
 const _jsonReplacer = function (key: string, value: unknown) {
   if (key === 'metrics' && value && typeof value === 'object') {
-    // TODO: need better typings here, if possible, so that TSC warns if we aren't
-    //  including a property we should be if a new one is needed in the future (i.e. if
-    //  a new property is added to the `TextMetricsLike` type)
     // NOTE: TextMetrics objects don't have own-enumerable properties; they only have getters,
     //  so we have to explicitly get the values we care about instead of spreading them into
     //  the new object
@@ -265,7 +264,7 @@ const _jsonReplacer = function (key: string, value: unknown) {
       width: metrics.width,
       fontBoundingBoxAscent: metrics.fontBoundingBoxAscent,
       fontBoundingBoxDescent: metrics.fontBoundingBoxDescent,
-    };
+    } satisfies TextMetricsLike;
   }
 
   return value;
@@ -470,7 +469,7 @@ export const splitWords = ({
     return {
       lines: [],
       textAlign: 'center',
-      textBaseline: 'middle',
+      textBaseline: 'top',
       width: positioning.width,
       height: 0,
     };
