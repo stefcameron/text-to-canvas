@@ -6,10 +6,6 @@ export const DEFAULT_FONT_COLOR = 'black';
 export const DEFAULT_STROKE_COLOR = DEFAULT_FONT_COLOR;
 export const DEFAULT_STROKE_WIDTH = 0;
 export const DEFAULT_STROKE_JOIN = 'round';
-export const DEFAULT_UNDERLINE_COLOR = DEFAULT_FONT_COLOR;
-export const DEFAULT_UNDERLINE_OFFSET = 0;
-export const DEFAULT_STRIKETHROUGH_COLOR = DEFAULT_FONT_COLOR;
-export const DEFAULT_STRIKETHROUGH_OFFSET = 0;
 
 /**
  * Shallow-merges `TextFormat` sources into `target` while ignoring source properties that are
@@ -33,14 +29,14 @@ const _formatMerge = (
     strokeColor: DEFAULT_STROKE_COLOR,
     strokeWidth: DEFAULT_STROKE_WIDTH,
     underline: {
-      color: DEFAULT_UNDERLINE_COLOR,
+      color: DEFAULT_FONT_COLOR,
       thickness: 0,
-      offset: NaN,
+      offset: 0,
     },
     strikethrough: {
-      color: DEFAULT_STRIKETHROUGH_COLOR,
+      color: DEFAULT_FONT_COLOR,
       thickness: 0,
-      offset: NaN,
+      offset: 0,
     },
   };
 
@@ -52,9 +48,11 @@ const _formatMerge = (
           if (sourceKey === 'underline' || sourceKey === 'strikethrough') {
             if (typeof sourceValue === 'boolean') {
               if (sourceValue) {
+                // NOTE: using empty string as TBD once we know font color
+                target[sourceKey].color = '';
                 // NOTE: using NaN as TBD once we know font size/family
-                target[sourceKey].thickness = sourceValue ? NaN : 0;
-                target[sourceKey].offset = sourceValue ? NaN : 0;
+                target[sourceKey].thickness = NaN;
+                target[sourceKey].offset = NaN;
               }
             } else if (
               sourceValue &&
@@ -73,6 +71,12 @@ const _formatMerge = (
                     underStrikeSource[k];
                 }
               });
+              if (!underStrikeSourceKeys.includes('color')) {
+                // since source specified an object (which enables underline) but did not
+                //  specify a color, set it to empty string so we know we need to set it to the
+                //  general font color once we're done
+                target[sourceKey].color = '';
+              }
               if (!underStrikeSourceKeys.includes('thickness')) {
                 // since source specified an object (which enables underline) but did not
                 //  specify a thickness, set it to NaN so we know we need to set it to the
@@ -151,6 +155,10 @@ export const getTextFormat = (
   const relativeThickness = result.fontSize / 24;
 
   underStrikeProps.forEach((prop) => {
+    if (result[prop].color === '') {
+      result[prop].color = result.fontColor;
+    }
+
     if (Number.isNaN(result[prop].thickness)) {
       result[prop].thickness = relativeThickness;
     }

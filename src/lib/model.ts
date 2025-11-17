@@ -79,9 +79,7 @@ export interface TextFormat {
     | boolean
     | {
         /**
-         * CSS color value.
-         *
-         * Defaults to base text format color (black).
+         * CSS color value. Defaults to text format color.
          */
         color?: string;
 
@@ -110,9 +108,7 @@ export interface TextFormat {
     | boolean
     | {
         /**
-         * CSS color value.
-         *
-         * Defaults to base text format color (black).
+         * CSS color value. Defaults to text format color.
          */
         color?: string;
 
