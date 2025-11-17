@@ -7,6 +7,17 @@ import cloneDeep from 'lodash/cloneDeep';
 const canvas = ref(null);
 const context = ref(null);
 
+const fontFamilies = [
+  'Times New Roman',
+  'Georgia',
+  'Courier New',
+  'Impact',
+  'Comic Sans MS',
+  'Roboto',
+  'Inter',
+  'Montserrat',
+];
+
 const renderTime = ref(0);
 
 const canvasSize = { w: 500, h: 500 };
@@ -22,6 +33,7 @@ const initialConfig = {
   justify: false,
   debug: false,
   overflow: true,
+  fontFamily: 'Times New Roman',
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -56,8 +68,7 @@ function renderText() {
     justify: config.justify,
     debug: config.debug,
     overflow: config.overflow,
-    // currently not configurable in demo UI
-    fontFamily: 'Times New Roman, serif',
+    fontFamily: config.fontFamily,
     fontSize: config.fontSize,
     fontWeight: '400',
     fontColor: 'slategray',
@@ -203,6 +214,23 @@ onMounted(() => {
           />
         </div>
 
+        <div class="dropdown">
+          <span class="label">Font Family</span>
+
+          <el-select
+            v-model="config.fontFamily"
+            placeholder="Select font"
+            size="medium"
+          >
+            <el-option
+              v-for="font in fontFamilies"
+              :key="font"
+              :label="font"
+              :value="font"
+            />
+          </el-select>
+        </div>
+
         <br />
         <el-row :gutter="12">
           <el-col :span="8">
@@ -262,7 +290,8 @@ canvas {
   max-width: 100%;
 }
 
-.slider {
+.slider,
+.dropdown {
   display: flex;
   align-items: center;
 }
@@ -270,7 +299,8 @@ canvas {
   margin-top: 0;
   margin-left: 12px;
 }
-.slider .label {
+.slider .label,
+.dropdown .label {
   font-size: 14px;
   color: var(--el-text-color-secondary);
   line-height: 44px;
@@ -280,7 +310,8 @@ canvas {
   white-space: nowrap;
   margin-bottom: 0;
 }
-.slider .label + .el-slider {
+.slider .label + .el-slider,
+.dropdown .label + .el-select {
   flex: 0 0 85%;
 }
 
