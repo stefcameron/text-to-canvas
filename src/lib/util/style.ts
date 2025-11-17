@@ -12,16 +12,18 @@ export const DEFAULT_STRIKETHROUGH_COLOR = DEFAULT_FONT_COLOR;
 export const DEFAULT_STRIKETHROUGH_OFFSET = 0;
 
 /**
- * Generates a text format based on defaults and any provided overrides.
- * @param format Overrides to `baseFormat` and default format.
- * @param baseFormat Overrides to default format.
- * @returns Full text format (all properties specified).
+ * Shallow-merges `TextFormat` sources into `target` while ignoring source properties that are
+ *  `undefined`, but deep-merges the `underline` and `strikethrough` properties if they are objects
+ *  on both.
+ * @param sources `TextFormat` sources to merge. Falsy sources are ignored/skipped.
+ * @returns Merged fully-spec'ed text format. Underline and strikethrough `thickness` will be
+ *  `NaN` if they should be set to whatever the relative thickness should be. `offset` will be
+ *  `NaN` if they should be set according to the current font.
  */
-export const getTextFormat = (
-  format?: TextFormat,
-  baseFormat?: TextFormat
+const _formatMerge = (
+  ...sources: Array<TextFormat | null | undefined | false | 0 | ''>
 ): RequiredTextFormat => {
-  const defaultFormat = {
+  const target: RequiredTextFormat = {
     fontFamily: DEFAULT_FONT_FAMILY,
     fontSize: DEFAULT_FONT_SIZE,
     fontWeight: '400',
@@ -33,16 +35,114 @@ export const getTextFormat = (
     underline: {
       color: DEFAULT_UNDERLINE_COLOR,
       thickness: 0,
-      offset: DEFAULT_UNDERLINE_OFFSET,
+      offset: NaN,
     },
     strikethrough: {
       color: DEFAULT_STRIKETHROUGH_COLOR,
       thickness: 0,
-      offset: DEFAULT_STRIKETHROUGH_OFFSET,
+      offset: NaN,
     },
   };
 
-  const result = Object.assign({}, defaultFormat, baseFormat, format);
+  sources.forEach((source) => {
+    if (source && typeof source === 'object' && !Array.isArray(source)) {
+      Object.entries(source).forEach(([sourceKey, sourceValue]) => {
+        if (sourceValue !== undefined) {
+          // deep-merge underline and strikethrough objects
+          if (sourceKey === 'underline' || sourceKey === 'strikethrough') {
+            if (typeof sourceValue === 'boolean') {
+              if (sourceValue) {
+                // NOTE: using NaN as TBD once we know font size/family
+                target[sourceKey].thickness = sourceValue ? NaN : 0;
+                target[sourceKey].offset = sourceValue ? NaN : 0;
+              }
+            } else if (
+              sourceValue &&
+              typeof sourceValue === 'object' &&
+              !Array.isArray(sourceValue)
+            ) {
+              const underStrikeSource = sourceValue as Partial<
+                RequiredTextFormat[typeof sourceKey]
+              >;
+              const underStrikeSourceKeys = Object.keys(
+                underStrikeSource
+              ) as (keyof RequiredTextFormat['underline'])[];
+              underStrikeSourceKeys.forEach((k) => {
+                if (underStrikeSource[k] !== undefined) {
+                  (target[sourceKey] as Record<string, unknown>)[k] =
+                    underStrikeSource[k];
+                }
+              });
+              if (!underStrikeSourceKeys.includes('thickness')) {
+                // since source specified an object (which enables underline) but did not
+                //  specify a thickness, set it to NaN so we know we need to set it to the
+                //  relative thickness once we're done
+                target[sourceKey].thickness = NaN;
+              }
+              if (!underStrikeSourceKeys.includes('offset')) {
+                // since source specified an object (which enables underline) but did not
+                //  specify a offset, set it to NaN so we know we need to set it to the
+                //  font-specific offset once we're done
+                target[sourceKey].offset = NaN;
+              }
+            }
+            // else, `sourceValue` is not boolean and not object: ignore
+          } else {
+            (target as Record<string, unknown>)[sourceKey] = sourceValue;
+          }
+        }
+      });
+    }
+  });
+
+  return target;
+};
+
+/**
+ * Generates a text format based on defaults and any provided overrides.
+ * @param format Overrides to `baseFormat` and default format.
+ * @param baseFormat Overrides to default format.
+ * @returns Full text format (all properties specified).
+ */
+export const getTextFormat = (
+  format?: TextFormat,
+  baseFormat?: TextFormat
+): RequiredTextFormat => {
+  const underStrikeProps: Array<'underline' | 'strikethrough'> = [
+    'underline',
+    'strikethrough',
+  ];
+
+  // create a "full" version of `format` and `baseFormat` which have `underline` and
+  //  `strikethrough` specified as objects only to make ensuing merges easier
+  const fullBaseFormat = {
+    ...baseFormat,
+  };
+  const fullFormat = {
+    ...format,
+  };
+  underStrikeProps.forEach((prop) => {
+    [fullBaseFormat, fullFormat].forEach((obj) => {
+      if (obj[prop] !== undefined) {
+        if (obj[prop] === true) {
+          obj[prop] = {
+            thickness: NaN,
+          };
+        } else if (obj[prop] === false) {
+          obj[prop] = {
+            thickness: 0,
+          };
+        } else {
+          // must be an object: clone it to protect the original from upcoming merges
+          obj[prop] = {
+            ...obj[prop],
+          };
+        }
+      }
+    });
+  });
+
+  const result = _formatMerge(fullBaseFormat, fullFormat);
 
   // NOTE: relative thickness is very likely subjective to the font being used,
   //  (i.e. some thinner fonts may find 1px thinkness at 24px font size still
@@ -50,57 +150,19 @@ export const getTextFormat = (
   //  we get a 1px thickness at 24px font size and thinner/thicker otherwise
   const relativeThickness = result.fontSize / 24;
 
-  const props: Array<'underline' | 'strikethrough'> = [
-    'underline',
-    'strikethrough',
-  ];
-  props.forEach((prop) => {
-    const baseProp =
-      typeof baseFormat?.[prop] === 'object' ? baseFormat[prop] : {};
+  underStrikeProps.forEach((prop) => {
+    if (Number.isNaN(result[prop].thickness)) {
+      result[prop].thickness = relativeThickness;
+    }
 
-    if (format?.[prop] === true) {
-      // result[prop] will be true as well
-      result[prop] = {
-        ...defaultFormat[prop],
-        ...baseProp,
-        thickness: relativeThickness,
-      };
-    } else if (
-      format?.[prop] === false ||
-      format?.[prop] === undefined ||
-      // check for case where `format[prop]` is explicitly set to `undefined`,
-      //  which would have overwrite the default in `result` coming from `defaultFormat`
-      //  per rules of `Object.assign()`
-      result[prop] === undefined
-    ) {
-      result[prop] = {
-        ...defaultFormat[prop],
-        ...baseProp,
-        thickness: 0,
-      };
-    } else {
-      // we have to have an object now for `result.underline` but it may be incomplete
-      //  if it came from `format.underline` which doesn't have to specify all properties
-      //  or could have set some of them explicitly to `undefined`
-      // NOTE: make sure underline/strikethrough property is a NEW object cloned from the
-      //  source one so that we don't inadvertently modify the source
-      result[prop] = {
-        ...(result[prop] || {}),
-      } as RequiredTextFormat[typeof prop];
-      if (result[prop].color === undefined) {
-        result[prop].color =
-          prop === 'underline'
-            ? DEFAULT_UNDERLINE_COLOR
-            : DEFAULT_STRIKETHROUGH_COLOR;
-      }
-      if (result[prop].offset === undefined) {
-        result[prop].offset =
-          prop === 'underline'
-            ? DEFAULT_UNDERLINE_OFFSET
-            : DEFAULT_STRIKETHROUGH_OFFSET;
-      }
-      if (result[prop].thickness === undefined) {
-        result[prop].thickness = relativeThickness;
+    if (Number.isNaN(result[prop].offset)) {
+      if (
+        result.fontFamily.startsWith('Verdana') ||
+        result.fontFamily.startsWith('Roboto')
+      ) {
+        result[prop].offset = -2;
+      } else {
+        result[prop].offset = 0;
       }
     }
   });

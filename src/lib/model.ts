@@ -96,6 +96,8 @@ export interface TextFormat {
          * Offset, positive (move down, away from text) or negative (move up, toward text) to tweak
          *  the exact position of the underline with respect to the text. Use this if the font
          *  you're using is not working well with the default position.
+         *
+         * By default, the offset will depend on the `fontFamily`.
          */
         offset?: number;
       };
@@ -125,6 +127,8 @@ export interface TextFormat {
          * Offset, positive (move down, away from text) or negative (move up, toward text) to tweak
          *  the exact position of the strikethrough with respect to the text. Use this if the font
          *  you're using is not working well with the default position.
+         *
+         * By default, the offset will depend on the `fontFamily`.
          */
         offset?: number;
       };
