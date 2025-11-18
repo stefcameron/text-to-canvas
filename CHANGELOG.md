@@ -4,12 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
-
-### Added
-
-- Make font-family configurable in demo UI
-
 ## v2.0.0
 
 - **Breaking:** Updated minimum supported of Node to `>=22` and builds now target `ES2022` at minimum.

@@ -8,14 +8,15 @@ const canvas = ref(null);
 const context = ref(null);
 
 const fontFamilies = [
-  'Times New Roman',
-  'Georgia',
-  'Courier New',
-  'Impact',
   'Comic Sans MS',
-  'Roboto',
+  'Courier New',
+  'Georgia',
+  'Impact',
   'Inter',
   'Montserrat',
+  'Roboto',
+  'Times New Roman',
+  'Verdana',
 ];
 
 const renderTime = ref(0);
@@ -223,7 +224,7 @@ onMounted(() => {
             size="medium"
           >
             <el-option
-              v-for="font in fontFamilies"
+              v-for="font in [...fontFamilies].sort()"
               :key="font"
               :label="font"
               :value="font"
