@@ -34,6 +34,13 @@ const initialConfig = {
   justify: false,
   debug: false,
   overflow: true,
+  underline: false,
+  strikethrough: false,
+
+  // ❗️ IMPORTANT: always initialize with a system font (one that is globally available on all
+  //  systems); any non-system fonts added MUST ALSO BE DOWNLOADED and won't render properly
+  //  initially if not previously installed -- add non-system fonts to INDEX.HTML Google Font
+  //  API request
   fontFamily: 'Times New Roman',
 };
 
@@ -71,22 +78,41 @@ function renderText() {
     overflow: config.overflow,
     fontFamily: config.fontFamily,
     fontSize: config.fontSize,
+    strokeWidth: config.strokeWidth,
+    underline: config.underline
+      ? {
+          color: 'green',
+        }
+      : false,
+    strikethrough: config.strikethrough
+      ? {
+          color: 'purple',
+        }
+      : false,
+    // currently not configurable in demo UI
     fontWeight: '400',
     fontColor: 'slategray',
-    strokeWidth: config.strokeWidth,
     strokeColor: 'lime',
   };
 
   const words = textToWords(config.text);
   words.forEach((word) => {
     if (word.text === 'ipsum') {
-      word.format = { fontStyle: 'italic', fontColor: 'red' };
+      word.format = {
+        fontStyle: 'italic',
+        fontColor: 'red',
+        underline: false,
+        strikethrough: false,
+      };
     } else if (word.text === 'consectetur') {
       word.format = {
         fontWeight: 'bold',
         fontColor: 'blue',
         strokeColor: 'cyan',
         strokeWidth: 0.5,
+        fontSize: config.fontSize,
+        underline: false,
+        strikethrough: false,
       };
     }
   });
@@ -140,7 +166,8 @@ onMounted(() => {
           💬 To keep the demo app simple while showing the library's rich text
           features, the word "ipsum" is always rendered in italics/red without a
           stroke, and the word "consectetur" always in bold/blue with a cyan
-          stroke fixed at 0.5px.
+          stroke fixed at 0.5px. Both words are also configured not to have an
+          underline or a strikethrough regardless of the setting being enabled.
         </p>
         <p>
           🔺 Setting the <code>Stroke</code> too large will cause it to bleed
@@ -153,6 +180,22 @@ onMounted(() => {
           Turn on <strong>debug mode</strong> (below) to see the text box
           boundaries.
         </p>
+        <div class="dropdown">
+          <span class="label">Font Family</span>
+
+          <el-select
+            v-model="config.fontFamily"
+            placeholder="Select font"
+            size="medium"
+          >
+            <el-option
+              v-for="font in [...fontFamilies].sort()"
+              :key="font"
+              :label="font"
+              :value="font"
+            />
+          </el-select>
+        </div>
         <div class="slider">
           <span class="label">Font size</span>
           <el-slider
@@ -214,25 +257,8 @@ onMounted(() => {
             size="small"
           />
         </div>
-
-        <div class="dropdown">
-          <span class="label">Font Family</span>
-
-          <el-select
-            v-model="config.fontFamily"
-            placeholder="Select font"
-            size="medium"
-          >
-            <el-option
-              v-for="font in [...fontFamilies].sort()"
-              :key="font"
-              :label="font"
-              :value="font"
-            />
-          </el-select>
-        </div>
-
         <br />
+
         <el-row :gutter="12">
           <el-col :span="8">
             <el-form-item label="Horizontal Align">
@@ -254,6 +280,8 @@ onMounted(() => {
           </el-col>
           <el-col :span="8">
             <el-checkbox v-model="config.justify" label="Justify" />
+            <el-checkbox v-model="config.underline" label="Underline" />
+            <el-checkbox v-model="config.strikethrough" label="Strikethrough" />
           </el-col>
         </el-row>
         <br />

@@ -14,7 +14,125 @@ import {
   DEFAULT_STROKE_WIDTH,
   DEFAULT_STROKE_JOIN,
 } from './util/style';
-import { CanvasRenderContext, DrawTextConfig, Text } from './model';
+import {
+  CanvasRenderContext,
+  DrawTextConfig,
+  PositionedWord,
+  RenderTextBaseline,
+  RequiredTextFormat,
+  Text,
+} from './model';
+
+/**
+ * @private
+ * Draws an underline on the Word, if necessary.
+ */
+const _drawUnderline = ({
+  pw,
+  textBaseline,
+  baseFormat,
+  ctx,
+}: {
+  /** Word to render. */
+  pw: PositionedWord;
+  /** Text baseline used to render the Word. */
+  textBaseline: RenderTextBaseline;
+  /** Base format when the Word doesn't specify a format override. */
+  baseFormat: RequiredTextFormat;
+  /** 2D canvas on which to render. */
+  ctx: CanvasRenderContext;
+}) => {
+  const lineWidth =
+    pw.format?.underline.thickness ?? baseFormat.underline.thickness;
+  if (lineWidth <= 0) {
+    return; // no underline
+  }
+
+  ctx.save();
+  ctx.lineWidth = lineWidth;
+  ctx.strokeStyle = pw.format?.underline.color ?? baseFormat.underline.color;
+
+  let underlineY = pw.y;
+  switch (textBaseline) {
+    case 'top':
+      underlineY += pw.height - (pw.word.metrics?.fontBoundingBoxDescent ?? 0);
+      break;
+    case 'bottom':
+      underlineY -= (pw.word.metrics?.fontBoundingBoxDescent ?? 0) / 2;
+      break;
+    default: {
+      // this will flag as an error if a new value is added to the `RenderTextBaseline`
+      //  union that we aren't handling in a case above
+      const never: never = textBaseline;
+      return never;
+    }
+  }
+
+  underlineY += pw.format?.underline.offset ?? baseFormat.underline.offset;
+
+  ctx.beginPath();
+  ctx.moveTo(pw.x, underlineY);
+  ctx.lineTo(pw.x + pw.width, underlineY);
+  ctx.stroke();
+  ctx.restore();
+};
+
+/**
+ * @private
+ * Draws a strikethrough on the Word, if necessary.
+ */
+const _drawStrikethrough = ({
+  pw,
+  textBaseline,
+  baseFormat,
+  ctx,
+}: {
+  /** Word to render. */
+  pw: PositionedWord;
+  /** Text baseline used to render the Word. */
+  textBaseline: RenderTextBaseline;
+  /** Base format when the Word doesn't specify a format override. */
+  baseFormat: RequiredTextFormat;
+  /** 2D canvas on which to render. */
+  ctx: CanvasRenderContext;
+}) => {
+  const lineWidth =
+    pw.format?.strikethrough.thickness ?? baseFormat.strikethrough.thickness;
+  if (lineWidth <= 0) {
+    return; // no strikethrough
+  }
+
+  ctx.save();
+  ctx.lineWidth = lineWidth;
+  ctx.strokeStyle =
+    pw.format?.strikethrough.color ?? baseFormat.strikethrough.color;
+
+  let strikethroughY = pw.y;
+  switch (textBaseline) {
+    case 'top':
+      strikethroughY += pw.height / 2;
+      break;
+    case 'bottom':
+      strikethroughY -=
+        pw.height / 2 - (pw.word.metrics?.fontBoundingBoxDescent ?? 0) / 3;
+      break;
+    default: {
+      // this will flag as an error if a new value is added to the `RenderTextBaseline`
+      //  union that we aren't handling in a case above
+      const never: never = textBaseline;
+      return never;
+    }
+  }
+
+  strikethroughY +=
+    pw.format?.strikethrough.offset ?? baseFormat.strikethrough.offset;
+
+  ctx.beginPath();
+  ctx.moveTo(pw.x, strikethroughY);
+  ctx.lineTo(pw.x + pw.width, strikethroughY);
+  ctx.stroke();
+  ctx.restore();
+};
 
 const drawText = (
   ctx: CanvasRenderContext,
@@ -30,6 +148,8 @@ const drawText = (
     fontColor: config.fontColor,
     strokeColor: config.strokeColor,
     strokeWidth: config.strokeWidth,
+    underline: config.underline,
+    strikethrough: config.strikethrough,
   });
 
   const {
@@ -111,6 +231,9 @@ const drawText = (
           ctx.restore();
         }
       }
+
+      _drawUnderline({ pw, textBaseline, baseFormat, ctx });
+      _drawStrikethrough({ pw, textBaseline, baseFormat, ctx });
     });
   });
 

@@ -33,6 +33,10 @@ async function main() {
         strokeColor: 'cyan',
         strokeWidth: 0.5,
       };
+    } else if (word.text === 'adipiscing') {
+      word.format = { underline: { offset: 1 } };
+    } else if (word.text === 'convallis') {
+      word.format = { strikethrough: { offset: 5 } };
     }
   });
 
