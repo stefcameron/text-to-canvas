@@ -23,7 +23,8 @@
     "build/**/*.ts",
     "build/**/*.mts",
     "src/**/*.ts",
-    "src/**/*.mts"
+    "src/**/*.mts",
+    "vitest.config.mts"
     // think twice about including "src/**/*.vue" here for use with typescript-eslint
     //  because you'll hit this and for a demo, it's just not worth it:
     //  https://stackoverflow.com/questions/64051706/eslint-doesnt-believe-that-ive-included-vue-files-in-my-tsconfig
