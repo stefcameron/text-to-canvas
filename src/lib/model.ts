@@ -95,7 +95,7 @@ export interface TextFormat {
          *  the exact position of the underline with respect to the text. Use this if the font
          *  you're using is not working well with the default position.
          *
-         * By default, the offset will depend on the `fontFamily`.
+         * By default, the offset will depend on the `fontFamily` and `fontSize`.
          */
         offset?: number;
       };
@@ -124,7 +124,7 @@ export interface TextFormat {
          *  the exact position of the strikethrough with respect to the text. Use this if the font
          *  you're using is not working well with the default position.
          *
-         * By default, the offset will depend on the `fontFamily`.
+         * By default, the offset will depend on the `fontFamily` and `fontSize`.
          */
         offset?: number;
       };

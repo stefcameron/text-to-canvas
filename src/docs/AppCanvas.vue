@@ -34,9 +34,14 @@ const initialConfig = {
   justify: false,
   debug: false,
   overflow: true,
-  fontFamily: 'Times New Roman',
   underline: false,
   strikethrough: false,
+
+  // ❗️ IMPORTANT: always initialize with a system font (one that is globally available on all
+  //  systems); any non-system fonts added MUST ALSO BE DOWNLOADED and won't render properly
+  //  initially if not previously installed -- add non-system fonts to INDEX.HTML Google Font
+  //  API request
+  fontFamily: 'Times New Roman',
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -175,6 +180,22 @@ onMounted(() => {
           Turn on <strong>debug mode</strong> (below) to see the text box
           boundaries.
         </p>
+        <div class="dropdown">
+          <span class="label">Font Family</span>
+
+          <el-select
+            v-model="config.fontFamily"
+            placeholder="Select font"
+            size="medium"
+          >
+            <el-option
+              v-for="font in [...fontFamilies].sort()"
+              :key="font"
+              :label="font"
+              :value="font"
+            />
+          </el-select>
+        </div>
         <div class="slider">
           <span class="label">Font size</span>
           <el-slider
@@ -236,25 +257,8 @@ onMounted(() => {
             size="small"
           />
         </div>
-
-        <div class="dropdown">
-          <span class="label">Font Family</span>
-
-          <el-select
-            v-model="config.fontFamily"
-            placeholder="Select font"
-            size="medium"
-          >
-            <el-option
-              v-for="font in [...fontFamilies].sort()"
-              :key="font"
-              :label="font"
-              :value="font"
-            />
-          </el-select>
-        </div>
-
         <br />
+
         <el-row :gutter="12">
           <el-col :span="8">
             <el-form-item label="Horizontal Align">

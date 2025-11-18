@@ -148,11 +148,13 @@ export const getTextFormat = (
 
   const result = _formatMerge(fullBaseFormat, fullFormat);
 
-  // NOTE: relative thickness is very likely subjective to the font being used,
-  //  (i.e. some thinner fonts may find 1px thinkness at 24px font size still
-  //  too thick) but for now, short of testing and mapping thousands of fonts,
-  //  we get a 1px thickness at 24px font size and thinner/thicker otherwise
-  const relativeThickness = result.fontSize / 24;
+  // NOTE: thickness and offset are subjective to the font being used, and in empirical testing
+  //  thus far, it looks like 1px thickness is good at 24px font size, and then it's directly
+  //  proportionate to the font size from there; it also looks to be the same directly proportionate
+  //  tweak for the offset based on 24px font size (i.e. certain fonts will require certain offsets
+  //  at 24px size, and then the offset should grow/shrink from there with the same factor as the
+  //  thickness)
+  const fontSizeFactor = result.fontSize / 24;
 
   underStrikeProps.forEach((prop) => {
     if (result[prop].color === '') {
@@ -160,18 +162,29 @@ export const getTextFormat = (
     }
 
     if (Number.isNaN(result[prop].thickness)) {
-      result[prop].thickness = relativeThickness;
+      result[prop].thickness = fontSizeFactor;
     }
 
+    // ❗️ IMPORTANT: always set the offset based on 24px FONT SIZE as that is the "zero"; offset
+    //  should be larger/smaller directly proportionate to the font size from that basis
     if (Number.isNaN(result[prop].offset)) {
       if (
-        result.fontFamily.startsWith('Verdana') ||
-        result.fontFamily.startsWith('Roboto')
+        result.fontFamily.startsWith('Roboto') ||
+        result.fontFamily.startsWith('Verdana')
       ) {
         result[prop].offset = -2;
+      } else if (
+        result.fontFamily === 'Inter' ||
+        result.fontFamily.startsWith('Montserrat')
+      ) {
+        result[prop].offset = -1;
+      } else if (result.fontFamily.startsWith('Comic Sans')) {
+        result[prop].offset = -5;
       } else {
         result[prop].offset = 0;
       }
+
+      result[prop].offset *= fontSizeFactor;
     }
   });
 
