@@ -19,6 +19,18 @@ const fontFamilies = [
   'Verdana',
 ];
 
+const colors = [
+  'black',
+  'red',
+  'blue',
+  'green',
+  'purple',
+  'orange',
+  'brown',
+  'gray',
+  'slategray',
+];
+
 const renderTime = ref(0);
 
 const canvasSize = { w: 500, h: 500 };
@@ -42,6 +54,8 @@ const initialConfig = {
   //  initially if not previously installed -- add non-system fonts to INDEX.HTML Google Font
   //  API request
   fontFamily: 'Times New Roman',
+  fontColor: 'slategray',
+  underlineColor: 'blue',
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -77,11 +91,13 @@ function renderText() {
     debug: config.debug,
     overflow: config.overflow,
     fontFamily: config.fontFamily,
+    fontColor: config.fontColor,
     fontSize: config.fontSize,
     strokeWidth: config.strokeWidth,
     underline: config.underline
       ? {
-          color: 'green',
+          color: config.underlineColor,
+          offset: config.underlineOffset,
         }
       : false,
     strikethrough: config.strikethrough
@@ -91,8 +107,7 @@ function renderText() {
       : false,
     // currently not configurable in demo UI
     fontWeight: '400',
-    fontColor: 'slategray',
-    strokeColor: 'lime',
+    strokeColor: config.strokeColor ?? 'lime',
   };
 
   const words = textToWords(config.text);
@@ -128,7 +143,6 @@ function redrawAndMeasure() {
   renderText();
   const t1 = performance.now();
   renderTime.value = t1 - t0;
-
   // eslint-disable-next-line no-console
   console.log(`Rendering took ${renderTime.value} milliseconds`);
 }
@@ -180,22 +194,40 @@ onMounted(() => {
           Turn on <strong>debug mode</strong> (below) to see the text box
           boundaries.
         </p>
-        <div class="dropdown">
-          <span class="label">Font Family</span>
+        <div class="wrapper">
+          <div class="dropdown">
+            <span class="label">Font Family</span>
+            <el-select
+              v-model="config.fontFamily"
+              placeholder="Select font"
+              size="medium"
+            >
+              <el-option
+                v-for="font in [...fontFamilies].sort()"
+                :key="font"
+                :label="font"
+                :value="font"
+              />
+            </el-select>
+          </div>
 
-          <el-select
-            v-model="config.fontFamily"
-            placeholder="Select font"
-            size="medium"
-          >
-            <el-option
-              v-for="font in [...fontFamilies].sort()"
-              :key="font"
-              :label="font"
-              :value="font"
-            />
-          </el-select>
+          <div class="dropdown">
+            <span class="label">Color</span>
+            <el-select
+              v-model="config.fontColor"
+              placeholder="Select color"
+              size="medium"
+            >
+              <el-option
+                v-for="color in colors"
+                :key="color"
+                :label="color"
+                :value="color"
+              />
+            </el-select>
+          </div>
         </div>
+
         <div class="slider">
           <span class="label">Font size</span>
           <el-slider
@@ -284,6 +316,34 @@ onMounted(() => {
             <el-checkbox v-model="config.strikethrough" label="Strikethrough" />
           </el-col>
         </el-row>
+        <div v-if="config.underline">
+          <div class="slider">
+            <span class="label">Offset</span>
+            <el-slider
+              v-model="config.underlineOffset"
+              :min="-20"
+              :max="50"
+              :step="1"
+              show-input
+              size="small"
+            />
+          </div>
+          <div class="underline">
+            <span class="underLabel">Color</span>
+            <el-select
+              v-model="config.underlineColor"
+              placeholder="Select color"
+              size="medium"
+            >
+              <el-option
+                v-for="underlineColor in colors"
+                :key="underlineColor"
+                :label="underlineColor"
+                :value="underlineColor"
+              />
+            </el-select>
+          </div>
+        </div>
         <br />
 
         <el-row :gutter="12">
@@ -317,6 +377,19 @@ onMounted(() => {
 canvas {
   background-color: #e7e6e8;
   max-width: 100%;
+}
+
+.underline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.underline .underLabel {
+  font-size: 14px;
+  width: 70px;
+  color: var(--el-text-color-secondary);
 }
 
 .slider,
