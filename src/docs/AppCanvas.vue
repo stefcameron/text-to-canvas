@@ -56,6 +56,7 @@ const initialConfig = {
   fontFamily: 'Times New Roman',
   fontColor: 'slategray',
   underlineColor: 'blue',
+  strikethroughColor: 'red',
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -102,7 +103,7 @@ function renderText() {
       : false,
     strikethrough: config.strikethrough
       ? {
-          color: 'purple',
+          color: config.strikethroughColor,
         }
       : false,
     // currently not configurable in demo UI
@@ -196,7 +197,7 @@ onMounted(() => {
         </p>
         <div class="wrapper">
           <div class="dropdown">
-            <span class="label">Font Family</span>
+            <span class="label">Font</span>
             <el-select
               v-model="config.fontFamily"
               placeholder="Select font"
@@ -211,20 +212,13 @@ onMounted(() => {
             </el-select>
           </div>
 
-          <div class="dropdown">
+          <div class="inline-option">
             <span class="label">Color</span>
-            <el-select
+            <input
+              type="color"
               v-model="config.fontColor"
-              placeholder="Select color"
-              size="medium"
-            >
-              <el-option
-                v-for="color in colors"
-                :key="color"
-                :label="color"
-                :value="color"
-              />
-            </el-select>
+              class="color-input"
+            />
           </div>
         </div>
 
@@ -291,9 +285,9 @@ onMounted(() => {
         </div>
         <br />
 
-        <el-row :gutter="12">
-          <el-col :span="8">
-            <el-form-item label="Horizontal Align">
+        <el-row :gutter="12" class="align-row">
+          <el-col :span="12">
+            <el-form-item label="Horizontal Align" class="align-item">
               <el-select v-model="config.align" placeholder="Align">
                 <el-option label="Center" value="center" />
                 <el-option label="Left" value="left" />
@@ -301,8 +295,8 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="Vertical Align">
+          <el-col :span="12">
+            <el-form-item label="Vertical Align" class="align-item">
               <el-select v-model="config.vAlign" placeholder="vAlign">
                 <el-option label="Middle" value="middle" />
                 <el-option label="Top" value="top" />
@@ -310,42 +304,58 @@ onMounted(() => {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-checkbox v-model="config.justify" label="Justify" />
-            <el-checkbox v-model="config.underline" label="Underline" />
-            <el-checkbox v-model="config.strikethrough" label="Strikethrough" />
-          </el-col>
         </el-row>
-        <div v-if="config.underline">
-          <div class="slider">
-            <span class="label">Offset</span>
-            <el-slider
-              v-model="config.underlineOffset"
-              :min="-20"
-              :max="50"
-              :step="1"
-              show-input
-              size="small"
-            />
+
+        <div class="checkbox-section">
+          <el-checkbox v-model="config.justify" label="Justify" />
+
+          <div class="checkbox-with-options">
+            <div class="checkbox-line">
+              <el-checkbox v-model="config.underline" label="Underline" />
+              <div v-if="config.underline" class="inline-options">
+                <div class="inline-option">
+                  <span class="option-label">Offset</span>
+                  <el-input-number
+                    v-model="config.underlineOffset"
+                    :min="-20"
+                    :max="50"
+                    :step="1"
+                    size="small"
+                    controls-position="right"
+                  />
+                </div>
+                <div class="inline-option">
+                  <span class="option-label">Color</span>
+                  <input
+                    type="color"
+                    v-model="config.underlineColor"
+                    class="color-input"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="underline">
-            <span class="underLabel">Color</span>
-            <el-select
-              v-model="config.underlineColor"
-              placeholder="Select color"
-              size="medium"
-            >
-              <el-option
-                v-for="underlineColor in colors"
-                :key="underlineColor"
-                :label="underlineColor"
-                :value="underlineColor"
+
+          <div class="checkbox-with-options">
+            <div class="checkbox-line">
+              <el-checkbox
+                v-model="config.strikethrough"
+                label="Strikethrough"
               />
-            </el-select>
+              <div v-if="config.strikethrough" class="inline-options">
+                <div class="inline-option">
+                  <span class="option-label">Color</span>
+                  <input
+                    type="color"
+                    v-model="config.strikethroughColor"
+                    class="color-input"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <br />
-
         <el-row :gutter="12">
           <el-col :span="12">
             <el-checkbox v-model="config.overflow" label="Overflow" />
@@ -378,18 +388,69 @@ canvas {
   background-color: #e7e6e8;
   max-width: 100%;
 }
+.align-row {
+  display: flex;
+}
 
-.underline {
+.align-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.align-item .el-form-item__label {
+  text-align: left;
+  margin-bottom: 8px;
+}
+.checkbox-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.checkbox-with-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-line {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 4px;
+}
+.inline-options {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
 }
 
-.underline .underLabel {
+.inline-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-input {
+  width: 100px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.color-input:focus {
+  border-color: #409eff;
+  outline: none;
+}
+
+.option-label {
   font-size: 14px;
-  width: 70px;
   color: var(--el-text-color-secondary);
+  min-width: 50px;
 }
 
 .slider,
@@ -397,10 +458,12 @@ canvas {
   display: flex;
   align-items: center;
 }
+
 .slider .el-slider {
   margin-top: 0;
   margin-left: 12px;
 }
+
 .slider .label,
 .dropdown .label {
   font-size: 14px;
@@ -412,6 +475,7 @@ canvas {
   white-space: nowrap;
   margin-bottom: 0;
 }
+
 .slider .label + .el-slider,
 .dropdown .label + .el-select {
   flex: 0 0 85%;
@@ -424,6 +488,19 @@ canvas {
 @media all and (max-width: 900px) {
   .flex {
     flex-direction: column;
+  }
+
+  .inline-options {
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 0;
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .checkbox-line {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -443,5 +520,14 @@ canvas {
 .bottom-text {
   font-size: 0.8em;
   color: #e7e6e8;
+}
+.wrapper {
+  display: flex;
+  gap: 16px;
+  margin: 10px 0;
+}
+
+.wrapper .dropdown {
+  flex: 1;
 }
 </style>
