@@ -19,18 +19,6 @@ const fontFamilies = [
   'Verdana',
 ];
 
-const colors = [
-  'black',
-  'red',
-  'blue',
-  'green',
-  'purple',
-  'orange',
-  'brown',
-  'gray',
-  'slategray',
-];
-
 const renderTime = ref(0);
 
 const canvasSize = { w: 500, h: 500 };
@@ -48,7 +36,6 @@ const initialConfig = {
   overflow: true,
   underline: false,
   strikethrough: false,
-
   // ❗️ IMPORTANT: always initialize with a system font (one that is globally available on all
   //  systems); any non-system fonts added MUST ALSO BE DOWNLOADED and won't render properly
   //  initially if not previously installed -- add non-system fonts to INDEX.HTML Google Font
@@ -57,6 +44,7 @@ const initialConfig = {
   fontColor: 'slategray',
   underlineColor: 'blue',
   strikethroughColor: 'red',
+  underlineThickness: 1,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -99,39 +87,27 @@ function renderText() {
       ? {
           color: config.underlineColor,
           offset: config.underlineOffset,
+          thickness: config.underlineThickness,
         }
       : false,
     strikethrough: config.strikethrough
       ? {
           color: config.strikethroughColor,
+          offset: config.strikethroughOffset,
         }
       : false,
     // currently not configurable in demo UI
     fontWeight: '400',
-    strokeColor: config.strokeColor ?? 'lime',
+    strokeColor: config.strokeColor,
   };
 
   const words = textToWords(config.text);
-  words.forEach((word) => {
-    if (word.text === 'ipsum') {
-      word.format = {
-        fontStyle: 'italic',
-        fontColor: 'red',
-        underline: false,
-        strikethrough: false,
-      };
-    } else if (word.text === 'consectetur') {
-      word.format = {
-        fontWeight: 'bold',
-        fontColor: 'blue',
-        strokeColor: 'cyan',
-        strokeWidth: 0.5,
-        fontSize: config.fontSize,
-        underline: false,
-        strikethrough: false,
-      };
-    }
-  });
+
+  if (config.fontStyle) {
+    words.forEach((word) => {
+      word.format = { ...(word.format || {}), fontStyle: 'italic' };
+    });
+  }
 
   const { height } = drawText(ctx, words, myConfig);
 
@@ -177,13 +153,6 @@ onMounted(() => {
           type="textarea"
           placeholder="Please input"
         />
-        <p>
-          💬 To keep the demo app simple while showing the library's rich text
-          features, the word "ipsum" is always rendered in italics/red without a
-          stroke, and the word "consectetur" always in bold/blue with a cyan
-          stroke fixed at 0.5px. Both words are also configured not to have an
-          underline or a strikethrough regardless of the setting being enabled.
-        </p>
         <p>
           🔺 Setting the <code>Stroke</code> too large will cause it to bleed
           out of the box. <strong>This is expected</strong>, and a limitation of
@@ -308,11 +277,11 @@ onMounted(() => {
 
         <div class="checkbox-section">
           <el-checkbox v-model="config.justify" label="Justify" />
-
+          <el-checkbox v-model="config.fontStyle" label="Italic" />
           <div class="checkbox-with-options">
             <div class="checkbox-line">
               <el-checkbox v-model="config.underline" label="Underline" />
-              <div v-if="config.underline" class="inline-options">
+              <div v-if="config.underline" class="inline-options underline">
                 <div class="inline-option">
                   <span class="option-label">Offset</span>
                   <el-input-number
@@ -325,10 +294,22 @@ onMounted(() => {
                   />
                 </div>
                 <div class="inline-option">
+                  <span class="option-label">Thickness</span>
+                  <el-input-number
+                    v-model="config.underlineThickness"
+                    :min="1"
+                    :max="10"
+                    :step="1"
+                    size="small"
+                    controls-position="right"
+                  />
+                </div>
+                <div class="inline-option">
                   <span class="option-label">Color</span>
                   <input
                     type="color"
                     v-model="config.underlineColor"
+                    placeholder="red"
                     class="color-input"
                   />
                 </div>
@@ -342,7 +323,19 @@ onMounted(() => {
                 v-model="config.strikethrough"
                 label="Strikethrough"
               />
+
               <div v-if="config.strikethrough" class="inline-options">
+                <div class="inline-option">
+                  <span class="option-label">Offset</span>
+                  <el-input-number
+                    v-model="config.strikethroughOffset"
+                    :min="-20"
+                    :max="50"
+                    :step="1"
+                    size="small"
+                    controls-position="right"
+                  />
+                </div>
                 <div class="inline-option">
                   <span class="option-label">Color</span>
                   <input
@@ -404,7 +397,7 @@ canvas {
 .checkbox-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin: 16px 0;
 }
 
@@ -418,23 +411,24 @@ canvas {
   align-items: center;
   gap: 12px;
 }
+
 .inline-options {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   margin-left: auto;
 }
 
 .inline-option {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .color-input {
-  width: 100px;
+  width: 80px;
   height: 32px;
-  padding: 2px;
+  padding: 1px;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   background: #ffffff;
@@ -450,7 +444,7 @@ canvas {
 .option-label {
   font-size: 14px;
   color: var(--el-text-color-secondary);
-  min-width: 50px;
+  min-width: 40px;
 }
 
 .slider,
@@ -529,5 +523,11 @@ canvas {
 
 .wrapper .dropdown {
   flex: 1;
+}
+
+.canvas-wrapper {
+  position: sticky;
+  top: 20px;
+  height: fit-content;
 }
 </style>
