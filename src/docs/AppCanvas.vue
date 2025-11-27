@@ -313,7 +313,6 @@ onMounted(() => {
                   <input
                     type="color"
                     v-model="config.underlineColor"
-                    placeholder="red"
                     class="color-input"
                   />
                 </div>
