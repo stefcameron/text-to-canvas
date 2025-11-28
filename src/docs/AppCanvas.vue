@@ -42,14 +42,14 @@ const initialConfig = {
   //  API request
   fontFamily: 'Times New Roman',
   fontColor: '#708090',
+  isItalic: false,
+  strokeColor: '#ff0000',
   underlineColor: '#0000ff',
-  strikethroughColor: '#ff0000',
   underlineThickness: 1,
   underlineOffset: 0,
-  strikethroughOffset: 0,
-  fontStyle: false,
-  strokeColor: '#ff0000',
+  strikethroughColor: '#ff0000',
   strikethroughThickness: 1,
+  strikethroughOffset: 0,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -104,7 +104,7 @@ function renderText() {
       : false,
     fontWeight: '400',
     strokeColor: config.strokeColor,
-    fontStyle: config.fontStyle ? 'italic' : 'normal',
+    fontStyle: config.isItalic ? 'italic' : 'normal',
   };
 
   const words = textToWords(config.text);
@@ -133,6 +133,9 @@ function renderText() {
   }
 
   const { height } = drawText(ctx, words, myConfig);
+
+  // eslint-disable-next-line no-console
+
   console.log(`Total height = ${height}`);
 }
 
@@ -180,10 +183,10 @@ onMounted(() => {
           stroke, and the word "consectetur" always in bold/blue with a cyan
           stroke fixed at 0.5px. Both words are also configured not to have an
           underline or a strikethrough regardless of the setting being enabled.
-          <strong
-            >This special formatting is only active when "Preserve per-word
-            formatting" is checked.</strong
-          >
+          <strong>
+            This special formatting is only active when "Preserve per-word
+            formatting" is checked.
+          </strong>
         </p>
         <p>
           🔺 Setting the <code>Stroke</code> too large will cause it to bleed
@@ -313,7 +316,7 @@ onMounted(() => {
             label="Preserve per-word formatting"
           />
           <el-checkbox v-model="config.justify" label="Justify" />
-          <el-checkbox v-model="config.fontStyle" label="Italic" />
+          <el-checkbox v-model="config.isItalic" label="Italic" />
           <div class="checkbox-with-options">
             <div class="checkbox-line">
               <el-checkbox v-model="config.underline" label="Underline" />
