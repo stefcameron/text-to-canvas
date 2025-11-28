@@ -48,7 +48,7 @@ const initialConfig = {
   underlineOffset: 0,
   strikethroughOffset: 0,
   fontStyle: false,
-  strokeColor: 'black',
+  strokeColor: '#ff0000',
   strikethroughThickness: 1,
 };
 
@@ -114,15 +114,15 @@ function renderText() {
       if (word.text === 'ipsum') {
         word.format = {
           fontStyle: 'italic',
-          fontColor: 'red',
+          fontColor: '#ff0000',
           underline: false,
           strikethrough: false,
         };
       } else if (word.text === 'consectetur') {
         word.format = {
           fontWeight: 'bold',
-          fontColor: 'blue',
-          strokeColor: 'cyan',
+          fontColor: '#0b27f9',
+          strokeColor: '#09fb19',
           strokeWidth: 0.5,
           fontSize: config.fontSize,
           underline: false,
@@ -135,10 +135,6 @@ function renderText() {
   const { height } = drawText(ctx, words, myConfig);
   console.log(`Total height = ${height}`);
 }
-
-watch([config, preservePerWordFormatting], () => {
-  debouncedRedrawAndMeasure();
-});
 
 function redrawAndMeasure() {
   const t0 = performance.now();
@@ -156,7 +152,7 @@ function initializeCanvas() {
   debouncedRedrawAndMeasure();
 }
 
-watch(config, () => {
+watch([config, preservePerWordFormatting], () => {
   debouncedRedrawAndMeasure();
 });
 
