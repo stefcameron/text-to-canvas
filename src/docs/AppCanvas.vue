@@ -42,6 +42,7 @@ const initialConfig = {
   //  API request
   fontFamily: 'Times New Roman',
   fontColor: '#708090',
+  isBold: false,
   isItalic: false,
   strokeColor: '#ff0000',
   underlineColor: '#0000ff',
@@ -64,6 +65,7 @@ function resetConfig() {
           : initialConfig[key];
     }
   }
+  preservePerWordFormatting.value = true;
 }
 
 function renderText() {
@@ -105,6 +107,7 @@ function renderText() {
     fontWeight: '400',
     strokeColor: config.strokeColor,
     fontStyle: config.isItalic ? 'italic' : 'normal',
+    fontWeight: config.isBold ? 'bold' : '400',
   };
 
   const words = textToWords(config.text);
@@ -225,7 +228,28 @@ onMounted(() => {
             />
           </div>
         </div>
-
+        <div class="stroke-wrapper">
+          <span class="label">Stroke🔺</span>
+          <div class="stroke-controls">
+            <el-slider
+              v-model="config.strokeWidth"
+              show-input
+              :min="0"
+              :max="20"
+              :step="0.5"
+              size="small"
+              class="stroke-slider"
+            />
+            <div class="stroke-color">
+              <span class="option-label">Color</span>
+              <input
+                type="color"
+                v-model="config.strokeColor"
+                class="color-input"
+              />
+            </div>
+          </div>
+        </div>
         <div class="slider">
           <span class="label">Font size</span>
           <el-slider
@@ -233,17 +257,6 @@ onMounted(() => {
             show-input
             :min="0"
             :max="128"
-            size="small"
-          />
-        </div>
-        <div class="slider">
-          <span class="label">Stroke 🔺</span>
-          <el-slider
-            v-model="config.strokeWidth"
-            show-input
-            :min="0"
-            :max="20"
-            :step="0.5"
             size="small"
           />
         </div>
@@ -311,12 +324,16 @@ onMounted(() => {
         </el-row>
 
         <div class="checkbox-section">
+          <div class="checkbox-line">
+            <span class="label">Appearance: </span>
+            <el-checkbox v-model="config.isBold" label="Bold" />
+            <el-checkbox v-model="config.isItalic" label="Italic" />
+            <el-checkbox v-model="config.justify" label="Justify" />
+          </div>
           <el-checkbox
             v-model="preservePerWordFormatting"
             label="Preserve per-word formatting"
           />
-          <el-checkbox v-model="config.justify" label="Justify" />
-          <el-checkbox v-model="config.isItalic" label="Italic" />
           <div class="checkbox-with-options">
             <div class="checkbox-line">
               <el-checkbox v-model="config.underline" label="Underline" />
@@ -439,6 +456,31 @@ canvas {
   flex-direction: column;
 }
 
+.stroke-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.stroke-controls {
+  display: flex;
+  align-items: center;
+  flex: 0 0 90%;
+  gap: 12px;
+}
+
+.stroke-slider {
+  flex: 1;
+  margin: 0 !important;
+}
+
+.stroke-color {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
 .align-item .el-form-item__label {
   text-align: left;
   margin-bottom: 8px;
@@ -490,7 +532,8 @@ canvas {
   outline: none;
 }
 
-.option-label {
+.option-label,
+.label {
   font-size: 14px;
   color: var(--el-text-color-secondary);
   min-width: 40px;
@@ -539,6 +582,25 @@ canvas {
     margin-left: 0;
     margin-top: 8px;
     width: 100%;
+  }
+  .stroke-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stroke-controls {
+    flex: 1;
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stroke-slider {
+    width: 100%;
+  }
+
+  .stroke-color {
+    align-self: flex-start;
   }
 
   .checkbox-line {
