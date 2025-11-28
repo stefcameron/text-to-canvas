@@ -41,9 +41,9 @@ const initialConfig = {
   //  initially if not previously installed -- add non-system fonts to INDEX.HTML Google Font
   //  API request
   fontFamily: 'Times New Roman',
-  fontColor: 'slategray',
-  underlineColor: 'blue',
-  strikethroughColor: 'red',
+  fontColor: '#708090',
+  underlineColor: '#0000ff',
+  strikethroughColor: '#ff0000',
   underlineThickness: 1,
   underlineOffset: 0,
   strikethroughOffset: 0,
@@ -53,6 +53,7 @@ const initialConfig = {
 };
 
 const config = reactive(cloneDeep(initialConfig));
+const preservePerWordFormatting = ref(true);
 
 function resetConfig() {
   for (const key of Object.keys(initialConfig)) {
@@ -71,7 +72,6 @@ function renderText() {
   }
 
   const ctx = context.value;
-
   ctx.clearRect(0, 0, canvasSize.w, canvasSize.h);
 
   const myConfig = {
@@ -102,7 +102,6 @@ function renderText() {
           thickness: config.strikethroughThickness,
         }
       : false,
-    // currently not configurable in demo UI
     fontWeight: '400',
     strokeColor: config.strokeColor,
     fontStyle: config.fontStyle ? 'italic' : 'normal',
@@ -110,11 +109,36 @@ function renderText() {
 
   const words = textToWords(config.text);
 
-  const { height } = drawText(ctx, words, myConfig);
+  if (preservePerWordFormatting.value) {
+    words.forEach((word) => {
+      if (word.text === 'ipsum') {
+        word.format = {
+          fontStyle: 'italic',
+          fontColor: 'red',
+          underline: false,
+          strikethrough: false,
+        };
+      } else if (word.text === 'consectetur') {
+        word.format = {
+          fontWeight: 'bold',
+          fontColor: 'blue',
+          strokeColor: 'cyan',
+          strokeWidth: 0.5,
+          fontSize: config.fontSize,
+          underline: false,
+          strikethrough: false,
+        };
+      }
+    });
+  }
 
-  // eslint-disable-next-line no-console
+  const { height } = drawText(ctx, words, myConfig);
   console.log(`Total height = ${height}`);
 }
+
+watch([config, preservePerWordFormatting], () => {
+  debouncedRedrawAndMeasure();
+});
 
 function redrawAndMeasure() {
   const t0 = performance.now();
@@ -154,6 +178,17 @@ onMounted(() => {
           type="textarea"
           placeholder="Please input"
         />
+        <p v-if="preservePerWordFormatting">
+          💬 To keep the demo app simple while showing the library's rich text
+          features, the word "ipsum" is always rendered in italics/red without a
+          stroke, and the word "consectetur" always in bold/blue with a cyan
+          stroke fixed at 0.5px. Both words are also configured not to have an
+          underline or a strikethrough regardless of the setting being enabled.
+          <strong
+            >This special formatting is only active when "Preserve per-word
+            formatting" is checked.</strong
+          >
+        </p>
         <p>
           🔺 Setting the <code>Stroke</code> too large will cause it to bleed
           out of the box. <strong>This is expected</strong>, and a limitation of
@@ -277,6 +312,10 @@ onMounted(() => {
         </el-row>
 
         <div class="checkbox-section">
+          <el-checkbox
+            v-model="preservePerWordFormatting"
+            label="Preserve per-word formatting"
+          />
           <el-checkbox v-model="config.justify" label="Justify" />
           <el-checkbox v-model="config.fontStyle" label="Italic" />
           <div class="checkbox-with-options">
