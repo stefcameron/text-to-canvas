@@ -49,6 +49,7 @@ const initialConfig = {
   strikethroughOffset: 0,
   fontStyle: false,
   strokeColor: 'black',
+  strikethroughThickness: 1,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -98,20 +99,16 @@ function renderText() {
       ? {
           color: config.strikethroughColor,
           offset: config.strikethroughOffset,
+          thickness: config.strikethroughThickness,
         }
       : false,
     // currently not configurable in demo UI
     fontWeight: '400',
     strokeColor: config.strokeColor,
+    fontStyle: config.fontStyle ? 'italic' : 'normal',
   };
 
   const words = textToWords(config.text);
-
-  if (config.fontStyle) {
-    words.forEach((word) => {
-      word.format = { ...(word.format || {}), fontStyle: 'italic' };
-    });
-  }
 
   const { height } = drawText(ctx, words, myConfig);
 
@@ -334,6 +331,17 @@ onMounted(() => {
                     v-model="config.strikethroughOffset"
                     :min="-20"
                     :max="50"
+                    :step="1"
+                    size="small"
+                    controls-position="right"
+                  />
+                </div>
+                <div class="inline-option">
+                  <span class="option-label">Thickness</span>
+                  <el-input-number
+                    v-model="config.strikethroughThickness"
+                    :min="1"
+                    :max="10"
                     :step="1"
                     size="small"
                     controls-position="right"
