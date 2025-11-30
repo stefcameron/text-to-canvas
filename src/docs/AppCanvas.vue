@@ -336,7 +336,10 @@ onMounted(() => {
           <div class="checkbox-with-options">
             <div class="checkbox-line">
               <el-checkbox v-model="config.underline" label="Underline" />
-              <div v-if="config.underline" class="inline-options underline">
+              <div
+                class="inline-options underline"
+                :class="{ 'hidden-options': !config.underline }"
+              >
                 <div class="inline-option">
                   <span class="option-label">Offset</span>
                   <el-input-number
@@ -369,45 +372,47 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="checkbox-with-options">
-            <div class="checkbox-line">
-              <el-checkbox
-                v-model="config.strikethrough"
-                label="Strikethrough"
-              />
-
-              <div v-if="config.strikethrough" class="inline-options">
-                <div class="inline-option">
-                  <span class="option-label">Offset</span>
-                  <el-input-number
-                    v-model="config.strikethroughOffset"
-                    :min="-20"
-                    :max="50"
-                    :step="1"
-                    size="small"
-                    controls-position="right"
-                  />
-                </div>
-                <div class="inline-option">
-                  <span class="option-label">Thickness</span>
-                  <el-input-number
-                    v-model="config.strikethroughThickness"
-                    :min="1"
-                    :max="10"
-                    :step="1"
-                    size="small"
-                    controls-position="right"
-                  />
-                </div>
-                <div class="inline-option">
-                  <span class="option-label">Color</span>
-                  <input
-                    type="color"
-                    v-model="config.strikethroughColor"
-                    class="color-input"
-                  />
+            <div class="checkbox-with-options">
+              <div class="checkbox-line">
+                <el-checkbox
+                  v-model="config.strikethrough"
+                  label="Strikethrough"
+                />
+                <div
+                  class="inline-options"
+                  :class="{ 'hidden-options': !config.strikethrough }"
+                >
+                  <div class="inline-option">
+                    <span class="option-label">Offset</span>
+                    <el-input-number
+                      v-model="config.strikethroughOffset"
+                      :min="-20"
+                      :max="50"
+                      :step="1"
+                      size="small"
+                      controls-position="right"
+                    />
+                  </div>
+                  <div class="inline-option">
+                    <span class="option-label">Thickness</span>
+                    <el-input-number
+                      v-model="config.strikethroughThickness"
+                      :min="1"
+                      :max="10"
+                      :step="1"
+                      size="small"
+                      controls-position="right"
+                    />
+                  </div>
+                  <div class="inline-option">
+                    <span class="option-label">Color</span>
+                    <input
+                      type="color"
+                      v-model="config.strikethroughColor"
+                      class="color-input"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -455,6 +460,15 @@ canvas {
   flex-direction: column;
 }
 
+.hidden-options {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+
 .stroke-wrapper {
   display: flex;
   align-items: center;
@@ -494,6 +508,7 @@ canvas {
 .checkbox-with-options {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
 .checkbox-line {
@@ -605,6 +620,14 @@ canvas {
   .checkbox-line {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .inline-options.hidden-options {
+    height: 0;
+  }
+
+  .inline-options:not(.hidden-options) {
+    height: auto;
+    margin-top: 8px;
   }
 }
 
