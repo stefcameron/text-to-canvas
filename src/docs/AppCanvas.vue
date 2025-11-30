@@ -27,27 +27,27 @@ const initialConfig = {
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin convallis eros.',
   pos: { x: 100, y: 150 },
   size: { w: 300, h: 200 },
-  fontSize: 24,
-  strokeWidth: 0,
-  align: 'center',
-  vAlign: 'middle',
-  justify: false,
-  debug: false,
-  overflow: true,
-  underline: false,
-  strikethrough: false,
   // ❗️ IMPORTANT: always initialize with a system font (one that is globally available on all
   //  systems); any non-system fonts added MUST ALSO BE DOWNLOADED and won't render properly
   //  initially if not previously installed -- add non-system fonts to INDEX.HTML Google Font
   //  API request
   fontFamily: 'Times New Roman',
   fontColor: '#708090',
+  fontSize: 24,
   isBold: false,
   isItalic: false,
-  strokeColor: '#ff0000',
+  strokeWidth: 0,
+  strokeColor: '#00ffff',
+  align: 'center',
+  vAlign: 'middle',
+  justify: false,
+  debug: false,
+  overflow: true,
+  underline: false,
   underlineColor: '#0000ff',
   underlineThickness: 1,
   underlineOffset: 0,
+  strikethrough: false,
   strikethroughColor: '#ff0000',
   strikethroughThickness: 1,
   strikethroughOffset: 0,
@@ -115,18 +115,20 @@ function renderText() {
     words.forEach((word) => {
       if (word.text === 'ipsum') {
         word.format = {
+          fontWeight: '400',
           fontStyle: 'italic',
-          fontColor: '#ff0000',
+          fontColor: 'red',
+          strokeWidth: 0,
           underline: false,
           strikethrough: false,
         };
       } else if (word.text === 'consectetur') {
         word.format = {
           fontWeight: 'bold',
-          fontColor: '#0b27f9',
-          strokeColor: '#09fb19',
+          fontStyle: 'normal',
+          fontColor: 'blue',
+          strokeColor: 'lime',
           strokeWidth: 0.5,
-          fontSize: config.fontSize,
           underline: false,
           strikethrough: false,
         };
@@ -137,7 +139,6 @@ function renderText() {
   const { height } = drawText(ctx, words, myConfig);
 
   // eslint-disable-next-line no-console
-
   console.log(`Total height = ${height}`);
 }
 
@@ -201,23 +202,20 @@ onMounted(() => {
           Turn on <strong>debug mode</strong> (below) to see the text box
           boundaries.
         </p>
-        <div class="wrapper">
-          <div class="dropdown">
-            <span class="label">Font</span>
-            <el-select
-              v-model="config.fontFamily"
-              placeholder="Select font"
-              size="medium"
-            >
-              <el-option
-                v-for="font in [...fontFamilies].sort()"
-                :key="font"
-                :label="font"
-                :value="font"
-              />
-            </el-select>
-          </div>
-
+        <div class="font-wrapper">
+          <span class="label">Font</span>
+          <el-select
+            v-model="config.fontFamily"
+            placeholder="Select font"
+            size="medium"
+          >
+            <el-option
+              v-for="font in [...fontFamilies].sort()"
+              :key="font"
+              :label="font"
+              :value="font"
+            />
+          </el-select>
           <div class="inline-option">
             <span class="label">Color</span>
             <input
@@ -472,14 +470,15 @@ canvas {
 .stroke-wrapper {
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin: 10px 0 0 0;
 }
 
 .stroke-controls {
   display: flex;
   align-items: center;
-  flex: 0 0 90%;
+  flex: 1 1 auto;
   gap: 12px;
+  margin-left: 10px;
 }
 
 .stroke-slider {
@@ -565,11 +564,13 @@ canvas {
 }
 
 .slider .label,
-.dropdown .label {
+.dropdown .label,
+.stroke-wrapper .label {
   font-size: 14px;
   color: var(--el-text-color-secondary);
   line-height: 44px;
-  flex: 1;
+  flex: 0 0 auto;
+  min-width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -585,6 +586,38 @@ canvas {
   display: flex;
 }
 
+.flex > div {
+  flex: 1;
+}
+
+.canvas-wrapper {
+  margin: 20px auto;
+}
+
+.controls-wrapper {
+  margin: 20px auto;
+  margin-left: 12px;
+}
+
+.bottom-text {
+  font-size: 0.8em;
+  color: #e7e6e8;
+}
+.font-wrapper {
+  display: flex;
+  gap: 16px;
+}
+
+.font-wrapper .el-select {
+  margin-left: 32px;
+}
+
+.canvas-wrapper {
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
 @media all and (max-width: 900px) {
   .flex {
     flex-direction: column;
@@ -597,15 +630,10 @@ canvas {
     margin-top: 8px;
     width: 100%;
   }
-  .stroke-wrapper {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
   .stroke-controls {
     flex: 1;
     width: 100%;
-    flex-direction: column;
     gap: 8px;
   }
 
@@ -629,38 +657,9 @@ canvas {
     height: auto;
     margin-top: 8px;
   }
-}
 
-.flex > div {
-  flex: 1;
-}
-
-.canvas-wrapper {
-  margin: 20px auto;
-}
-
-.controls-wrapper {
-  margin: 20px auto;
-  margin-left: 12px;
-}
-
-.bottom-text {
-  font-size: 0.8em;
-  color: #e7e6e8;
-}
-.wrapper {
-  display: flex;
-  gap: 16px;
-  margin: 10px 0;
-}
-
-.wrapper .dropdown {
-  flex: 1;
-}
-
-.canvas-wrapper {
-  position: sticky;
-  top: 20px;
-  height: fit-content;
+  .canvas-wrapper {
+    position: static;
+  }
 }
 </style>
