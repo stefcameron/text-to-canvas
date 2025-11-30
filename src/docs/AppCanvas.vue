@@ -104,7 +104,6 @@ function renderText() {
           thickness: config.strikethroughThickness,
         }
       : false,
-    fontWeight: '400',
     strokeColor: config.strokeColor,
     fontStyle: config.isItalic ? 'italic' : 'normal',
     fontWeight: config.isBold ? 'bold' : '400',
