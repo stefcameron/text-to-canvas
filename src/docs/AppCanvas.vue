@@ -19,6 +19,57 @@ const fontFamilies = [
   'Verdana',
 ];
 
+const fontSpecificOffsets = {
+  'Comic Sans MS': {
+    underline: -2,
+    strikethrough: -4,
+  },
+  'Times New Roman': {
+    underline: 0,
+    strikethrough: 0,
+  },
+  'Courier New': {
+    underline: 1,
+    strikethrough: -1,
+  },
+  Georgia: {
+    underline: -1,
+    strikethrough: 0,
+  },
+  Impact: {
+    underline: 0,
+    strikethrough: 0,
+  },
+  Inter: {
+    underline: 0,
+    strikethrough: -2,
+  },
+  Montserrat: {
+    underline: 0,
+    strikethrough: 0,
+  },
+  Roboto: {
+    underline: 0,
+    strikethrough: 0,
+  },
+  Verdana: {
+    underline: -1,
+    strikethrough: 5,
+  },
+};
+
+function getSmartOffset(fontFamily, type) {
+  const offsets = fontSpecificOffsets[fontFamily];
+  if (!offsets) return 0;
+
+  if (type === 'underline') {
+    return offsets.underline !== undefined ? offsets.underline : 0;
+  } else if (type === 'strikethrough') {
+    return offsets.strikethrough !== undefined ? offsets.strikethrough : 0;
+  }
+  return 0;
+}
+
 const renderTime = ref(0);
 
 const canvasSize = { w: 500, h: 500 };
@@ -46,11 +97,11 @@ const initialConfig = {
   underline: false,
   underlineColor: '#0000ff',
   underlineThickness: 1,
-  underlineOffset: 0,
+  underlineOffset: null,
   strikethrough: false,
   strikethroughColor: '#ff0000',
   strikethroughThickness: 1,
-  strikethroughOffset: 0,
+  strikethroughOffset: null,
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -76,6 +127,16 @@ function renderText() {
   const ctx = context.value;
   ctx.clearRect(0, 0, canvasSize.w, canvasSize.h);
 
+  const underlineOffsetToUse =
+    config.underlineOffset === null
+      ? getSmartOffset(config.fontFamily, 'underline')
+      : config.underlineOffset || 0;
+
+  const strikethroughOffsetToUse =
+    config.strikethroughOffset === null
+      ? getSmartOffset(config.fontFamily, 'strikethrough')
+      : config.strikethroughOffset || 0;
+
   const myConfig = {
     x: config.pos.x,
     y: config.pos.y,
@@ -93,14 +154,14 @@ function renderText() {
     underline: config.underline
       ? {
           color: config.underlineColor,
-          offset: config.underlineOffset,
+          offset: underlineOffsetToUse,
           thickness: config.underlineThickness,
         }
       : false,
     strikethrough: config.strikethrough
       ? {
           color: config.strikethroughColor,
-          offset: config.strikethroughOffset,
+          offset: strikethroughOffsetToUse,
           thickness: config.strikethroughThickness,
         }
       : false,
@@ -335,7 +396,7 @@ onMounted(() => {
             <div class="checkbox-line">
               <el-checkbox v-model="config.underline" label="Underline" />
               <div
-                class="inline-options underline"
+                class="inline-options"
                 :class="{ 'hidden-options': !config.underline }"
               >
                 <div class="inline-option">
@@ -347,6 +408,8 @@ onMounted(() => {
                     :step="1"
                     size="small"
                     controls-position="right"
+                    :clearable="true"
+                    placeholder="auto"
                   />
                 </div>
                 <div class="inline-option">
@@ -370,52 +433,54 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-
-            <div class="checkbox-with-options">
-              <div class="checkbox-line">
-                <el-checkbox
-                  v-model="config.strikethrough"
-                  label="Strikethrough"
-                />
-                <div
-                  class="inline-options"
-                  :class="{ 'hidden-options': !config.strikethrough }"
-                >
-                  <div class="inline-option">
-                    <span class="option-label">Offset</span>
-                    <el-input-number
-                      v-model="config.strikethroughOffset"
-                      :min="-20"
-                      :max="50"
-                      :step="1"
-                      size="small"
-                      controls-position="right"
-                    />
-                  </div>
-                  <div class="inline-option">
-                    <span class="option-label">Thickness</span>
-                    <el-input-number
-                      v-model="config.strikethroughThickness"
-                      :min="1"
-                      :max="10"
-                      :step="1"
-                      size="small"
-                      controls-position="right"
-                    />
-                  </div>
-                  <div class="inline-option">
-                    <span class="option-label">Color</span>
-                    <input
-                      type="color"
-                      v-model="config.strikethroughColor"
-                      class="color-input"
-                    />
-                  </div>
+          </div>
+          <div class="checkbox-with-options">
+            <div class="checkbox-line">
+              <el-checkbox
+                v-model="config.strikethrough"
+                label="Strikethrough"
+              />
+              <div
+                class="inline-options"
+                :class="{ 'hidden-options': !config.strikethrough }"
+              >
+                <div class="inline-option">
+                  <span class="option-label">Offset</span>
+                  <el-input-number
+                    v-model="config.strikethroughOffset"
+                    :min="-20"
+                    :max="50"
+                    :step="1"
+                    size="small"
+                    controls-position="right"
+                    :clearable="true"
+                    placeholder="auto"
+                  />
+                </div>
+                <div class="inline-option">
+                  <span class="option-label">Thickness</span>
+                  <el-input-number
+                    v-model="config.strikethroughThickness"
+                    :min="1"
+                    :max="10"
+                    :step="1"
+                    size="small"
+                    controls-position="right"
+                  />
+                </div>
+                <div class="inline-option">
+                  <span class="option-label">Color</span>
+                  <input
+                    type="color"
+                    v-model="config.strikethroughColor"
+                    class="color-input"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
+
         <br />
         <el-row :gutter="12">
           <el-col :span="12">
