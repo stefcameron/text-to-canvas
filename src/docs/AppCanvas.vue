@@ -19,57 +19,6 @@ const fontFamilies = [
   'Verdana',
 ];
 
-const fontSpecificOffsets = {
-  'Comic Sans MS': {
-    underline: -2,
-    strikethrough: -4,
-  },
-  'Times New Roman': {
-    underline: 0,
-    strikethrough: 0,
-  },
-  'Courier New': {
-    underline: 1,
-    strikethrough: -1,
-  },
-  Georgia: {
-    underline: -1,
-    strikethrough: 0,
-  },
-  Impact: {
-    underline: 0,
-    strikethrough: 0,
-  },
-  Inter: {
-    underline: 0,
-    strikethrough: -2,
-  },
-  Montserrat: {
-    underline: 0,
-    strikethrough: 0,
-  },
-  Roboto: {
-    underline: 0,
-    strikethrough: 0,
-  },
-  Verdana: {
-    underline: -1,
-    strikethrough: 5,
-  },
-};
-
-function getSmartOffset(fontFamily, type) {
-  const offsets = fontSpecificOffsets[fontFamily];
-  if (!offsets) return 0;
-
-  if (type === 'underline') {
-    return offsets.underline !== undefined ? offsets.underline : 0;
-  } else if (type === 'strikethrough') {
-    return offsets.strikethrough !== undefined ? offsets.strikethrough : 0;
-  }
-  return 0;
-}
-
 const renderTime = ref(0);
 
 const canvasSize = { w: 500, h: 500 };
@@ -128,14 +77,12 @@ function renderText() {
   ctx.clearRect(0, 0, canvasSize.w, canvasSize.h);
 
   const underlineOffsetToUse =
-    config.underlineOffset === null
-      ? getSmartOffset(config.fontFamily, 'underline')
-      : config.underlineOffset || 0;
+    config.underlineOffset === null ? undefined : config.underlineOffset;
 
   const strikethroughOffsetToUse =
     config.strikethroughOffset === null
-      ? getSmartOffset(config.fontFamily, 'strikethrough')
-      : config.strikethroughOffset || 0;
+      ? undefined
+      : config.strikethroughOffset;
 
   const myConfig = {
     x: config.pos.x,
@@ -392,6 +339,7 @@ onMounted(() => {
             v-model="preservePerWordFormatting"
             label="Preserve per-word formatting"
           />
+
           <div class="checkbox-with-options">
             <div class="checkbox-line">
               <el-checkbox v-model="config.underline" label="Underline" />
@@ -408,9 +356,16 @@ onMounted(() => {
                     :step="1"
                     size="small"
                     controls-position="right"
-                    :clearable="true"
-                    placeholder="auto"
                   />
+                  <el-button
+                    @click="config.underlineOffset = null"
+                    size="small"
+                    type="text"
+                    class="clear-btn"
+                    title="Clear to use auto offset"
+                  >
+                    ✕
+                  </el-button>
                 </div>
                 <div class="inline-option">
                   <span class="option-label">Thickness</span>
@@ -453,9 +408,16 @@ onMounted(() => {
                     :step="1"
                     size="small"
                     controls-position="right"
-                    :clearable="true"
-                    placeholder="auto"
                   />
+                  <el-button
+                    @click="config.strikethroughOffset = null"
+                    size="small"
+                    type="text"
+                    class="clear-btn"
+                    title="Clear to use auto offset"
+                  >
+                    ✕
+                  </el-button>
                 </div>
                 <div class="inline-option">
                   <span class="option-label">Thickness</span>
@@ -480,7 +442,6 @@ onMounted(() => {
             </div>
           </div>
         </div>
-
         <br />
         <el-row :gutter="12">
           <el-col :span="12">
@@ -521,6 +482,18 @@ canvas {
 .align-item {
   display: flex;
   flex-direction: column;
+}
+
+.clear-btn {
+  width: 6px;
+  height: 24px;
+  font-size: 10px;
+  color: #999;
+}
+
+.clear-btn:hover {
+  color: #f56c6c;
+  background-color: #fef0f0;
 }
 
 .hidden-options {
@@ -591,7 +564,7 @@ canvas {
 .inline-option {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .color-input {
