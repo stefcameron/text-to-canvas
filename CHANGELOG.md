@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## UNRELEASED
+
+- Fixed a bug where specifying any allowed property of `TextFormat.underline` or `TextFormat.strikethrough` as `undefined` was not resulting in the default behavior. `undefined` is treated as equivalent to the absence of the property.
+
 ## v3.0.0
 
 - __Breaking:__ The `RenderSpec.textBaseline` property type has changed from `CanvasTextBaseline` to `RenderTextBaseline` which is a narrowing of possible baselines used for actual rendering.

@@ -174,4 +174,62 @@ describe('getTextFormat', () => {
       expect(formatDefault.underline.offset).toBe(0);
     });
   });
+
+  describe('merging with undefined values', () => {
+    it('should not override underline.color when merging with undefined color', () => {
+      // When format has { underline: { color: undefined, thickness: 2 } } and
+      // baseFormat has { underline: { color: 'red' } }, the undefined color should
+      // not override the existing 'red' value from baseFormat
+      const result = getTextFormat(
+        { underline: { color: undefined, thickness: 2 } },
+        { underline: { color: 'red' } }
+      );
+      expect(result.underline.color).toBe('red');
+      expect(result.underline.thickness).toBe(2);
+    });
+
+    it('should not override underline.thickness when merging with undefined thickness', () => {
+      // baseFormat sets thickness to 5, format sets thickness to undefined (with another property set)
+      // Expected: thickness should remain 5 from baseFormat
+      const result = getTextFormat(
+        { underline: { thickness: undefined, color: 'green' } },
+        { underline: { thickness: 5 } }
+      );
+      expect(result.underline.thickness).toBe(5);
+      expect(result.underline.color).toBe('green');
+    });
+
+    it('should not override underline.offset when merging with undefined offset', () => {
+      // baseFormat sets offset to 10, format sets offset to undefined (with another property set)
+      // Expected: offset should remain 10 from baseFormat
+      const result = getTextFormat(
+        { underline: { offset: undefined, thickness: 3 } },
+        { underline: { offset: 10 } }
+      );
+      expect(result.underline.offset).toBe(10);
+      expect(result.underline.thickness).toBe(3);
+    });
+
+    it('should not override strikethrough.color when merging with undefined color', () => {
+      // baseFormat sets color to 'blue', format sets color to undefined (with another property set)
+      // Expected: color should remain 'blue' from baseFormat
+      const result = getTextFormat(
+        { strikethrough: { color: undefined, thickness: 2 } },
+        { strikethrough: { color: 'blue' } }
+      );
+      expect(result.strikethrough.color).toBe('blue');
+      expect(result.strikethrough.thickness).toBe(2);
+    });
+
+    it('should not override strikethrough.thickness when merging with undefined thickness', () => {
+      // baseFormat sets thickness to 3, format sets thickness to undefined (with another property set)
+      // Expected: thickness should remain 3 from baseFormat
+      const result = getTextFormat(
+        { strikethrough: { thickness: undefined, color: 'yellow' } },
+        { strikethrough: { thickness: 3 } }
+      );
+      expect(result.strikethrough.thickness).toBe(3);
+      expect(result.strikethrough.color).toBe('yellow');
+    });
+  });
 });
