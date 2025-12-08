@@ -231,5 +231,16 @@ describe('getTextFormat', () => {
       expect(result.strikethrough.thickness).toBe(3);
       expect(result.strikethrough.color).toBe('yellow');
     });
+
+    it('should not override strikethrough.offset when merging with undefined offset', () => {
+      // baseFormat sets offset to 8, format sets offset to undefined (with another property set)
+      // Expected: offset should remain 8 from baseFormat
+      const result = getTextFormat(
+        { strikethrough: { offset: undefined, thickness: 4 } },
+        { strikethrough: { offset: 8 } }
+      );
+      expect(result.strikethrough.offset).toBe(8);
+      expect(result.strikethrough.thickness).toBe(4);
+    });
   });
 });

@@ -93,7 +93,7 @@ const _formatMerge = (
               ).filter((k) => underStrikeSource[k] !== undefined);
 
               // apply all non-undefined values to the target
-              underStrikeSourceKeys.concat().forEach((k) => {
+              underStrikeSourceKeys.forEach((k) => {
                 (target[sourceKey] as Record<string, unknown>)[k] =
                   underStrikeSource[k];
                 targetSpecified[sourceKey][k] = true;
