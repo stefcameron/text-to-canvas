@@ -40,6 +40,19 @@ const _formatMerge = (
     },
   };
 
+  const targetSpecified = {
+    underline: {
+      color: false,
+      offset: false,
+      thickness: false,
+    },
+    strikethrough: {
+      color: false,
+      offset: false,
+      thickness: false,
+    },
+  };
+
   sources.forEach((source) => {
     if (source && typeof source === 'object' && !Array.isArray(source)) {
       Object.entries(source).forEach(([sourceKey, sourceValue]) => {
@@ -53,6 +66,14 @@ const _formatMerge = (
                 // NOTE: using NaN as TBD once we know font size/family
                 target[sourceKey].thickness = NaN;
                 target[sourceKey].offset = NaN;
+
+                targetSpecified[sourceKey].color = true;
+                targetSpecified[sourceKey].thickness = true;
+                targetSpecified[sourceKey].offset = true;
+              } else {
+                // explicitly set thickness to 0 since the style is disabled
+                target[sourceKey].thickness = 0;
+                targetSpecified[sourceKey].thickness = true;
               }
             } else if (
               sourceValue &&
@@ -62,32 +83,51 @@ const _formatMerge = (
               const underStrikeSource = sourceValue as Partial<
                 RequiredTextFormat[typeof sourceKey]
               >;
-              const underStrikeSourceKeys = Object.keys(
-                underStrikeSource
-              ) as (keyof RequiredTextFormat['underline'])[];
+
+              // get a list of keys that don't have `undefined` values (considering `undefined`
+              //  values the equivalent of the absence of the key)
+              const underStrikeSourceKeys = (
+                Object.keys(
+                  underStrikeSource
+                ) as (keyof RequiredTextFormat['underline'])[]
+              ).filter((k) => underStrikeSource[k] !== undefined);
+
+              // apply all non-undefined values to the target
               underStrikeSourceKeys.forEach((k) => {
-                if (underStrikeSource[k] !== undefined) {
-                  (target[sourceKey] as Record<string, unknown>)[k] =
-                    underStrikeSource[k];
-                }
+                (target[sourceKey] as Record<string, unknown>)[k] =
+                  underStrikeSource[k];
+                targetSpecified[sourceKey][k] = true;
               });
-              if (!underStrikeSourceKeys.includes('color')) {
+
+              if (
+                !underStrikeSourceKeys.includes('color') &&
+                !targetSpecified[sourceKey].color
+              ) {
                 // since source specified an object (which enables underline) but did not
                 //  specify a color, set it to empty string so we know we need to set it to the
                 //  general font color once we're done
                 target[sourceKey].color = '';
+                targetSpecified[sourceKey].color = true;
               }
-              if (!underStrikeSourceKeys.includes('thickness')) {
+              if (
+                !underStrikeSourceKeys.includes('thickness') &&
+                !targetSpecified[sourceKey].thickness
+              ) {
                 // since source specified an object (which enables underline) but did not
                 //  specify a thickness, set it to NaN so we know we need to set it to the
                 //  relative thickness once we're done
                 target[sourceKey].thickness = NaN;
+                targetSpecified[sourceKey].thickness = true;
               }
-              if (!underStrikeSourceKeys.includes('offset')) {
+              if (
+                !underStrikeSourceKeys.includes('offset') &&
+                !targetSpecified[sourceKey].offset
+              ) {
                 // since source specified an object (which enables underline) but did not
                 //  specify a offset, set it to NaN so we know we need to set it to the
                 //  font-specific offset once we're done
                 target[sourceKey].offset = NaN;
+                targetSpecified[sourceKey].offset = true;
               }
             }
             // else, `sourceValue` is not boolean and not object: ignore
@@ -117,36 +157,7 @@ export const getTextFormat = (
     'strikethrough',
   ];
 
-  // create a "full" version of `format` and `baseFormat` which have `underline` and
-  //  `strikethrough` specified as objects only to make ensuing merges easier
-  const fullBaseFormat = {
-    ...baseFormat,
-  };
-  const fullFormat = {
-    ...format,
-  };
-  underStrikeProps.forEach((prop) => {
-    [fullBaseFormat, fullFormat].forEach((obj) => {
-      if (obj[prop] !== undefined) {
-        if (obj[prop] === true) {
-          obj[prop] = {
-            thickness: NaN,
-          };
-        } else if (obj[prop] === false) {
-          obj[prop] = {
-            thickness: 0,
-          };
-        } else {
-          // must be an object: clone it to protect the original from upcoming merges
-          obj[prop] = {
-            ...obj[prop],
-          };
-        }
-      }
-    });
-  });
-
-  const result = _formatMerge(fullBaseFormat, fullFormat);
+  const result = _formatMerge(baseFormat, format);
 
   // NOTE: thickness and offset are subjective to the font being used, and in empirical testing
   //  thus far, it looks like 1px thickness is good at 24px font size, and then it's directly

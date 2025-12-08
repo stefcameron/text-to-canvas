@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
+## v3.0.1
+
+- Fixed a bug where specifying any allowed property of `TextFormat.underline` or `TextFormat.strikethrough` as `undefined` was not resulting in the default behavior. `undefined` is treated as equivalent to the absence of the property.
+
+## v3.0.0
 
 - __Breaking:__ The `RenderSpec.textBaseline` property type has changed from `CanvasTextBaseline` to `RenderTextBaseline` which is a narrowing of possible baselines used for actual rendering.
-- Added new `TextFormat.underline` and `TextFormat.strikethrough` options.
+- Added new `TextFormat.underline` and `TextFormat.strikethrough` options ([#600](https://github.com/stefcameron/text-to-canvas/pull/600))
   - Set to true to enable with all defaults, or specify an object with `{ color?, thickness?, offset? }` properties to have more customization.
   - By default, the thickness and offset scale with the font size based on `24px` font size (which yields a `1px` thick line that is just beneath the text for underline and centered on the text for strikethrough). This simply seemed to be the best balance for the handful of fonts that were tested (all fonts currently available in the demo app). Tweak as needed for the font(s) you will use.
 
