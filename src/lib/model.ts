@@ -79,14 +79,14 @@ export interface TextFormat {
     | boolean
     | {
         /**
-         * CSS color value. Defaults to text format color.
+         * CSS color value. Defaults to text format color when `undefined` or unspecified.
          */
         color?: string;
 
         /**
          * Thickness of the line in pixels. `>= 0`, can be fractional. `0` effectively means
          *  "no underline". Defaults to a number based on `fontSize` that aims to be balanced
-         *  (bigger/smaller the font, thicker/thinner the underline).
+         *  (bigger/smaller the font, thicker/thinner the underline) when `undefined` or unspecified.
          */
         thickness?: number;
 
@@ -95,7 +95,8 @@ export interface TextFormat {
          *  the exact position of the underline with respect to the text. Use this if the font
          *  you're using is not working well with the default position.
          *
-         * By default, the offset will depend on the `fontFamily` and `fontSize`.
+         * By default (when `undefined` or unspecified), the offset will depend on the `fontFamily`
+         *  and `fontSize`.
          */
         offset?: number;
       };
@@ -115,7 +116,7 @@ export interface TextFormat {
         /**
          * Thickness of the line in pixels. `>= 0`, can be fractional. `0` effectively means
          *  "no strikethrough". Defaults to a number based on `fontSize` that aims to be balanced
-         *  (bigger/smaller the font, thicker/thinner the strikethrough).
+         *  (bigger/smaller the font, thicker/thinner the strikethrough) when `undefined` or unspecified.
          */
         thickness?: number;
 
@@ -124,7 +125,8 @@ export interface TextFormat {
          *  the exact position of the strikethrough with respect to the text. Use this if the font
          *  you're using is not working well with the default position.
          *
-         * By default, the offset will depend on the `fontFamily` and `fontSize`.
+         * By default (when `undefined` or unspecified), the offset will depend on the `fontFamily`
+         *  and `fontSize`.
          */
         offset?: number;
       };
