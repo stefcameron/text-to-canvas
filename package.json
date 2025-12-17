@@ -74,7 +74,7 @@
     "test:unit": "vitest run"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.2",
     "@types/lodash": "^4.17.21",
     "@types/node": "^24.10.2",
     "@types/offscreencanvas": "^2019.7.3",
