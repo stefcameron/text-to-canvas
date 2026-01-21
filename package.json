@@ -90,7 +90,7 @@
     "eslint-plugin-vue": "^10.7.0",
     "globals": "^17.0.0",
     "lodash": "^4.17.21",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.0",
     "typescript": "^5.9.3",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^30.0.0",
