@@ -98,7 +98,7 @@
     "vite-node": "^5.3.0",
     "vitest": "^4.0.18",
     "vue": "^3.5.28",
-    "vue-eslint-parser": "^10.2.0"
+    "vue-eslint-parser": "^10.4.0"
   },
   "optionalDependencies": {
     "canvas": "^3.2.1"
