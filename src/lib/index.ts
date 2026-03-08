@@ -172,12 +172,13 @@ const drawText = (
       : undefined, // ignore since `text` is a string; we assume it already has all the whitespace it needs
     x: boxX,
     y: boxY,
-    width: config.width,
+    width: config.width, // DEBUG TODO: override with Infinite if textWrap='Overflow'|'Clip'?
     height: config.height,
     align: config.align,
     vAlign: config.vAlign,
     justify: config.justify,
     format: baseFormat,
+    textWrap: config.textWrap,
   });
 
   ctx.save();

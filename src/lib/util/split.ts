@@ -13,6 +13,7 @@ import {
   CanvasRenderContext,
   TextMetricsLike,
   RenderTextBaseline,
+  TextWrap,
 } from '../model';
 import { trimLine } from './trim';
 
@@ -49,18 +50,28 @@ const _getWordHash = (word: Word) => {
 /**
  * @private
  * Splits words into lines based on words that are single newline characters.
- * @param words
+ * @param words Words to split into lines.
  * @param inferWhitespace True (default) if whitespace should be inferred (and injected)
  *  based on words; false if we're to assume the words already include all necessary whitespace.
+ * @param textWrap Text wrapping option, which will determine how words flow into lines.
+ *  Defaults to `wrap`.
  * @returns Words expressed as lines.
  */
 const _splitIntoLines = (
   words: Array<Word>,
-  inferWhitespace: boolean = true
+  inferWhitespace: boolean = true,
+  textWrap: TextWrap = 'wrap'
 ): Array<Array<Word>> => {
-  const lines: Array<Array<Word>> = [[]];
+  const lines: Array<Array<Word>> = [];
+
+  if (textWrap !== 'wrap') {
+    // all words on a single line
+    lines.push(words);
+    return lines;
+  }
 
   let wasWhitespace = false; // true if previous word was whitespace
+  lines.push([]); // first row to fill with words
   words.forEach((word, wordIdx) => {
     // TODO: this is likely a naive split (at least based on character?); should at least
     //  think about this more; text format shouldn't matter on a line break, right (hope not)?
@@ -395,6 +406,7 @@ export const splitWords = ({
   justify,
   format: baseFormat,
   inferWhitespace = true,
+  textWrap = 'wrap',
   ...positioning // rest of params are related to positioning
 }: SplitWordsProps): RenderSpec => {
   const wordMap: WordMap = new Map();
@@ -454,7 +466,8 @@ export const splitWords = ({
   //  one super long line)
   const hardLines = _splitIntoLines(
     trimLine(words).trimmedLine,
-    inferWhitespace
+    inferWhitespace,
+    textWrap
   );
 
   if (
