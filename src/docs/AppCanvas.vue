@@ -51,6 +51,7 @@ const initialConfig = {
   strikethroughColor: '#ff0000',
   strikethroughThickness: 1,
   strikethroughOffset: null,
+  textWrap: 'wrap', // 'none', 'clip', 'wrap'
 };
 
 const config = reactive(cloneDeep(initialConfig));
@@ -115,6 +116,7 @@ function renderText() {
     strokeColor: config.strokeColor,
     fontStyle: config.isItalic ? 'italic' : 'normal',
     fontWeight: config.isBold ? 'bold' : '400',
+    textWrap: config.textWrap || 'wrap',
   };
 
   const words = textToWords(config.text);
@@ -184,7 +186,7 @@ onMounted(() => {
       <div class="controls-wrapper">
         <el-input
           v-model="config.text"
-          :rows="2"
+          :rows="4"
           type="textarea"
           placeholder="Please input"
         />
@@ -442,7 +444,18 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <br />
+
+        <el-row :gutter="12" class="align-row">
+          <el-col :span="12">
+            <el-form-item label="Text Wrapping" class="align-item">
+              <el-select v-model="config.textWrap">
+                <el-option label="None" value="none" />
+                <el-option label="Wrap" value="wrap" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-row :gutter="12">
           <el-col :span="12">
             <el-checkbox v-model="config.overflow" label="Overflow" />

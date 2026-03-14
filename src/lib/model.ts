@@ -182,6 +182,27 @@ export type PlainText = string;
 
 export type Text = PlainText | Word[];
 
+// DEBUG TODO: does this make sense at a splitWords() and splitText() level?
+//  clipping doesn't make sense there as these functions don't clip; but there
+//  might be possible optimizations for clip like not calculating past
+//  the word that will be clipped...
+/**
+ * Text Wrapping options:
+ *
+ * - `none`: Render __all__ words on a single line, whether they are displayed or not.
+ *
+ *     🔺 Note that the general {@link DrawTextConfig.overflow} option still determines whether
+ *     the entire line is visible, however, in this mode, __all__ {@link Word Words} have `metrics`
+ *     even if they are out of view.
+ *
+ *     💡 To __clip__ the text at the box's left/right edges, use the `overflow=true` option to hide
+ *     the overflow.
+ *
+ * - `wrap`: Wrap words at whitespace boundaries within the configured text rendering
+ *     {@link DrawTextConfig.width}.
+ */
+export type TextWrap = 'none' | 'wrap'; // NOTE: 'clip' = 'none' + overflow=false
+
 export interface DrawTextConfig extends TextFormat {
   /**
    * Width of box (px) at X/Y in 2D context within which text should be rendered. This will affect
@@ -235,6 +256,15 @@ export interface DrawTextConfig extends TextFormat {
    * False if the text should be clipped to the box's boundaries.
    */
   overflow?: boolean;
+
+  /**
+   * Text wrapping options. See {@link TextWrap} for more information. Defaults to `wrap`.
+   *
+   * 💬 Note that the `overflow` option does affect the `none` and `clip` modes by being
+   *  the determining factor as to whether the full text is visible or not within the
+   *  configured rendering {@link DrawTextConfig.width}.
+   */
+  textWrap?: TextWrap;
 }
 
 export interface BaseSplitProps {
@@ -271,6 +301,11 @@ export interface BaseSplitProps {
    *  formatting overrides. It's basically how "plain text" should be rendered.
    */
   format?: TextFormat;
+
+  /**
+   * Text wrapping options. See {@link TextWrap} for more information. Defaults to `wrap`.
+   */
+  textWrap?: TextWrap;
 }
 
 // props for a public API function

@@ -13,6 +13,7 @@ import {
   CanvasRenderContext,
   TextMetricsLike,
   RenderTextBaseline,
+  TextWrap,
 } from '../model';
 import { trimLine } from './trim';
 
@@ -43,18 +44,37 @@ let fontBoundingBoxSupported: boolean;
  * @returns Hash.
  */
 const _getWordHash = (word: Word) => {
-  return `${word.text}${word.format ? JSON.stringify(word.format) : ''}`;
+  // DEBUG TODO: what to use when the word is whitespace that measures to nothing?
+  //  when it's a newline, it measures to zero and doesn't get rendered...
+  return `${word.text || HAIR}${word.format ? JSON.stringify(word.format) : ''}`;
 };
+
+/**
+ * Count the number of occurrences of a given character in a string the most efficient
+ *  way with O(n) time and O(1) memory, zero overhead from temp array or Regex engine.
+ * @param str String in which to look.
+ * @param char Single character to find.
+ * @returns Number of occurrences.
+ */
+const _countChar = (str: string, char: string) => {
+  let count = 0;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === char) {
+      count++;
+    }
+  }
+  return count;
+}
 
 /**
  * @private
  * Splits words into lines based on words that are single newline characters.
- * @param words
+ * @param words Words to split into lines.
  * @param inferWhitespace True (default) if whitespace should be inferred (and injected)
  *  based on words; false if we're to assume the words already include all necessary whitespace.
  * @returns Words expressed as lines.
  */
-const _splitIntoLines = (
+const _splitIntoHardLines = (
   words: Array<Word>,
   inferWhitespace: boolean = true
 ): Array<Array<Word>> => {
@@ -64,8 +84,9 @@ const _splitIntoLines = (
   words.forEach((word, wordIdx) => {
     // TODO: this is likely a naive split (at least based on character?); should at least
     //  think about this more; text format shouldn't matter on a line break, right (hope not)?
-    if (word.text.match(/^\n+$/)) {
-      for (let i = 0; i < word.text.length; i++) {
+    if (word.text.match(/^\s*\n\s*$/)) { // match '\n', '   \n  ', etc
+      const newlineCount = _countChar(word.text, '\n');
+      for (let i = 0; i < newlineCount; i++) {
         lines.push([]);
       }
       wasWhitespace = true;
@@ -152,6 +173,7 @@ const _generateSpec = ({
   //  each word has a different font size, then things will still be offset, but for the
   //  same font size, the baseline should match from left to right)
   const getHeight = (word: Word): number =>
+    // DEBUG TODO: when a word is a newline, it needs to measure to correct line height given formatting, not zero...
     // NOTE: `metrics` must exist as every `word` MUST have been measured at this point
     word.metrics!.fontBoundingBoxAscent + word.metrics!.fontBoundingBoxDescent;
 
@@ -395,6 +417,7 @@ export const splitWords = ({
   justify,
   format: baseFormat,
   inferWhitespace = true,
+  textWrap = 'wrap',
   ...positioning // rest of params are related to positioning
 }: SplitWordsProps): RenderSpec => {
   const wordMap: WordMap = new Map();
@@ -452,7 +475,7 @@ export const splitWords = ({
   // start by trimming the `words` to remove any whitespace at either end, then split the `words`
   //  into an initial set of lines dictated by explicit hard breaks, if any (if none, we'll have
   //  one super long line)
-  const hardLines = _splitIntoLines(
+  const hardLines = _splitIntoHardLines(
     trimLine(words).trimmedLine,
     inferWhitespace
   );
@@ -487,10 +510,10 @@ export const splitWords = ({
   for (const hardLine of hardLines) {
     let { splitPoint } = measureLine(hardLine);
 
-    // if the line fits, we're done; else, we have to break it down further to fit
-    //  as best as we can (i.e. MIN one word per line, no breaks within words, no
+    // if not wrapping, we're done; if the line fits, we're done; else, we have to break it down
+    //  further to fit as best as we can (i.e. MIN one word per line, no breaks within words, no
     //  leading/pending whitespace)
-    if (splitPoint >= hardLine.length) {
+    if (textWrap !== 'wrap' || splitPoint >= hardLine.length) {
       wrappedLines.push(hardLine);
     } else {
       // shallow clone because we're going to break this line down further to get the best fit
@@ -516,7 +539,7 @@ export const splitWords = ({
   }
 
   // never justify a single line because there's no other line to visually justify it to
-  if (justify && wrappedLines.length > 1) {
+  if (textWrap === 'wrap' && justify && wrappedLines.length > 1) {
     wrappedLines.forEach((wrappedLine, idx) => {
       // never justify the last line (common in text editors)
       if (idx < wrappedLines.length - 1) {
