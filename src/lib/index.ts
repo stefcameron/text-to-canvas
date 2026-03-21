@@ -17,6 +17,7 @@ import {
 import {
   CanvasRenderContext,
   DrawTextConfig,
+  DrawTextResults,
   PositionedWord,
   RenderTextBaseline,
   RequiredTextFormat,
@@ -134,11 +135,18 @@ const _drawStrikethrough = ({
   ctx.restore();
 };
 
+/**
+ * Draws the specified text onto the canvas.
+ * @param ctx Canvas render context.
+ * @param text Text to draw.
+ * @param config Options for drawing the text.
+ * @returns Information about the text drawn onto the canvas.
+ */
 const drawText = (
   ctx: CanvasRenderContext,
   text: Text,
   config: DrawTextConfig
-) => {
+): DrawTextResults => {
   const baseFormat = getTextFormat({
     fontFamily: config.fontFamily,
     fontSize: config.fontSize,
@@ -178,6 +186,7 @@ const drawText = (
     vAlign: config.vAlign,
     justify: config.justify,
     format: baseFormat,
+    textWrap: config.textWrap,
   });
 
   ctx.save();
