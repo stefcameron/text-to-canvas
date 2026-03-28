@@ -236,7 +236,7 @@ Newline characters (i.e. hard breaks) are supported in text and Words, but only 
 - Line Separator (LS): `\u2028`
 - Paragraph Separator (PS): `\u2029`
 
-> 🔺 Any `Word` that has at least one line break character in it will be treated as a __single__ line break regardless of any other characters it contains, even if they are additional line breaks. If you generate your own `Word` array to provide to `splitText()` or `drawText()`, make sure you separate all line breaks into separate words.
+> 🔺 Any `Word` that has at least one line break character in it will be treated as a __single__ line break regardless of any other characters it contains, even if they are additional line breaks. If you generate your own `Word` array to provide to `splitWords()` or `drawText()`, make sure you separate all line breaks into separate words.
 
 ## Text Wrapping
 
@@ -245,7 +245,7 @@ Text wrapping is supported via the `DrawTextConfig.textWrap` config option. Two 
 - `'wrap'`: (Default) Text wraps at the horizontal boundaries of the render box.
 - `'none'`: Text does not wrap and will either overflow past the horizontal boundaries of the render box, or if `overflow=false`, get __clipped__ at the boundaries.
 
-> 💡 To achieve spreadsheet-style clipping, use `textFormat='none'` and `overflow=false`.
+> 💡 To achieve spreadsheet-style clipping, use `textWrap='none'` and `overflow=false`.
 
 # Examples
 

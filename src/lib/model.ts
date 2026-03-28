@@ -211,7 +211,7 @@ export type Text = PlainText | Word[];
  *     the entire line is visible, however, in this mode, __all__ {@link Word Words} have `metrics`
  *     even if they are out of view.
  *
- *     💡 To __clip__ the text at the box's left/right edges, use the `overflow=true` option to hide
+ *     💡 To __clip__ the text at the box's left/right edges, use the `overflow=false` option to hide
  *     the overflow.
  *
  * - `wrap`: Wrap words at whitespace boundaries within the configured text rendering
@@ -276,9 +276,10 @@ export interface DrawTextConfig extends TextFormat {
   /**
    * Text wrapping options. See {@link TextWrap} for more information. Defaults to `wrap`.
    *
-   * 💬 Note that the `overflow` option does affect the `none` and `clip` modes by being
-   *  the determining factor as to whether the full text is visible or not within the
-   *  configured rendering {@link DrawTextConfig.width}.
+   * 💬 Note that 'none' simply means, aside from hard line breaks found in the text, the
+   *  text will be displayed on non-wrapping lines and may overflow the configured rendering
+   *  {@link DrawTextConfig.width}. Set the `overflow=false` option to eliminate what overflows
+   *  the rendering box.
    */
   textWrap?: TextWrap;
 }

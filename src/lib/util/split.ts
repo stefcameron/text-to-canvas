@@ -1,5 +1,5 @@
 import { getTextFormat, getTextStyle } from './style';
-import { isWhitespace, hasLineBreak } from './whitespace';
+import { isWhitespace, hasLineBreak, isLineBreak } from './whitespace';
 import { justifyLine } from './justify';
 import {
   PositionedWord,
@@ -87,7 +87,11 @@ const _splitIntoHardLines = (
     // if it contains a line break, IGNORE everything else and consider it a SINGLE line break
     if (hasLineBreak(word.text)) {
       lines.push([]); // move to new line
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       prevLine = lines.at(-2); // one line ago
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       beforePrevLine = lines.at(-3); // two lines ago
 
       // if the previous line was empty, it's empty an line from multiple line break Words following
@@ -96,6 +100,8 @@ const _splitIntoHardLines = (
       //  before it)
       if (prevLine && prevLine.length < 1) {
         // inherit the format of the last Word on that line, if it has a format
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+        // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
         const { format } = beforePrevLine?.at(-1) || {};
         prevLine.push({
           text: HAIR,
@@ -114,6 +120,8 @@ const _splitIntoHardLines = (
 
     if (isWhitespace(word.text)) {
       // whitespace OTHER THAN newlines since we checked for newlines above
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       lines.at(-1)?.push(word); // append to current line
       wasWhitespace = true;
       return; // next `word`
@@ -127,13 +135,19 @@ const _splitIntoHardLines = (
     //  word and the one before wasn't whitespace, insert a space
     if (inferWhitespace && !wasWhitespace && wordIdx > 0) {
       // append to current line
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
       lines.at(-1)?.push({
         text: SPACE,
         // inherit format of previous Word on on current line, if it has a format
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+        // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
         format: lines.at(-1)?.at(-1)?.format,
       });
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+    // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
     lines.at(-1)?.push(word); // append to current line
     wasWhitespace = false;
   });
@@ -624,7 +638,9 @@ export const textToWords = (text: string) => {
       if (word) {
         words.push(word);
       }
-      word = { text: c }; // new word which is either whitespace or first char of next word
+      // start new word, which is either whitespace or first char of next word; if it's a supported
+      //  line break character, normalize it to LF
+      word = { text: isLineBreak(c) ? '\n' : c };
     } else {
       // accumulate into current `word` (either a printable character or a whitespace character)
       if (!word) {

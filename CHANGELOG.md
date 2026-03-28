@@ -8,6 +8,7 @@ The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0
 
 - __Breaking:__ Support for [line breaks](./README.md#line-breaks). Breaking because of Words containing characters and one or more line breaks being treated as a single line break (any additional characters ignored).
   - Also fixes a bug where line breaks were treated as space characters instead of breaking text to new lines.
+- When inferring whitespace (`inferWhitespace` option of `splitWords()`), generated space characters now inherit the format of the previous word.
 - New `DrawTextResults` exported type for the object returned by `drawText()` instead of relying on an inferred type which could too easily change without being noticed.
 - New `DrawTextConfig.textWrap: TextWrap` config option to control whether [text wraps](./README.md#text-wrapping) at the horizontal boundaries of the render box.
   - Note that "clipping", spreadsheet-style, is a combination of `textWrap='none'` and `overflow=false` options.
@@ -15,7 +16,6 @@ The format is inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0
 ## v3.0.1
 
 - Fixed a bug where specifying any allowed property of `TextFormat.underline` or `TextFormat.strikethrough` as `undefined` was not resulting in the default behavior. `undefined` is treated as equivalent to the absence of the property.
-- When inferring whitespace (`inferWhitespace` option of `splitWords()`), generated space characters now inherit the format of the previous word.
 
 ## v3.0.0
 
