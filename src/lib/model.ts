@@ -174,7 +174,7 @@ export interface Word {
    * - Line Separator (LS): `\u2028`
    * - Paragraph Separator (PS): `\u2029`
    *
-   * Carriage Returns (CR) are ignored. If the text uses CRLF for breaks (i.e. Mirosoft Windows),
+   * Carriage Returns (CR) are ignored. If the text uses CRLF for breaks (i.e. Microsoft Windows),
    *  the CR will be ignored and the LF will result in a new line.
    */
   text: string;
