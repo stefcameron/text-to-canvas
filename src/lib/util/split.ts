@@ -1,5 +1,5 @@
 import { getTextFormat, getTextStyle } from './style';
-import { isWhitespace } from './whitespace';
+import { isWhitespace, hasLineBreak, isLineBreak } from './whitespace';
 import { justifyLine } from './justify';
 import {
   PositionedWord,
@@ -43,30 +43,76 @@ let fontBoundingBoxSupported: boolean;
  * @returns Hash.
  */
 const _getWordHash = (word: Word) => {
-  return `${word.text}${word.format ? JSON.stringify(word.format) : ''}`;
+  // NOTE: JSON.stringify() doesn't guarantee object property order so we convert the format
+  //  object, and its nested objects, if any (only one level deep is necessary for now) into
+  //  object entries (`[name, value]` tuples) to ensure a consistent hash
+  return `${word.text}${
+    word.format
+      ? JSON.stringify(
+          Object.entries(word.format).map(([name, propValue]) => {
+            let value = propValue as unknown;
+            if (
+              (name === 'underline' || name === 'strikethrough') &&
+              typeof propValue === 'object'
+            ) {
+              // must be underline or strikethrough format (nested) object
+              value = Object.entries(propValue as object);
+            }
+            return [name, value];
+          })
+        )
+      : ''
+  }`;
 };
 
 /**
  * @private
  * Splits words into lines based on words that are single newline characters.
- * @param words
+ * @param words Words to split into lines.
  * @param inferWhitespace True (default) if whitespace should be inferred (and injected)
  *  based on words; false if we're to assume the words already include all necessary whitespace.
  * @returns Words expressed as lines.
+ * @throws {Error}
  */
-const _splitIntoLines = (
+const _splitIntoHardLines = (
   words: Array<Word>,
   inferWhitespace: boolean = true
 ): Array<Array<Word>> => {
-  const lines: Array<Array<Word>> = [[]];
+  const lines: Array<Array<Word>> = [[]]; // start with an empty line
+  let prevLine: Array<Word> | undefined; // line before the current line (1 line ago), if any
+  let beforePrevLine: Array<Word> | undefined; // line before previous line (2 lines ago), if any
 
   let wasWhitespace = false; // true if previous word was whitespace
   words.forEach((word, wordIdx) => {
-    // TODO: this is likely a naive split (at least based on character?); should at least
-    //  think about this more; text format shouldn't matter on a line break, right (hope not)?
-    if (word.text.match(/^\n+$/)) {
-      for (let i = 0; i < word.text.length; i++) {
-        lines.push([]);
+    // if it contains a line break, IGNORE everything else and consider it a SINGLE line break
+    if (hasLineBreak(word.text)) {
+      lines.push([]); // move to new line
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
+      prevLine = lines.at(-2); // one line ago
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+      // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
+      beforePrevLine = lines.at(-3); // two lines ago
+
+      // if the previous line was empty, it's empty an line from multiple line break Words following
+      //  one another (e.g. 'Lorem\n\nipsum'): give it a HAIR word so it gets some height and renders
+      //  an empty line and make it inherit the same format as the last Word before it (on the line
+      //  before it)
+      if (prevLine && prevLine.length < 1) {
+        // inherit the format of the last Word on that line, if it has a format
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+        // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
+        const { format } = beforePrevLine?.at(-1) || {};
+        prevLine.push({
+          text: HAIR,
+          format: {
+            ...format,
+            // remove any underline/strikethrough so it doesn't render on a HAIR which is
+            //  technically not whitespace which would otherwise be skipped
+            underline: false,
+            strikethrough: false,
+          },
+        });
       }
       wasWhitespace = true;
       return; // next `word`
@@ -76,7 +122,7 @@ const _splitIntoLines = (
       // whitespace OTHER THAN newlines since we checked for newlines above
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
       // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
-      lines.at(-1)?.push(word);
+      lines.at(-1)?.push(word); // append to current line
       wasWhitespace = true;
       return; // next `word`
     }
@@ -88,14 +134,21 @@ const _splitIntoLines = (
     // looks like a non-empty, non-whitespace word at this point, so if it isn't the first
     //  word and the one before wasn't whitespace, insert a space
     if (inferWhitespace && !wasWhitespace && wordIdx > 0) {
+      // append to current line
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
       // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
-      lines.at(-1)?.push({ text: SPACE });
+      lines.at(-1)?.push({
+        text: SPACE,
+        // inherit format of previous Word on on current line, if it has a format
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
+        // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
+        format: lines.at(-1)?.at(-1)?.format,
+      });
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- because of TSC ridiculousness
     // @ts-ignore -- ridiculous TSC won't recognize Array.at() is a method
-    lines.at(-1)?.push(word);
+    lines.at(-1)?.push(word); // append to current line
     wasWhitespace = false;
   });
 
@@ -385,7 +438,13 @@ const _measureWord = ({
 /**
  * Splits Words into positioned lines of Words as they need to be rendred in 2D space,
  *  but does not render anything.
- * @param config
+ *
+ * 🔺 A {@link Word} that contains a newline character along with any other character(s), even if
+ *  not whitespace characters or multiple newline characters, will be treated as a __single__
+ *  newline character (i.e. hard break in the text). Use the {@link textToWords} function to
+ *  correctly split a text `string` into a `Word[]` this way. Beware if providing your own `Word[]`.
+ *
+ * @param params
  * @returns Lines of positioned words to be rendered, and total height required to
  *  render all lines.
  */
@@ -395,6 +454,7 @@ export const splitWords = ({
   justify,
   format: baseFormat,
   inferWhitespace = true,
+  textWrap = 'wrap',
   ...positioning // rest of params are related to positioning
 }: SplitWordsProps): RenderSpec => {
   const wordMap: WordMap = new Map();
@@ -409,11 +469,11 @@ export const splitWords = ({
   // - Returned `lineWidth` is width up to, but not including, the `splitPoint` (always <= `boxWidth`
   //   unless the first Word is too wide to fit, in which case `lineWidth` will be that Word's
   //   width even though it's > `boxWidth`).
-  //   - If `force=true`, will be the full width of the line regardless of `boxWidth`.
+  //   - If `force=true`, will be the full width of the line regardless of `boxWidth` or `textWrap`.
   // - Returned `splitPoint` is index into `words` of the Word immediately FOLLOWING the last
   //   Word included in the `lineWidth` (and is `words.length` if all Words were included);
-  //  `splitPoint` could also be thought of as the number of `words` included in the `lineWidth`.
-  //  - If `force=true`, will always be `words.length`.
+  //   `splitPoint` could also be thought of as the number of `words` included in the `lineWidth`.
+  //   - If `force=true` or `textWrap='none'`, will always be `words.length`.
   const measureLine = (
     lineWords: Array<Word>,
     force: boolean = false
@@ -425,7 +485,7 @@ export const splitWords = ({
     let splitPoint = 0;
     lineWords.every((word, idx) => {
       const wordWidth = _measureWord({ ctx, word, wordMap, baseTextFormat });
-      if (!force && lineWidth + wordWidth > boxWidth) {
+      if (!force && textWrap !== 'none' && lineWidth + wordWidth > boxWidth) {
         // at minimum, MUST include at least first Word, even if it's wider than box width
         if (idx === 0) {
           splitPoint = 1;
@@ -452,7 +512,7 @@ export const splitWords = ({
   // start by trimming the `words` to remove any whitespace at either end, then split the `words`
   //  into an initial set of lines dictated by explicit hard breaks, if any (if none, we'll have
   //  one super long line)
-  const hardLines = _splitIntoLines(
+  const hardLines = _splitIntoHardLines(
     trimLine(words).trimmedLine,
     inferWhitespace
   );
@@ -487,10 +547,10 @@ export const splitWords = ({
   for (const hardLine of hardLines) {
     let { splitPoint } = measureLine(hardLine);
 
-    // if the line fits, we're done; else, we have to break it down further to fit
-    //  as best as we can (i.e. MIN one word per line, no breaks within words, no
+    // if not wrapping, we're done; if the line fits, we're done; else, we have to break it down
+    //  further to fit as best as we can (i.e. MIN one word per line, no breaks within words, no
     //  leading/pending whitespace)
-    if (splitPoint >= hardLine.length) {
+    if (textWrap !== 'wrap' || splitPoint >= hardLine.length) {
       wrappedLines.push(hardLine);
     } else {
       // shallow clone because we're going to break this line down further to get the best fit
@@ -516,7 +576,7 @@ export const splitWords = ({
   }
 
   // never justify a single line because there's no other line to visually justify it to
-  if (justify && wrappedLines.length > 1) {
+  if (textWrap === 'wrap' && justify && wrappedLines.length > 1) {
     wrappedLines.forEach((wrappedLine, idx) => {
       // never justify the last line (common in text editors)
       if (idx < wrappedLines.length - 1) {
@@ -546,8 +606,9 @@ export const splitWords = ({
 };
 
 /**
- * Converts a string of text containing words and whitespace, as well as line breaks (newlines),
- *  into a `Word[]` that can be given to `splitWords()`.
+ * Converts a string of text containing words and whitespace, as well as line breaks
+ *  (LF, LS, or PS; all are normalized to LF), into a `Word[]` that can be given to
+ *  `splitWords()`.
  * @param text String to convert into Words.
  * @returns Converted text.
  */
@@ -558,19 +619,30 @@ export const textToWords = (text: string) => {
   let word: Word | undefined = undefined;
   let wasWhitespace = false;
   Array.from(text.trim()).forEach((c) => {
+    if (c === '\r') {
+      return; // ignore it, expecting an LF (\n) to follow, Windows-style
+    }
+
     const charIsWhitespace = isWhitespace(c);
+
+    // if the character is either whitespace when we didn't have whitespace before, or
+    //  not whitespace and we did have it, or is whitespace and we did have it, consider
+    //  it a word boundary; this works for newlines as well because newlines are whitespace
     if (
       (charIsWhitespace && !wasWhitespace) ||
-      (!charIsWhitespace && wasWhitespace)
+      (!charIsWhitespace && wasWhitespace) ||
+      (charIsWhitespace && wasWhitespace)
     ) {
       // save current `word`, if any, and start new `word`
       wasWhitespace = charIsWhitespace;
       if (word) {
         words.push(word);
       }
-      word = { text: c };
+      // start new word, which is either whitespace or first char of next word; if it's a supported
+      //  line break character, normalize it to LF
+      word = { text: isLineBreak(c) ? '\n' : c };
     } else {
-      // accumulate into current `word`
+      // accumulate into current `word` (either a printable character or a whitespace character)
       if (!word) {
         word = { text: '' };
       }

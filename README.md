@@ -187,11 +187,12 @@ You can run this demo locally with `npm run node:demo`
 | `fontColor`       | `'black'`    | Base font color, same as css color. Examples: `blue`, `#00ff00`. |
 | `strokeColor`     | `'black'`    | Base stroke color, same as css color. Examples: `blue`, `#00ff00`. |
 | `strokeWidth`     | `0`          | Base stroke width. Positive number; `<=0` means none. Can be fractional. ⚠️ Word splitting does not take into account the stroke, which is applied on the __center__ of the edges of the text via the [strokeText()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeText) Canvas API. Setting a thick stroke will cause it to bleed out of the text box. |
-| `justify`         | `false`      | Justify text if `true`, it will insert spaces between words when necessary. |
+| `justify`         | `false`      | Justify text if `true`. It will insert spaces between words when necessary. __Ignored__ if `textWrap != 'wrap'` |
 | `underline`       | `false`      | If the text or word should be underlined. Can also be an object with customization options like color, thickness, and offset. |
 | `strikethrough`   | `false`      | If the text or word should have a strikethrough. Can also be an object with customization options like color, thickness, and offset. |
 | `inferWhitespace` | `true`       | If whitespace in the text should be inferred. Only applies if the text given to `drawText()` is a `Word[]`. If the text is a `string`, this config setting is ignored. |
-| `overflow`        | `true`       | Allows the text to overflow out of the box if the box is too narrow/short to fit it all. `false` will clip the text to the box's boundaries. |
+| `overflow`        | `true`       | Allows the text to overflow out of the box if the box is too narrow/short to fit it all. `false` will clip the text to the box's boundaries. Use in conjunction with `textWrap='none'` to achieve a typical spreadsheet clipping effect. |
+| `textWrap`        | `'wrap'`     | Whether the text should wrap at supported newline characters (LF, LS, or PS) as well as at the box's horizontal boundaries in order to keep as much of the text visible, or extend beyond the horizontal boundaries of the box even if it doesn't fit. This is __separate__ from whether the text extending beyond the box's horizontal boundaries is visible (i.e. "clipped"). Use the `overflow` option to control clipping (e.g. `clip = textWrap='none' + overflow=false`. Other values: `'none'` (no wrapping other than at hard breaks using `\n` characters). |
 | `debug`           | `false`      | Draws the border and alignment lines of the text box for debugging purposes. |
 
 ## Functions
@@ -226,6 +227,25 @@ import {
 - `getTextFormat()`: Generates a "full" `TextFormat` object (all properties specified) given one with only partial properties using prescribed defaults.
 
 TypeScript integration should provide helpful JSDocs for every function and each of its parameters to further help with their use.
+
+## Line Breaks
+
+Newline characters (i.e. hard breaks) are supported in text and Words, but only the following characters are considered line breaks:
+
+- Line Feed (LF): `\n`
+- Line Separator (LS): `\u2028`
+- Paragraph Separator (PS): `\u2029`
+
+> 🔺 Any `Word` that has at least one line break character in it will be treated as a __single__ line break regardless of any other characters it contains, even if they are additional line breaks. If you generate your own `Word` array to provide to `splitWords()` or `drawText()`, make sure you separate all line breaks into separate words.
+
+## Text Wrapping
+
+Text wrapping is supported via the `DrawTextConfig.textWrap` config option. Two modes are supported:
+
+- `'wrap'`: (Default) Text wraps at the horizontal boundaries of the render box.
+- `'none'`: Text does not wrap and will either overflow past the horizontal boundaries of the render box, or if `overflow=false`, get __clipped__ at the boundaries.
+
+> 💡 To achieve spreadsheet-style clipping, use `textWrap='none'` and `overflow=false`.
 
 # Examples
 

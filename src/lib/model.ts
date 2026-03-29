@@ -157,11 +157,31 @@ export type RequiredTextFormat = Required<
   strikethrough: Required<_StrikethroughObj>;
 };
 
+/**
+ * Text with optional formatting used as input into various API functions like `drawText()`
+ *  or `splitWords()`. May also have `metrics` if it was previously measured as an optimization.
+ */
 export interface Word {
-  /** The word. Can also be whitespace. */
+  /**
+   * The word. Can also be whitespace or a __single__ newline character for a hard break.
+   *
+   * 🔺 If the text contains a newline character with any other character(s), it will be treated as
+   *  a __single__ newline, as will multiple newline characters together (e.g. `'\n\n\n' -> '\n'`).
+   *
+   * Supported newline characters:
+   *
+   * - Line Feed (LF): `\n`
+   * - Line Separator (LS): `\u2028`
+   * - Paragraph Separator (PS): `\u2029`
+   *
+   * Carriage Returns (CR) are ignored. If the text uses CRLF for breaks (i.e. Microsoft Windows),
+   *  the CR will be ignored and the LF will result in a new line.
+   */
   text: string;
+
   /** Optional formatting. If unspecified, base format defaults will be used. */
   format?: TextFormat;
+
   /**
    * Optional metrics for this Word if it has __already been measured__ on canvas.
    *
@@ -181,6 +201,23 @@ export interface Word {
 export type PlainText = string;
 
 export type Text = PlainText | Word[];
+
+/**
+ * Text Wrapping options:
+ *
+ * - `none`: Render __all__ words on a single line, whether they are displayed or not.
+ *
+ *     🔺 Note that the general {@link DrawTextConfig.overflow} option still determines whether
+ *     the entire line is visible, however, in this mode, __all__ {@link Word Words} have `metrics`
+ *     even if they are out of view.
+ *
+ *     💡 To __clip__ the text at the box's left/right edges, use the `overflow=false` option to hide
+ *     the overflow.
+ *
+ * - `wrap`: Wrap words at whitespace boundaries within the configured text rendering
+ *     {@link DrawTextConfig.width}.
+ */
+export type TextWrap = 'none' | 'wrap'; // NOTE: 'clip' = 'none' + overflow=false
 
 export interface DrawTextConfig extends TextFormat {
   /**
@@ -235,6 +272,16 @@ export interface DrawTextConfig extends TextFormat {
    * False if the text should be clipped to the box's boundaries.
    */
   overflow?: boolean;
+
+  /**
+   * Text wrapping options. See {@link TextWrap} for more information. Defaults to `wrap`.
+   *
+   * 💬 Note that 'none' simply means, aside from hard line breaks found in the text, the
+   *  text will be displayed on non-wrapping lines and may overflow the configured rendering
+   *  {@link DrawTextConfig.width}. Set the `overflow=false` option to eliminate what overflows
+   *  the rendering box.
+   */
+  textWrap?: TextWrap;
 }
 
 export interface BaseSplitProps {
@@ -271,6 +318,11 @@ export interface BaseSplitProps {
    *  formatting overrides. It's basically how "plain text" should be rendered.
    */
   format?: TextFormat;
+
+  /**
+   * Text wrapping options. See {@link TextWrap} for more information. Defaults to `wrap`.
+   */
+  textWrap?: TextWrap;
 }
 
 // props for a public API function
@@ -381,4 +433,10 @@ export interface RenderSpec {
 
   /** Total required height (px) to render all lines. */
   readonly height: number;
+}
+
+/** Results from calling the `drawText` function. */
+export interface DrawTextResults {
+  /** Total height (px) of the text as draw onto the canvas. */
+  height: number;
 }
