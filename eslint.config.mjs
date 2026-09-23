@@ -2,14 +2,14 @@
 // ROOT ESLint Configuration
 //
 
-/* eslint-env node */
-
 import js from '@eslint/js';
 import globals from 'globals';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin, {
+  flatConfigs as importFlatConfigs,
+} from 'eslint-plugin-import-x';
 import vue from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
 
@@ -25,7 +25,7 @@ const tsconfigRootDir = import.meta.dirname;
 const basePlugins = {};
 
 const importPluginSettings = {
-  'import/resolver': {
+  'import-x/resolver': {
     node: {
       extensions: [
         '.js',
@@ -195,7 +195,7 @@ const typescriptRules = {
   ...typescript.configs['recommended-type-checked'].rules,
 
   // AFTER TypeScript rules to turn off `import` rules that TypeScript covers
-  ...importPlugin.flatConfigs.typescript.rules,
+  ...importFlatConfigs.typescript.rules,
 };
 
 //
@@ -225,7 +225,7 @@ const createToolingConfig = (isModule = true, isTypescript = false) => ({
   ignores: ['src/**/*.*'],
   plugins: {
     ...basePlugins,
-    ...(isModule ? { import: importPlugin } : {}),
+    ...(isModule ? { 'import-x': importPlugin } : {}),
     ...(isTypescript ? { '@typescript-eslint': typescript } : {}),
   },
   languageOptions: {
@@ -254,7 +254,7 @@ const createToolingConfig = (isModule = true, isTypescript = false) => ({
   },
   rules: {
     ...baseRules,
-    ...(isModule ? importPlugin.flatConfigs.recommended.rules : {}), // BEFORE TypeScript rules
+    ...(isModule ? importFlatConfigs.recommended.rules : {}), // BEFORE TypeScript rules
     ...(isModule && isTypescript ? typescriptRules : {}),
     'no-console': 'off', // OK in repo scripts
   },
@@ -273,7 +273,7 @@ const createSourceJSConfig = () => ({
   files: ['src/**/*.js'],
   plugins: {
     ...basePlugins,
-    import: importPlugin,
+    'import-x': importPlugin,
   },
   languageOptions: {
     ecmaVersion,
@@ -296,7 +296,7 @@ const createSourceJSConfig = () => ({
   },
   rules: {
     ...baseRules,
-    ...importPlugin.flatConfigs.recommended.rules,
+    ...importFlatConfigs.recommended.rules,
   },
 });
 
@@ -305,7 +305,7 @@ const createSourceTSConfig = () => ({
   ignores: ['src/demos/**'],
   plugins: {
     ...basePlugins,
-    import: importPlugin,
+    'import-x': importPlugin,
     '@typescript-eslint': typescript,
   },
   languageOptions: {
@@ -331,7 +331,7 @@ const createSourceTSConfig = () => ({
   },
   rules: {
     ...baseRules,
-    ...importPlugin.flatConfigs.recommended.rules, // BEFORE TypeScript rules
+    ...importFlatConfigs.recommended.rules, // BEFORE TypeScript rules
     ...typescriptRules,
   },
 });
@@ -343,7 +343,7 @@ const createSourceVueConfig = () => ({
   files: ['src/**/*.vue'],
   plugins: {
     ...basePlugins,
-    import: importPlugin,
+    'import-x': importPlugin,
     vue,
   },
   languageOptions: {
@@ -367,7 +367,7 @@ const createSourceVueConfig = () => ({
   },
   rules: {
     ...baseRules,
-    ...importPlugin.flatConfigs.recommended.rules, // BEFORE TypeScript rules
+    ...importFlatConfigs.recommended.rules, // BEFORE TypeScript rules
     ...vueRules,
   },
 });
@@ -376,7 +376,7 @@ const createDemoTSConfig = () => ({
   files: ['src/demos/**/*.{ts,mts}'],
   plugins: {
     ...basePlugins,
-    import: importPlugin,
+    'import-x': importPlugin,
     '@typescript-eslint': typescript,
   },
   languageOptions: {
@@ -401,7 +401,7 @@ const createDemoTSConfig = () => ({
   },
   rules: {
     ...baseRules,
-    ...importPlugin.flatConfigs.recommended.rules, // BEFORE TypeScript rules
+    ...importFlatConfigs.recommended.rules, // BEFORE TypeScript rules
     ...typescriptRules,
   },
 });
@@ -412,7 +412,7 @@ const createTestConfig = (isTypescript = false) => ({
     : ['src/**/__tests__/**/?(*.)+(spec|test).js'],
   plugins: {
     ...basePlugins,
-    import: importPlugin,
+    'import-x': importPlugin,
     ...(isTypescript ? { '@typescript-eslint': typescript } : {}),
   },
   languageOptions: {
@@ -443,7 +443,7 @@ const createTestConfig = (isTypescript = false) => ({
   },
   rules: {
     ...baseRules,
-    ...importPlugin.flatConfigs.recommended.rules, // BEFORE TypeScript rules
+    ...importFlatConfigs.recommended.rules, // BEFORE TypeScript rules
     ...(isTypescript ? typescriptRules : {}),
     ...testRules,
   },
