@@ -82,7 +82,7 @@
     "@typescript-eslint/parser": "^8.73.0",
     "@vitejs/plugin-vue": "^6.0.10",
     "element-plus": "^2.14.8",
-    "eslint": "^10.14.0",
+    "eslint": "^10.15.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-node": "^0.4.0",
     "eslint-import-resolver-typescript": "^4.4.5",
